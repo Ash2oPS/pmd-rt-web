@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#122c28" />
+    <meta
+      name="description"
+      content="Une première expédition : test de jeu, commandes manette et sauvegarde hors connexion."
+    />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>PMD · Bois de l'Éveil</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="PMD accueil"
+        ><span class="brand-mark">✦</span> PMD
+        <span class="brand-sub">EXPLORATIONS</span></a
+      >
+      <span class="edition">PROTOTYPE <b>01</b></span>
+      <button id="menu-toggle" class="small-button" aria-label="Ouvrir le menu">
+        ☰ <span>Menu</span>
+      </button>
+    </header>
+    <main>
+      <section class="expedition" aria-label="Zone de jeu">
+        <div class="location">
+          <div>
+            <span class="eyebrow">PREMIÈRE EXPÉDITION</span>
+            <h1>Bois de l’Éveil<span>.</span></h1>
+          </div>
+          <span class="floor">ÉTAGE <b>01</b></span>
+        </div>
+        <div class="game-frame">
+          <canvas
+            id="game"
+            width="768"
+            height="448"
+            tabindex="0"
+            aria-label="Forêt explorable. Déplacez-vous avec la croix, le stick ou les flèches du clavier."
+          ></canvas>
+          <div class="scene-label">
+            <span class="live-dot"></span>
+            <span id="scene-status">Exploration</span>
+          </div>
+          <div id="toast" class="toast" role="status" aria-live="polite"></div>
+          <div class="touch-controls" aria-label="Commandes tactiles">
+            <div class="dpad">
+              <button data-action="up" aria-label="Haut">↑</button
+              ><button data-action="left" aria-label="Gauche">←</button
+              ><button data-action="down" aria-label="Bas">↓</button
+              ><button data-action="right" aria-label="Droite">→</button>
+            </div>
+            <button
+              class="touch-menu"
+              data-action="menu"
+              aria-label="Menu tactile"
+            >
+              ☰
+            </button>
+          </div>
+        </div>
+        <div class="field-footer">
+          <span
+            ><i class="key">↑↓←→</i> Se déplacer
+            <span class="footer-sep">/</span>
+            <i class="key">START</i> Menu</span
+          ><span class="coordinates" id="coordinates">03 / 05</span>
+        </div>
+      </section>
+      <aside aria-label="Carnet d’expédition">
+        <div class="journal-heading">
+          <span class="eyebrow">CARNET D’EXPÉDITION</span><span>↗</span>
+        </div>
+        <section class="explorer">
+          <div class="portrait" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path fill="#9c7036" d="M16 8h7v19h18V8h7v30H16z" />
+              <path fill="#f1c765" d="M18 13h4v20h20V13h4v31h-4v9H22v-9h-4z" />
+              <path fill="#172c27" d="M24 35h4v5h-4zm13 0h4v5h-4z" />
+              <path fill="#db704f" d="M22 46h20v7H22zm12 7h7v7h-7z" />
+            </svg>
+          </div>
+          <div>
+            <span class="eyebrow">TON EXPLORATEUR</span>
+            <h2>Éclaireur</h2>
+            <span class="muted">Prêt pour l’inconnu.</span>
+          </div>
+        </section>
+        <section class="objective">
+          <div class="section-number">01 / OBJECTIF</div>
+          <h3>Une petite découverte.</h3>
+          <p>Explore la clairière et retrouve les trois éclats de lumière.</p>
+          <div class="crystal-progress">
+            <span class="crystal-symbol">◆</span
+            ><strong id="crystals">0 <span>/ 3</span></strong
+            ><span id="objective-label">ÉCLATS RETROUVÉS</span>
+          </div>
+        </section>
+        <section class="diagnostics">
+          <div class="section-number">02 / CONNEXION</div>
+          <div class="status-row">
+            <span>Manette</span><strong id="pad-status">À connecter</strong>
+          </div>
+          <p id="pad-name" class="device-name">
+            Appuie sur un bouton pour la détecter.
+          </p>
+          <div
+            class="input-meter"
+            id="input-meter"
+            aria-label="Activité des commandes"
+          >
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <p id="raw-input" class="raw-input">Aucun signal</p>
+          <div class="status-row">
+            <span>Sauvegarde</span><strong id="save-status">Automatique</strong>
+          </div>
+          <div class="status-row">
+            <span>Hors connexion</span
+            ><strong id="offline-status">Préparation…</strong>
+          </div>
+          <button id="install" class="install-button" hidden>
+            Installer le jeu ↗
+          </button>
+        </section>
+        <div class="journal-bottom">
+          <span id="steps">0 pas</span><span class="build">BUILD 0.1.0</span>
+        </div>
+      </aside>
+    </main>
+    <footer class="app-footer">
+      <span>Un premier pas vers une nouvelle aventure.</span
+      ><span>CLAVIER · MANETTE · TACTILE</span>
+    </footer>
+    <div id="overlay" class="overlay" hidden>
+      <section
+        class="menu-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="menu-title"
+      >
+        <span class="eyebrow">CARNET DE ROUTE</span>
+        <h2 id="menu-title">Une petite pause.</h2>
+        <p id="pause-reason">L’aventure t’attend.</p>
+        <div id="menu-main" class="menu-list">
+          <button data-menu="resume">Reprendre <span>↵</span></button>
+          <button data-menu="save">Sauvegarder <span>↓</span></button>
+          <button data-menu="controls">Commandes <span>⌘</span></button>
+          <button data-menu="fullscreen">Plein écran <span>⛶</span></button>
+          <button data-menu="export">
+            Exporter la sauvegarde <span>↗</span>
+          </button>
+          <button data-menu="import">
+            Importer une sauvegarde <span>↙</span>
+          </button>
+        </div>
+        <div id="controls-panel" hidden>
+          <p class="controls-help">
+            Sélectionne une action, puis appuie sur le bouton ou incline le
+            stick souhaité. Le menu reste accessible au clavier et au toucher.
+          </p>
+          <div id="bindings" class="menu-list"></div>
+          <button id="reset-mapping" class="secondary-button">
+            Réinitialiser les commandes</button
+          ><button id="controls-back" class="secondary-button">Retour</button>
+        </div>
+        <p class="menu-hint">
+          ↑↓ Naviguer <span>·</span> A / Entrée Valider <span>·</span> B / Échap
+          Retour
+        </p>
+      </section>
+    </div>
+    <input
+      id="import-file"
+      type="file"
+      accept="application/json,.json"
+      hidden
+    />
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>

@@ -1,0 +1,474 @@
+import assert from "node:assert/strict";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { chromium } from "playwright";
+
+const baseURL = process.env.TEST_URL || "http://localhost:5173";
+const output = "output/playwright";
+await mkdir(output, { recursive: true });
+const browser = await chromium.launch({ headless: true });
+const errors = [];
+const results = [];
+const state = (page) =>
+  page.evaluate(() => JSON.parse(window.render_game_to_text()));
+async function settled(page) {
+  await page.waitForTimeout(220);
+}
+async function key(page, key, duration = 70) {
+  await page.keyboard.down(key);
+  await page.waitForTimeout(duration);
+  await page.keyboard.up(key);
+  await settled(page);
+}
+async function resume(page) {
+  if ((await state(page)).mode === "menu") {
+    await page.locator('[data-menu="resume"]').click();
+    await settled(page);
+  }
+}
+function watch(page) {
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+}
+async function check(name, action) {
+  await action();
+  results.push(name);
+  console.log(`PASS ${name}`);
+}
+
+try {
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+  });
+  const page = await context.newPage();
+  watch(page);
+  await page.goto(baseURL);
+  await page.waitForFunction(
+    () => typeof window.render_game_to_text === "function",
+  );
+  await settled(page);
+  await page.screenshot({
+    path: `${output}/desktop-initial.png`,
+    fullPage: true,
+  });
+
+  await check("keyboard movement, collision, pause and resume", async () => {
+    let before = await state(page);
+    assert.equal(before.mode, "play");
+    assert.deepEqual(
+      { x: before.player.x, y: before.player.y },
+      { x: 3, y: 5 },
+    );
+    await key(page, "ArrowRight");
+    let after = await state(page);
+    assert.equal(after.player.x, before.player.x + 1);
+    assert.ok(after.steps > before.steps);
+    await key(page, "ArrowLeft", 2200);
+    after = await state(page);
+    assert.ok(after.player.x >= 1, "Cannot cross left boundary");
+    await key(page, "ArrowUp", 2200);
+    assert.ok((await state(page)).player.y >= 1, "Cannot cross top boundary");
+    await key(page, "Escape");
+    before = await state(page);
+    assert.equal(before.mode, "menu");
+    await key(page, "ArrowRight", 300);
+    after = await state(page);
+    assert.deepEqual(after.player, before.player, "Movement freezes in menu");
+    await page.screenshot({
+      path: `${output}/desktop-menu.png`,
+      fullPage: true,
+    });
+    await resume(page);
+    assert.equal((await state(page)).mode, "play");
+    await key(page, "Escape");
+    await key(page, "Enter");
+    assert.equal(
+      (await state(page)).mode,
+      "play",
+      "Enter activates focused resume",
+    );
+  });
+
+  await check("local save survives reload", async () => {
+    await key(page, "ArrowRight");
+    const before = await state(page);
+    await key(page, "Escape");
+    await page.locator('[data-menu="save"]').click();
+    await settled(page);
+    await page.reload();
+    await page.waitForFunction(
+      () => typeof window.render_game_to_text === "function",
+    );
+    const after = await state(page);
+    assert.equal(after.player.x, before.player.x);
+    assert.equal(after.player.y, before.player.y);
+    assert.equal(after.steps, before.steps);
+    await resume(page);
+    await page.screenshot({
+      path: `${output}/desktop-game.png`,
+      fullPage: true,
+    });
+  });
+
+  await check(
+    "visibility loss pauses and requires explicit resume",
+    async () => {
+      await page.evaluate(() => {
+        Object.defineProperty(document, "hidden", {
+          configurable: true,
+          get: () => true,
+        });
+        Object.defineProperty(document, "visibilityState", {
+          configurable: true,
+          get: () => "hidden",
+        });
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+      assert.equal((await state(page)).mode, "menu");
+      await page.evaluate(() => {
+        Object.defineProperty(document, "hidden", {
+          configurable: true,
+          get: () => false,
+        });
+        Object.defineProperty(document, "visibilityState", {
+          configurable: true,
+          get: () => "visible",
+        });
+        document.dispatchEvent(new Event("visibilitychange"));
+      });
+      await settled(page);
+      assert.equal((await state(page)).mode, "menu");
+      await resume(page);
+    },
+  );
+
+  await check("save export and import preserve progress", async () => {
+    const before = await state(page);
+    await key(page, "Escape");
+    const downloading = page.waitForEvent("download");
+    await page.locator('[data-menu="export"]').click();
+    const download = await downloading;
+    const content = await readFile(await download.path());
+    const saved = JSON.parse(content.toString());
+    assert.equal(saved.player.x, before.player.x);
+    assert.equal(saved.player.y, before.player.y);
+    await resume(page);
+    await key(page, "ArrowRight");
+    await key(page, "Escape");
+    await page
+      .locator("#import-file")
+      .setInputFiles({
+        name: "restore.json",
+        mimeType: "application/json",
+        buffer: content,
+      });
+    await settled(page);
+    assert.deepEqual((await state(page)).player, before.player);
+    assert.equal((await state(page)).steps, before.steps);
+    await resume(page);
+  });
+
+  await check("service worker allows offline reload", async () => {
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+      if (!navigator.serviceWorker.controller) {
+        await new Promise((resolve) =>
+          navigator.serviceWorker.addEventListener(
+            "controllerchange",
+            resolve,
+            { once: true },
+          ),
+        );
+      }
+    });
+    await context.setOffline(true);
+    await page.reload();
+    await page.waitForFunction(
+      () => typeof window.render_game_to_text === "function",
+    );
+    assert.ok(["play", "menu"].includes((await state(page)).mode));
+    await context.setOffline(false);
+  });
+  await context.close();
+
+  const gamepadContext = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+  });
+  await gamepadContext.addInitScript(() => {
+    window.__testPad = {
+      id: "Test standard gamepad",
+      index: 0,
+      connected: true,
+      mapping: "standard",
+      timestamp: 0,
+      axes: [0, 0, 0, 0],
+      buttons: Array.from({ length: 17 }, () => ({
+        pressed: false,
+        touched: false,
+        value: 0,
+      })),
+    };
+    Object.defineProperty(navigator, "getGamepads", {
+      value: () => (window.__testPad ? [window.__testPad] : []),
+    });
+  });
+  const padPage = await gamepadContext.newPage();
+  watch(padPage);
+  await padPage.goto(baseURL);
+  await padPage.waitForFunction(
+    () => typeof window.render_game_to_text === "function",
+  );
+  await settled(padPage);
+  await resume(padPage);
+  await check("standard gamepad d-pad and analog deadzone", async () => {
+    const before = await state(padPage);
+    await padPage.evaluate(() => {
+      window.__testPad.buttons[15] = { pressed: true, touched: true, value: 1 };
+    });
+    await padPage.waitForTimeout(80);
+    await padPage.evaluate(() => {
+      window.__testPad.buttons[15] = {
+        pressed: false,
+        touched: false,
+        value: 0,
+      };
+    });
+    await settled(padPage);
+    const after = await state(padPage);
+    assert.equal(after.player.x, before.player.x + 1);
+    await padPage.evaluate(() => {
+      window.__testPad.axes[0] = 0.2;
+    });
+    await padPage.waitForTimeout(500);
+    assert.deepEqual(
+      (await state(padPage)).player,
+      after.player,
+      "Stick drift below deadzone ignored",
+    );
+    await padPage.evaluate(() => {
+      window.__testPad.axes[0] = -0.8;
+    });
+    await padPage.waitForTimeout(80);
+    await padPage.evaluate(() => {
+      window.__testPad.axes[0] = 0;
+    });
+    await settled(padPage);
+    assert.equal((await state(padPage)).player.x, after.player.x - 1);
+  });
+  await check("gamepad remapping works and persists", async () => {
+    await key(padPage, "Escape");
+    await padPage.locator('[data-menu="controls"]').click();
+    await padPage.locator('[data-binding="right"]').click();
+    await settled(padPage);
+    await padPage.evaluate(() => {
+      window.__testPad.buttons[3] = { pressed: true, touched: true, value: 1 };
+    });
+    await padPage.waitForTimeout(80);
+    await padPage.evaluate(() => {
+      window.__testPad.buttons[3] = {
+        pressed: false,
+        touched: false,
+        value: 0,
+      };
+    });
+    await settled(padPage);
+    assert.deepEqual((await state(padPage)).mapping.right, {
+      type: "button",
+      index: 3,
+    });
+    await padPage.locator("#controls-back").click();
+    await resume(padPage);
+    const before = await state(padPage);
+    await padPage.evaluate(() => {
+      window.__testPad.buttons[3] = { pressed: true, touched: true, value: 1 };
+    });
+    await padPage.waitForTimeout(80);
+    await padPage.evaluate(() => {
+      window.__testPad.buttons[3] = {
+        pressed: false,
+        touched: false,
+        value: 0,
+      };
+    });
+    await settled(padPage);
+    assert.equal((await state(padPage)).player.x, before.player.x + 1);
+    await padPage.reload();
+    await padPage.waitForFunction(
+      () => typeof window.render_game_to_text === "function",
+    );
+    await settled(padPage);
+    assert.deepEqual((await state(padPage)).mapping.right, {
+      type: "button",
+      index: 3,
+    });
+  });
+  await check("gamepad disconnect pauses", async () => {
+    await padPage.evaluate(() => {
+      const pad = window.__testPad;
+      window.__testPad = null;
+      const event = new Event("gamepaddisconnected");
+      Object.defineProperty(event, "gamepad", { value: pad });
+      window.dispatchEvent(event);
+    });
+    await settled(padPage);
+    assert.equal((await state(padPage)).mode, "menu");
+  });
+  await gamepadContext.close();
+
+  const mobileContext = await browser.newContext({
+    viewport: { width: 960, height: 540 },
+    isMobile: true,
+    hasTouch: true,
+    deviceScaleFactor: 1,
+  });
+  const mobilePage = await mobileContext.newPage();
+  watch(mobilePage);
+  await mobilePage.goto(baseURL);
+  await mobilePage.waitForFunction(
+    () => typeof window.render_game_to_text === "function",
+  );
+  await check("mobile layout fits the viewport", async () => {
+    assert.ok(
+      await mobilePage.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    );
+    const before = await state(mobilePage);
+    await mobilePage.locator('[data-action="right"]').tap();
+    await settled(mobilePage);
+    assert.equal(
+      (await state(mobilePage)).player.x,
+      before.player.x + 1,
+      "Touch d-pad moves one tile",
+    );
+    await mobilePage.screenshot({
+      path: `${output}/thor-game.png`,
+      fullPage: true,
+    });
+    await key(mobilePage, "Escape");
+    await mobilePage.screenshot({
+      path: `${output}/thor-menu.png`,
+      fullPage: true,
+    });
+  });
+  await mobileContext.close();
+  const portraitContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    deviceScaleFactor: 1,
+  });
+  const portrait = await portraitContext.newPage();
+  watch(portrait);
+  await portrait.goto(baseURL);
+  await portrait.waitForFunction(
+    () => typeof window.render_game_to_text === "function",
+  );
+  await check("portrait layout and touch menu", async () => {
+    assert.ok(
+      await portrait.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    );
+    await portrait.screenshot({
+      path: `${output}/mobile-game.png`,
+      fullPage: true,
+    });
+    await portrait.locator('[data-action="menu"]').tap();
+    await settled(portrait);
+    assert.equal((await state(portrait)).mode, "menu");
+    await portrait.screenshot({
+      path: `${output}/mobile-menu.png`,
+      fullPage: true,
+    });
+  });
+  await portraitContext.close();
+  const compactContext = await browser.newContext({
+    viewport: { width: 640, height: 360 },
+    isMobile: true,
+    hasTouch: true,
+    deviceScaleFactor: 1,
+  });
+  const compact = await compactContext.newPage();
+  watch(compact);
+  await compact.goto(baseURL);
+  await compact.waitForFunction(
+    () => typeof window.render_game_to_text === "function",
+  );
+  await check(
+    "compact landscape keeps the full playfield above the fold",
+    async () => {
+      assert.ok(
+        await compact.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      );
+      const frame = await compact.locator(".game-frame").boundingBox();
+      assert.ok(
+        frame.y >= 0 && frame.y + frame.height <= 360,
+        "Playfield is entirely in viewport",
+      );
+      await compact.screenshot({ path: `${output}/compact-game.png` });
+      await compact.locator('[data-action="menu"]').tap();
+      await settled(compact);
+      assert.equal((await state(compact)).mode, "menu");
+      await compact.screenshot({ path: `${output}/compact-menu.png` });
+    },
+  );
+  await compactContext.close();
+  const deniedContext = await browser.newContext();
+  await deniedContext.addInitScript(() => {
+    Storage.prototype.getItem = () => {
+      throw new DOMException("Blocked", "SecurityError");
+    };
+    Storage.prototype.setItem = () => {
+      throw new DOMException("Blocked", "SecurityError");
+    };
+  });
+  const denied = await deniedContext.newPage();
+  watch(denied);
+  await denied.goto(baseURL);
+  await denied.waitForFunction(
+    () => typeof window.render_game_to_text === "function",
+  );
+  await check(
+    "unavailable browser storage preserves play and export",
+    async () => {
+      assert.equal((await state(denied)).storage, false);
+      await key(denied, "ArrowRight");
+      assert.equal((await state(denied)).player.x, 4);
+      await key(denied, "Escape");
+      const downloading = denied.waitForEvent("download");
+      await denied.locator('[data-menu="export"]').click();
+      const saved = JSON.parse(
+        await readFile(await (await downloading).path(), "utf8"),
+      );
+      assert.equal(saved.player.x, 4);
+      await denied
+        .locator("#import-file")
+        .setInputFiles({
+          name: "invalid.json",
+          mimeType: "application/json",
+          buffer: Buffer.from('{"version":1,"player":{"x":-99,"y":0}}'),
+        });
+      await settled(denied);
+      assert.equal(
+        (await state(denied)).player.x,
+        4,
+        "Invalid import preserves state",
+      );
+    },
+  );
+  await deniedContext.close();
+  assert.deepEqual(errors, [], "Browser console has no errors");
+  await writeFile(
+    `${output}/results.json`,
+    JSON.stringify({ baseURL, passed: results, errors }, null, 2),
+  );
+  console.log(
+    `${results.length} browser checks passed. Screenshots: ${output}`,
+  );
+} finally {
+  await browser.close();
+}
