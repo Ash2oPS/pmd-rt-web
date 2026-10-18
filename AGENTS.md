@@ -15,3 +15,5 @@
 - Bump the cache version in `sw.js` whenever shipped runtime files change.
 - Keep `window.render_game_to_text()` and `window.advanceTime(ms)` available for automated checks.
 - Device input mapping and real Android sleep/install behavior require a physical AYN Thor test; never claim these were verified by desktop simulation.
+- Default face controls follow Thor labels: east A (button 1) confirms; south B (button 0) returns. Preserve custom remaps.
+- Use the copied input diagnostic for hardware issues. Native Android joystick scrolling may occur without DOM wheel events; a zero wheel count does not exclude it.

@@ -84,7 +84,8 @@ export function defaultMapping() {
   return Object.fromEntries(
     ACTIONS.map((a, i) => [
       a,
-      { type: "button", index: [12, 13, 14, 15, 0, 1, 9][i] },
+      // Thor uses Nintendo face labels: east A confirms, south B goes back.
+      { type: "button", index: [12, 13, 14, 15, 1, 0, 9][i] },
     ]),
   );
 }

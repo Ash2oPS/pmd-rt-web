@@ -1,4 +1,4 @@
-const CACHE = "pmd-field-v1";
+const CACHE = "pmd-field-v2";
 const ASSETS = [
   "./",
   "./index.html",

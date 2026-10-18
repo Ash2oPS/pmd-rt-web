@@ -54,6 +54,106 @@ let visual = { ...state.player },
   toastTimer,
   lastFrame = performance.now(),
   lastInputLabel = "";
+const inputDiagnostics = {
+  build: "0.1.1",
+  apiAvailable: typeof navigator.getGamepads === "function",
+  secureContext: window.isSecureContext,
+  error: null,
+  devices: [],
+  lastKey: null,
+  wheelEvents: 0,
+};
+const observedDevices = new Map();
+let lastDiagnosticPaint = 0;
+
+function recordDevices(pads) {
+  for (const pad of pads) {
+    const key = `${pad.index}:${pad.id}`;
+    const axes = [...pad.axes];
+    const activeButtons = [...pad.buttons].flatMap((button, index) =>
+      button.pressed || button.value > 0.1 ? [index] : [],
+    );
+    let device = observedDevices.get(key);
+    if (!device) {
+      device = {
+        id: pad.id,
+        index: pad.index,
+        seenButtons: [],
+        axisRanges: [],
+      };
+      observedDevices.set(key, device);
+    }
+    Object.assign(device, {
+      connected: pad.connected !== false,
+      mapping: pad.mapping,
+      timestamp: pad.timestamp,
+      axes,
+      buttonsCount: pad.buttons.length,
+      activeButtons,
+      seenButtons: [...new Set([...device.seenButtons, ...activeButtons])].sort(
+        (a, b) => a - b,
+      ),
+      axisRanges: axes.map((value, index) => ({
+        min: Math.min(device.axisRanges[index]?.min ?? 0, value),
+        max: Math.max(device.axisRanges[index]?.max ?? 0, value),
+      })),
+    });
+  }
+  for (const device of observedDevices.values()) {
+    if (
+      !pads.some((pad) => pad.index === device.index && pad.id === device.id)
+    ) {
+      device.connected = false;
+      device.activeButtons = [];
+    }
+  }
+  inputDiagnostics.devices = [...observedDevices.values()];
+  if (
+    $("input-details").open &&
+    performance.now() - lastDiagnosticPaint > 150
+  ) {
+    $("input-report").textContent = diagnosticReport();
+    lastDiagnosticPaint = performance.now();
+  }
+}
+function diagnosticReport() {
+  return JSON.stringify(
+    {
+      ...inputDiagnostics,
+      focused: document.hasFocus(),
+      browser: navigator.userAgent,
+      mapping,
+    },
+    null,
+    2,
+  );
+}
+async function copyDiagnostics() {
+  const report = diagnosticReport();
+  try {
+    await navigator.clipboard.writeText(report);
+    toast("Diagnostic copié. Tu peux le coller dans le chat.");
+    if (mode === "menu")
+      $("pause-reason").textContent =
+        "Diagnostic copié. Tu peux le coller dans le chat.";
+  } catch {
+    $("input-details").open = true;
+    $("input-report").textContent = report;
+    toast("Copie indisponible. Le rapport est affiché dans Connexion.");
+  }
+}
+$("copy-diagnostics").addEventListener("click", copyDiagnostics);
+$("input-details").addEventListener("toggle", () => {
+  if ($("input-details").open)
+    $("input-report").textContent = diagnosticReport();
+});
+document.addEventListener(
+  "wheel",
+  () => {
+    inputDiagnostics.wheelEvents++;
+  },
+  { passive: true },
+);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const labels = {
   up: "Haut",
@@ -234,6 +334,7 @@ const commands = {
   fullscreen,
   export: exportSave,
   import: () => $("import-file").click(),
+  diagnostic: copyDiagnostics,
 };
 document
   .querySelectorAll("[data-menu]")
@@ -283,6 +384,7 @@ $("import-file").addEventListener("change", async (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
+  inputDiagnostics.lastKey = { key: event.key, code: event.code };
   if (
     event.ctrlKey ||
     event.metaKey ||
@@ -388,19 +490,25 @@ function pollPad() {
     pads = navigator.getGamepads
       ? [...navigator.getGamepads()].filter((p) => p && p.connected !== false)
       : [];
-  } catch {
-    /* Keyboard and touch still work. */
+    inputDiagnostics.error = null;
+  } catch (error) {
+    inputDiagnostics.error = `${error.name}: ${error.message}`;
   }
+  recordDevices(pads);
   const pad = pads.find((p) => p.index === padIndex) || pads[0] || null;
   if (!pad && padPresent)
     suspend("Manette déconnectée. Reconnecte-la pour reprendre.");
   padPresent = !!pad;
   currentPad = pad;
   padIndex = pad?.index ?? null;
-  $("pad-status").textContent = pad ? "Connectée" : "À connecter";
+  $("pad-status").textContent = inputDiagnostics.error
+    ? "Erreur d’accès"
+    : pad
+      ? "Connectée"
+      : "À connecter";
   $("pad-name").textContent = pad
     ? pad.id
-    : "Appuie sur un bouton pour la détecter.";
+    : inputDiagnostics.error || "Appuie sur un bouton pour la détecter.";
   const signals = rawSignals(pad);
   const signalText = signals.length
     ? signals.map(bindingLabel).join(" · ")
@@ -410,6 +518,16 @@ function pollPad() {
   if (signalText !== lastInputLabel) {
     $("raw-input").textContent = signalText;
     lastInputLabel = signalText;
+  }
+  const buttonCount = Math.min(64, pad?.buttons.length || 17);
+  if ($("input-meter").children.length !== buttonCount) {
+    $("input-meter").replaceChildren(
+      ...Array.from({ length: buttonCount }, (_, i) => {
+        const bar = document.createElement("i");
+        bar.title = `Bouton ${i}`;
+        return bar;
+      }),
+    );
   }
   [...$("input-meter").children].forEach((bar, i) =>
     bar.classList.toggle(
@@ -715,6 +833,7 @@ window.render_game_to_text = () =>
         }
       : null,
     storage: storageOK,
+    inputDiagnostics,
     offline: $("offline-status").textContent,
   });
 window.advanceTime = (ms) => {

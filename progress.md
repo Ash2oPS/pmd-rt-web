@@ -29,3 +29,15 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 
 ## Pending
 - Physical Thor: verify built-in gamepad, PWA installation and actual sleep/resume.
+
+## Thor feedback — 0.1.1
+- User confirms remaining features work, but A/B are reversed; left stick scrolls only (no player movement); L1/R1 do not light the input meter. Device ID: `Odin Controller (Vendor 2020 Product 0111)`.
+- Confirmed saves are intentionally automatic. X/Y and shoulders have no gameplay actions yet; lack of raw detection is the reported issue.
+- Added failing unit regression for east A/south B, then swapped default confirm/back indices. Existing custom mappings remain intact.
+- Browser regression confirms menu navigation with the corrected physical face-button convention.
+- Desktop reproduction with synthetic axes moves the explorer without scrolling; not evidence of correct real Android handling.
+- Chromium sources confirm native joystick scrolling is a fallback when Gamepad handling declines input. Existing disconnect listener and polling already activate Gamepad updates; no evidence for adding arbitrary listeners or suppressing scroll globally.
+- Added failing browser diagnostics tests, then exposed all device axes/button counts, seen buttons, axis ranges, last key/wheel events and previously hidden API errors; copy report through menu/sidebar.
+- Raw data from the real Thor is needed before changing stick or shoulder decoding. Do not claim these fixed by the A/B patch.
+- Validation: 5 core tests and 15 browser checks pass; clipboard export verified from both sidebar and menu. Reviewed updated screenshots and independent diagnostic review found no blocking issues.
+- Important: Android native joystick fling can bypass DOM wheel events; a zero wheel count is not evidence against the reported scrolling.

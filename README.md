@@ -19,11 +19,15 @@ Open http://localhost:5173. The game has no runtime dependencies or build step. 
 | --- | --- | --- |
 | Move | Arrow keys, WASD or ZQSD | D-pad or left stick |
 | Menu / resume | Escape | Start (button 9) |
-| Confirm | Enter / Space | A (button 0) |
-| Back | X / Escape | B (button 1) |
+| Confirm | Enter / Space | Thor A / east (button 1) |
+| Back | X / Escape | Thor B / south (button 0) |
 | Fullscreen | F / menu button | Menu entry (browser permission dependent) |
 
 Touch controls appear on touch devices. All menus support keyboard and gamepad navigation. In **Menu → Commandes**, select an action, release controls, then press a button or move an axis. Mappings persist locally. Button numbers refer to the browser's API, not printed button labels. The sidebar displays the connected device, raw pressed buttons/axes and offline readiness. Start by pressing a physical button if Chrome has not exposed the device yet.
+
+The default face-button layout follows the Thor's Nintendo labels (east A confirms, south B returns). Existing custom mappings are preserved; use **Réinitialiser les commandes** to restore these defaults. X/Y and L1/R1 have no gameplay actions in this milestone, but their raw signals should appear in diagnostics. The meter adapts to the browser's button count.
+
+For device input problems, move both sticks and press the affected buttons, then choose **Copier le diagnostic** from the menu or sidebar. The report records all devices, observed button indices, axis ranges, last keyboard event, wheel event count and API errors. It stays in memory locally until copied; nothing is sent automatically. Real Android native gamepad events cannot be reproduced by desktop signal simulation.
 
 ## Saves and suspension
 

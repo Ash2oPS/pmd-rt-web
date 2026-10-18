@@ -38,6 +38,130 @@ async function check(name, action) {
 }
 
 try {
+  const diagnosticContext = await browser.newContext();
+  await diagnosticContext.addInitScript(() => {
+    window.__odinPad = {
+      id: "Odin Controller (Vendor: 2020 Product: 0111)",
+      index: 0,
+      connected: true,
+      mapping: "",
+      timestamp: 0,
+      axes: [0, 0, 0, 0, 0, 0],
+      buttons: Array.from({ length: 17 }, () => ({
+        pressed: false,
+        touched: false,
+        value: 0,
+      })),
+    };
+    Object.defineProperty(navigator, "getGamepads", {
+      configurable: true,
+      value: () => [window.__odinPad],
+    });
+  });
+  const diagnosticPage = await diagnosticContext.newPage();
+  watch(diagnosticPage);
+  await diagnosticPage.goto(baseURL);
+  await diagnosticPage.waitForFunction(
+    () => typeof window.render_game_to_text === "function",
+  );
+  await settled(diagnosticPage);
+  await check(
+    "Odin diagnostics capture raw stick and shoulder history",
+    async () => {
+      assert.ok(
+        (await state(diagnosticPage)).inputDiagnostics,
+        "Input diagnostics are exposed",
+      );
+      await diagnosticPage.evaluate(() => {
+        window.__odinPad.axes[0] = -0.85;
+        window.__odinPad.axes[1] = 0.75;
+        window.__odinPad.buttons[4] = {
+          pressed: true,
+          touched: true,
+          value: 1,
+        };
+        window.__odinPad.buttons[5] = {
+          pressed: true,
+          touched: true,
+          value: 1,
+        };
+      });
+      await settled(diagnosticPage);
+      const active = (await state(diagnosticPage)).inputDiagnostics;
+      assert.equal(active.apiAvailable, true);
+      assert.equal(active.secureContext, true);
+      assert.equal(active.error, null);
+      assert.equal(
+        active.devices[0].id,
+        "Odin Controller (Vendor: 2020 Product: 0111)",
+      );
+      assert.equal(active.devices[0].mapping, "");
+      assert.equal(active.devices[0].buttonsCount, 17);
+      assert.equal(active.devices[0].axes[0], -0.85);
+      assert.equal(active.devices[0].axes[1], 0.75);
+      assert.ok(active.devices[0].activeButtons.includes(4));
+      assert.ok(active.devices[0].activeButtons.includes(5));
+      await diagnosticPage.evaluate(() => {
+        window.__odinPad.axes.fill(0);
+        window.__odinPad.buttons[4] = {
+          pressed: false,
+          touched: false,
+          value: 0,
+        };
+        window.__odinPad.buttons[5] = {
+          pressed: false,
+          touched: false,
+          value: 0,
+        };
+      });
+      await settled(diagnosticPage);
+      const released = (await state(diagnosticPage)).inputDiagnostics
+        .devices[0];
+      assert.deepEqual(released.activeButtons, []);
+      assert.ok(released.seenButtons.includes(4));
+      assert.ok(released.seenButtons.includes(5));
+      assert.ok(released.axisRanges[0].min <= -0.85);
+      assert.ok(released.axisRanges[1].max >= 0.75);
+      await key(diagnosticPage, "ArrowRight");
+      await diagnosticPage.evaluate(() =>
+        document.dispatchEvent(
+          new WheelEvent("wheel", { deltaY: 20, bubbles: true }),
+        ),
+      );
+      const diagnostics = (await state(diagnosticPage)).inputDiagnostics;
+      assert.deepEqual(diagnostics.lastKey, {
+        key: "ArrowRight",
+        code: "ArrowRight",
+      });
+      assert.ok(diagnostics.wheelEvents >= 1);
+    },
+  );
+  await check(
+    "gamepad API errors are visible instead of swallowed",
+    async () => {
+      await diagnosticPage.evaluate(() =>
+        Object.defineProperty(navigator, "getGamepads", {
+          configurable: true,
+          value: () => {
+            throw new DOMException(
+              "Gamepad access denied by test",
+              "SecurityError",
+            );
+          },
+        }),
+      );
+      await settled(diagnosticPage);
+      assert.match(
+        (await state(diagnosticPage)).inputDiagnostics.error,
+        /Gamepad access denied by test/,
+      );
+      assert.match(
+        await diagnosticPage.locator("body").innerText(),
+        /Gamepad access denied by test/,
+      );
+    },
+  );
+  await diagnosticContext.close();
   const context = await browser.newContext({
     viewport: { width: 1440, height: 900 },
   });
@@ -156,13 +280,11 @@ try {
     await resume(page);
     await key(page, "ArrowRight");
     await key(page, "Escape");
-    await page
-      .locator("#import-file")
-      .setInputFiles({
-        name: "restore.json",
-        mimeType: "application/json",
-        buffer: content,
-      });
+    await page.locator("#import-file").setInputFiles({
+      name: "restore.json",
+      mimeType: "application/json",
+      buffer: content,
+    });
     await settled(page);
     assert.deepEqual((await state(page)).player, before.player);
     assert.equal((await state(page)).steps, before.steps);
@@ -210,6 +332,7 @@ try {
       })),
     };
     Object.defineProperty(navigator, "getGamepads", {
+      configurable: true,
       value: () => (window.__testPad ? [window.__testPad] : []),
     });
   });
@@ -221,6 +344,56 @@ try {
   );
   await settled(padPage);
   await resume(padPage);
+  await check("Thor gamepad A confirms and B returns", async () => {
+    async function button(index) {
+      await padPage.evaluate((index) => {
+        window.__testPad.buttons[index] = {
+          pressed: true,
+          touched: true,
+          value: 1,
+        };
+      }, index);
+      await padPage.waitForTimeout(80);
+      await padPage.evaluate((index) => {
+        window.__testPad.buttons[index] = {
+          pressed: false,
+          touched: false,
+          value: 0,
+        };
+      }, index);
+      await settled(padPage);
+    }
+    await button(9);
+    assert.equal((await state(padPage)).mode, "menu");
+    await button(13);
+    await button(13);
+    assert.equal(
+      await padPage.locator("button.selected").getAttribute("data-menu"),
+      "controls",
+    );
+    await button(1);
+    assert.equal(
+      (await state(padPage)).submenu,
+      true,
+      "Physical A opens controls",
+    );
+    await button(0);
+    assert.equal(
+      (await state(padPage)).submenu,
+      false,
+      "Physical B returns to main menu",
+    );
+    assert.equal((await state(padPage)).mode, "menu");
+    await button(1);
+    assert.equal((await state(padPage)).mode, "play", "Physical A resumes");
+    await button(9);
+    await button(0);
+    assert.equal(
+      (await state(padPage)).mode,
+      "play",
+      "Physical B closes pause menu",
+    );
+  });
   await check("standard gamepad d-pad and analog deadzone", async () => {
     const before = await state(padPage);
     await padPage.evaluate(() => {
@@ -445,13 +618,11 @@ try {
         await readFile(await (await downloading).path(), "utf8"),
       );
       assert.equal(saved.player.x, 4);
-      await denied
-        .locator("#import-file")
-        .setInputFiles({
-          name: "invalid.json",
-          mimeType: "application/json",
-          buffer: Buffer.from('{"version":1,"player":{"x":-99,"y":0}}'),
-        });
+      await denied.locator("#import-file").setInputFiles({
+        name: "invalid.json",
+        mimeType: "application/json",
+        buffer: Buffer.from('{"version":1,"player":{"x":-99,"y":0}}'),
+      });
       await settled(denied);
       assert.equal(
         (await state(denied)).player.x,

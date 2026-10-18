@@ -58,3 +58,15 @@ test("standard controls, stick deadzone and remapping work", () => {
   assert.equal(validateMapping({}), false);
   assert.equal(validateMapping(map), true);
 });
+
+test("Thor face buttons use east A to confirm and south B to go back", () => {
+  const pad = {
+    buttons: Array.from({ length: 17 }, () => ({ pressed: false, value: 0 })),
+    axes: [0, 0],
+  };
+  pad.buttons[1].pressed = true;
+  assert.deepEqual(decodePad(pad, defaultMapping()), ["confirm"]);
+  pad.buttons[1].pressed = false;
+  pad.buttons[0].pressed = true;
+  assert.deepEqual(decodePad(pad, defaultMapping()), ["back"]);
+});

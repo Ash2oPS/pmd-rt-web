@@ -119,6 +119,13 @@
             ><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
           </div>
           <p id="raw-input" class="raw-input">Aucun signal</p>
+          <details id="input-details" class="input-details">
+            <summary>Diagnostic des entrées</summary>
+            <pre id="input-report"></pre>
+          </details>
+          <button id="copy-diagnostics" class="secondary-button">
+            Copier le diagnostic
+          </button>
           <div class="status-row">
             <span>Sauvegarde</span><strong id="save-status">Automatique</strong>
           </div>
@@ -131,7 +138,7 @@
           </button>
         </section>
         <div class="journal-bottom">
-          <span id="steps">0 pas</span><span class="build">BUILD 0.1.0</span>
+          <span id="steps">0 pas</span><span class="build">BUILD 0.1.1</span>
         </div>
       </aside>
     </main>
@@ -159,6 +166,9 @@
           </button>
           <button data-menu="import">
             Importer une sauvegarde <span>↙</span>
+          </button>
+          <button data-menu="diagnostic">
+            Copier le diagnostic <span>↗</span>
           </button>
         </div>
         <div id="controls-panel" hidden>
