@@ -1,0 +1,6 @@
+{
+  "id": "torrent",
+  "label": "Torrent",
+  "description": "Water moves grow stronger at low HP. Catalog example; no combat effect is implemented.",
+  "effectId": "torrent"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "squirtle",
+  "label": "Carapuce",
+  "dexNumber": 7,
+  "types": [
+    "water"
+  ],
+  "stats": {
+    "hp": 35,
+    "attack": 40,
+    "defense": 35,
+    "specialAttack": 40,
+    "specialDefense": 35,
+    "speed": 45
+  },
+  "abilityIds": [
+    "torrent"
+  ],
+  "learnset": [
+    {
+      "level": 1,
+      "moveId": "water-gun"
+    },
+    {
+      "level": 3,
+      "moveId": "growl"
+    }
+  ]
+}

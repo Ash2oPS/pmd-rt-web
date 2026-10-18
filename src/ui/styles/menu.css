@@ -1,0 +1,107 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: #091d19cc;
+  backdrop-filter: blur(5px);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+.menu-panel {
+  background: #19362e;
+  border: 1px solid #7b8b6655;
+  box-shadow: 0 30px 100px #0005;
+  width: min(440px, 100%);
+  padding: 30px;
+  max-height: calc(100svh - 36px);
+  overflow: auto;
+  animation: appear 0.18s ease-out;
+}
+.menu-panel h2 {
+  font-size: 31px;
+  margin: 10px 0;
+}
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 20px 0;
+}
+.menu-list button {
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 12px;
+  font-size: 13px;
+  min-height: 42px;
+}
+.menu-list button span {
+  color: var(--muted);
+}
+.menu-list button.selected,
+.menu-list button:focus-visible,
+.menu-list button:hover {
+  background: #e3bd7217;
+  color: var(--gold);
+  outline: none;
+  box-shadow: inset 2px 0 var(--gold);
+}
+.menu-hint {
+  font-size: 9px;
+  line-height: 1.8;
+  margin-top: 20px;
+}
+.menu-hint span {
+  padding: 0 3px;
+}
+.secondary-button,
+.install-button {
+  border: 1px solid #ffffff25;
+  background: transparent;
+  padding: 10px 12px;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.controls-help {
+  font-size: 11px;
+}
+.controls-help.capturing {
+  color: var(--gold);
+}
+@keyframes appear {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (max-width: 700px) {
+  .menu-panel {
+    padding: 24px;
+  }
+}
+@media (max-height: 600px) and (min-width: 701px) {
+  .menu-panel {
+    padding: 18px 26px;
+  }
+  .menu-panel h2 {
+    font-size: 25px;
+  }
+  .menu-list {
+    margin: 10px 0;
+  }
+  .menu-list button {
+    padding: 9px;
+    min-height: 36px;
+  }
+  .menu-hint {
+    margin-top: 10px;
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ember",
+  "label": "Flammèche",
+  "type": "fire",
+  "power": 40,
+  "category": "special",
+  "effectId": "damage",
+  "accuracy": 100,
+  "pp": 20
+}

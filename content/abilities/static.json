@@ -1,0 +1,6 @@
+{
+  "id": "static",
+  "label": "Statik",
+  "description": "Contact may cause paralysis. Catalog example; no combat effect is implemented.",
+  "effectId": "static"
+}

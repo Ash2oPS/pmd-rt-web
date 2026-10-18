@@ -1,0 +1,10 @@
+{
+  "id": "tackle",
+  "label": "Charge",
+  "type": "normal",
+  "power": 40,
+  "category": "physical",
+  "effectId": "damage",
+  "accuracy": 100,
+  "pp": 20
+}

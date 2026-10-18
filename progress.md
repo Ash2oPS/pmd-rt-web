@@ -51,3 +51,17 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Bumped offline cache to v4 and displayed build to 0.1.2. User subsequently requested publication to GitHub Pages.
 - Full browser suite passes 18 checks, including outside-click behavior, cleared held inputs, full viewport/camera geometry at four sizes and accessible journal. Screenshots inspected.
 - Final visual pass found seams from drawing tiles directly with a fractional scale; rendering the scene to a fixed pixel buffer before nearest-neighbor scaling removes them.
+
+## Content-driven architecture — 0.2.0
+- User authorized the proposed architecture, editable content and AI contribution guardrails.
+- Replaced root `game.js`/`core.js` with 28 strict TypeScript modules across content/domain/platform/rendering/ui/app. Largest handwritten module is 277 lines.
+- Migrated active styles into four focused stylesheets; 20 screenshot comparisons confirmed equivalent layouts during extraction.
+- Added 19 editable JSON records (5 species, 6 moves, 5 abilities, 2 items, 1 dungeon), Zod validation, cross-reference/map/reachability checks, generated manifest and editor schemas.
+- Actual map/spawn/collectibles now come from the validated content catalog. Starter species/moves/abilities remain catalog-only examples; combat is not implemented.
+- Architecture checker enforces layer directions, cycles, 350-line limit with 300-line warning, explicit-any and checking-suppression bans. Regression tests exercise guard failures.
+- Added Vite development/build, local stale-worker retirement, hashed production precache and a verification/deployment workflow. Pages must switch from legacy root publication to GitHub Actions when publishing this migration.
+- Independent review caught storage getter exceptions outside a try block; added a failing regression, moved resolution inside the guarded initialization, then verified recovery.
+- Production browser tests caught Vite preview Vary-Origin cache mismatch; same-origin emitted static assets now match cached responses with ignoreVary.
+- Final verification: `npm run build` passes content/strict types/architecture/26 tests and emits the offline build. All 18 browser checks pass against production preview at `/pmd-rt-web/`, including offline reload. Latest screenshots inspected.
+- Built demo and source dev server verified; active local browser shows build 0.2.0 in Mode local and preserved the user's existing position/progress.
+- Not published to GitHub Pages in this task. Local source server is port 5173; temporary production previews run on 5174/5175 for checks.

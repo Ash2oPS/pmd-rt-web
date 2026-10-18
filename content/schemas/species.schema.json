@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "dexNumber": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "types": {
+      "minItems": 1,
+      "maxItems": 2,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "normal",
+          "fire",
+          "water",
+          "electric",
+          "grass",
+          "ice",
+          "fighting",
+          "poison",
+          "ground",
+          "flying",
+          "psychic",
+          "bug",
+          "rock",
+          "ghost",
+          "dragon",
+          "dark",
+          "steel",
+          "fairy"
+        ]
+      }
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "hp": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "attack": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "defense": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "specialAttack": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "specialDefense": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "speed": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        }
+      },
+      "required": [
+        "hp",
+        "attack",
+        "defense",
+        "specialAttack",
+        "specialDefense",
+        "speed"
+      ],
+      "additionalProperties": false
+    },
+    "abilityIds": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      }
+    },
+    "learnset": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "moveId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          }
+        },
+        "required": [
+          "level",
+          "moveId"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "dexNumber",
+    "types",
+    "stats",
+    "abilityIds",
+    "learnset"
+  ],
+  "additionalProperties": false
+}

@@ -1,72 +1,72 @@
-# PMD · Bois de l'Éveil
+# PMD · Explorations
 
-A small, original-art browser prototype for validating an eventual Mystery Dungeon inspired game on an AYN Thor. This milestone is an exploration room, not a complete fangame.
+A browser-game foundation with human-editable content, strict TypeScript, validated data and small modules. The playable demo is a forest room. Combat, recruitment and a complete Pokémon roster are future work.
 
-**Play:** https://ash2ops.github.io/pmd-rt-web/
+## Start
 
-## Run locally
+Use Node.js **22.12 or newer**.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
-Open http://localhost:5173. The game has no runtime dependencies or build step. For PWA installation/offline support, use HTTPS or localhost (an HTTP LAN address is insufficient).
+Open http://localhost:5173. Development uses live updates and retires old offline caches. Existing local saves and controller mappings are retained.
 
-## Controls
+## Add content
 
-| Action | Keyboard | Standard gamepad |
-| --- | --- | --- |
-| Move | Arrow keys, WASD or ZQSD | D-pad or left stick |
-| Menu / resume | Escape | Start (button 9) |
-| Confirm | Enter / Space | Thor A / east (button 1) |
-| Back | X / Escape | Thor B / south (button 0) |
-| Fullscreen | F / menu button | Menu entry (browser permission dependent) |
-
-Touch controls appear on touch devices. All menus support keyboard and gamepad navigation. In **Menu → Commandes**, select an action, release controls, then press a button or move an axis. Mappings persist locally. Button numbers refer to the browser's API, not printed button labels. The sidebar displays the connected device, raw pressed buttons/axes and offline readiness. Start by pressing a physical button if Chrome has not exposed the device yet.
-
-The default face-button layout follows the Thor's Nintendo labels (east A confirms, south B returns). Existing custom mappings are preserved; use **Réinitialiser les commandes** to restore these defaults. X/Y and L1/R1 have no gameplay actions in this milestone, but their raw signals should appear in diagnostics. The meter adapts to the browser's button count.
-
-For device input problems, move both sticks and press the affected buttons, then choose **Copier le diagnostic** from the menu or sidebar. The report records all devices, observed button indices, axis ranges, last keyboard event, wheel event count and API errors. It stays in memory locally until copied; nothing is sent automatically. Real Android native gamepad events cannot be reproduced by desktop signal simulation.
-
-## Saves and suspension
-
-- Position and collectible progress save after each movement and on pause/backgrounding.
-- Clicking elsewhere or losing window focus clears held inputs and saves, without pausing. Backgrounding the page, browser freeze or gamepad disconnection still pauses the scene. Resume explicitly from the menu.
-- Menu provides manual save, JSON export and validated JSON import. Invalid imports preserve current progress.
-- Saves belong to this browser profile and website address. Clearing browser data removes them; export a backup. Storage failure is displayed, and export remains available.
-
-## Install and play offline
-
-1. Open the deployed HTTPS URL in Chrome. Wait until **Hors connexion: Prêt**.
-2. Use **Installer le jeu** if shown, or Chrome's **Install app / Add to home screen** entry.
-3. Launch from the home screen. Once cached, this room works without a network connection.
-
-Browsers may reclaim site storage. Installation UI and fullscreen availability vary by browser. Updates install in the background; close every game tab/window and reopen to activate a new service worker. Bump the cache name in `sw.js` when changing shipped assets.
-
-## AYN Thor acceptance check
-
-- Open Chrome, press a built-in control, confirm device name and raw signals.
-- Test D-pad and stick movement, collision, held-input repetition and stick drift.
-- Navigate the menu using only physical controls. Remap a button and verify after reload.
-- Collect an item, reload and verify position/progress; export and import a backup.
-- Sleep and wake the device while moving: the scene must stay paused until explicitly resumed.
-- Install the PWA, wait for offline readiness, enable airplane mode and relaunch.
-
-The canvas fills the browser viewport, with an undistorted camera following the explorer when the full room does not fit the screen ratio. Open **Menu → Carnet et connexion** for progress, device status and diagnostic tools. The desktop suite simulates gamepad signals and page suspension. Physical Thor input mapping, actual Android sleep and installation still need this device check. The prototype uses one screen; independent second-screen support is outside this milestone.
-
-## Verification
+Copy an existing JSON record under `content/`, give it a stable ID, and run:
 
 ```sh
-npm test
+npm run content:generate
+npm run check
+```
+
+See [the content guide](docs/CONTENT.md) for species, moves, abilities, items, maps and references. VS Code provides field completion through generated JSON schemas. The starter values are illustrative balance, not a canonical database.
+
+## Structure
+
+| Location | Responsibility |
+| --- | --- |
+| `content/` | One JSON record per species, move, ability, item or dungeon |
+| `src/content/` | Types, validation and generated catalog |
+| `src/domain/` | Pure game state and rules |
+| `src/platform/` | Browser inputs, storage, lifecycle and installation |
+| `src/rendering/` | Canvas scene, camera and pixel art |
+| `src/ui/` | Menus, HUD, diagnostics and styles |
+| `src/app/` | Composition and game loop |
+| `scripts/`, `tests/` | Generation, architecture checks and verification |
+
+[Architecture](docs/ARCHITECTURE.md) explains boundaries. [Contribution rules](docs/CONTRIBUTING.md) explain the human/AI workflow. [AGENTS.md](AGENTS.md) is the instruction entry point for coding agents.
+
+## Verify and build
+
+```sh
+npm run build
 npx playwright install chromium
-npm run dev
-# In a second terminal:
+npm run preview
+# In another terminal:
 npm run test:browser
 ```
 
-Browser artifacts are generated under `output/playwright/` (ignored by Git).
+`build` checks content, types, architecture and unit tests before generating `dist/` and its offline cache. Browser checks run against production preview on port 5173; stop development first. For a second port, use `node node_modules/vite/bin/vite.js preview --port 5174` and set `TEST_URL` for browser tests.
 
-## Deployment
+Checks reject forbidden dependency directions, cycles, explicit `any`, checking bypasses and TypeScript modules above 350 lines. Warnings start at 300. Generated manifests are exempt from size limits only.
 
-GitHub Pages publishes `main`, repository root `/`. The static app, manifest and service worker use relative paths and work under `/pmd-rt-web/`. No secrets or server are required. No third-party art, fonts or audio are fetched.
+## Controls and saves
+
+- Arrows/WASD/ZQSD, touch or gamepad move the explorer.
+- Escape / Start opens the menu. Thor east A confirms; south B returns. Remap under **Commandes**.
+- F or **Plein écran** toggles fullscreen where supported.
+- **Carnet et connexion** contains progress, device status and copyable input diagnostics.
+- Progress saves automatically. JSON export/import and legacy version-1 saves remain supported.
+- Clicking elsewhere clears held input and saves without pausing. Hiding/freezing the page or disconnecting the controller still pauses.
+- The canvas fills the viewport without stretching pixels.
+
+## Offline and deployment
+
+Production installs as a PWA. Wait for **Hors connexion : Prêt** before testing airplane mode. Export save backups before clearing browser data. Updates activate after all old game tabs/windows close.
+
+The Pages workflow verifies, builds and publishes **only `dist/`**. Pages must use **GitHub Actions** as its source. Repository-root publication cannot execute TypeScript sources. See [deployment instructions](docs/CONTRIBUTING.md#deployment).
+
+Physical Thor controls and Android sleep/install require device testing after relevant platform changes. Desktop simulations are regression checks, not hardware proof. Independent second-screen support is outside this milestone.

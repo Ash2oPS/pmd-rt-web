@@ -1,0 +1,30 @@
+{
+  "id": "bulbasaur",
+  "label": "Bulbizarre",
+  "dexNumber": 1,
+  "types": [
+    "grass",
+    "poison"
+  ],
+  "stats": {
+    "hp": 35,
+    "attack": 40,
+    "defense": 35,
+    "specialAttack": 40,
+    "specialDefense": 35,
+    "speed": 45
+  },
+  "abilityIds": [
+    "overgrow"
+  ],
+  "learnset": [
+    {
+      "level": 1,
+      "moveId": "vine-whip"
+    },
+    {
+      "level": 3,
+      "moveId": "growl"
+    }
+  ]
+}

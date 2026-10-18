@@ -1,0 +1,10 @@
+{
+  "id": "thunder-shock",
+  "label": "Éclair",
+  "type": "electric",
+  "power": 40,
+  "category": "special",
+  "effectId": "damage",
+  "accuracy": 100,
+  "pp": 20
+}

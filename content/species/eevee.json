@@ -1,0 +1,29 @@
+{
+  "id": "eevee",
+  "label": "Évoli",
+  "dexNumber": 133,
+  "types": [
+    "normal"
+  ],
+  "stats": {
+    "hp": 35,
+    "attack": 40,
+    "defense": 35,
+    "specialAttack": 40,
+    "specialDefense": 35,
+    "speed": 45
+  },
+  "abilityIds": [
+    "run-away"
+  ],
+  "learnset": [
+    {
+      "level": 1,
+      "moveId": "tackle"
+    },
+    {
+      "level": 3,
+      "moveId": "growl"
+    }
+  ]
+}

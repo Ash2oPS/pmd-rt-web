@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "fire",
+        "water",
+        "electric",
+        "grass",
+        "ice",
+        "fighting",
+        "poison",
+        "ground",
+        "flying",
+        "psychic",
+        "bug",
+        "rock",
+        "ghost",
+        "dragon",
+        "dark",
+        "steel",
+        "fairy"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "physical",
+        "special",
+        "status"
+      ]
+    },
+    "power": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 999
+    },
+    "accuracy": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "pp": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 99
+    },
+    "effectId": {
+      "type": "string",
+      "enum": [
+        "damage",
+        "lower-attack"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "type",
+    "category",
+    "power",
+    "accuracy",
+    "pp",
+    "effectId"
+  ],
+  "additionalProperties": false
+}

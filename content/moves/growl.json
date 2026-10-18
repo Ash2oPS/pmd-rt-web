@@ -1,0 +1,10 @@
+{
+  "id": "growl",
+  "label": "Rugissement",
+  "type": "normal",
+  "power": 0,
+  "category": "status",
+  "effectId": "lower-attack",
+  "accuracy": 100,
+  "pp": 20
+}

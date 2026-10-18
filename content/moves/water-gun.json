@@ -1,0 +1,10 @@
+{
+  "id": "water-gun",
+  "label": "Pistolet à O",
+  "type": "water",
+  "power": 40,
+  "category": "special",
+  "effectId": "damage",
+  "accuracy": 100,
+  "pp": 20
+}

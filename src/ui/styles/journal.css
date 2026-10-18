@@ -1,0 +1,237 @@
+.explorer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.portrait {
+  width: 62px;
+  height: 68px;
+  background: #254339;
+  flex-shrink: 0;
+  border-radius: 30px 30px 4px 4px;
+  display: grid;
+  place-items: center;
+}
+.portrait svg {
+  width: 58px;
+  image-rendering: pixelated;
+}
+.objective,
+.diagnostics {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.section-number {
+  font-size: 9px;
+  letter-spacing: 1.7px;
+  color: var(--gold);
+}
+.crystal-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+.crystal-symbol {
+  color: var(--gold);
+  font-size: 24px;
+}
+.crystal-progress strong {
+  font-size: 23px;
+  font-weight: 400;
+}
+.crystal-progress strong span {
+  color: var(--muted);
+  font-size: 15px;
+}
+.crystal-progress > span:last-child {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  margin-left: auto;
+  max-width: 76px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  margin-top: 18px;
+}
+.status-row > span {
+  color: var(--muted);
+}
+.status-row strong {
+  font-weight: 400;
+  color: #d5dcbc;
+  text-align: right;
+}
+.device-name {
+  font-size: 10px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  min-height: 30px;
+}
+.input-meter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 14px;
+}
+.input-meter i {
+  height: 9px;
+  flex: 1 0 8px;
+  background: #69816b40;
+  border-radius: 1px;
+}
+.input-meter i.on {
+  background: var(--gold);
+}
+.raw-input {
+  font-size: 9px;
+  min-height: 15px;
+  margin-top: 7px;
+  color: #a4b49b;
+}
+.input-details {
+  margin-top: 12px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.input-details summary {
+  cursor: pointer;
+}
+.input-details pre {
+  max-height: 200px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 9px/1.6 monospace;
+}
+.journal-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.build {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+@media (min-width: 1500px) {
+  .objective,
+  .diagnostics {
+    padding: 30px 0;
+  }
+}
+@media (max-width: 1000px) {
+  .objective,
+  .diagnostics {
+    padding: 18px 0;
+  }
+  .explorer {
+    padding: 16px 0;
+    gap: 10px;
+  }
+  .portrait {
+    width: 48px;
+    height: 57px;
+  }
+  .portrait svg {
+    width: 46px;
+  }
+}
+@media (max-width: 700px) {
+  .explorer {
+    border: 0;
+  }
+  .objective {
+    padding: 0 0 15px;
+  }
+  .diagnostics {
+    padding-top: 16px;
+  }
+  .section-number {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .crystal-progress {
+    gap: 8px;
+  }
+  .crystal-progress > span:last-child {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+}
+@media (max-height: 600px) and (min-width: 701px) {
+  .explorer {
+    padding: 12px 0;
+  }
+  .portrait {
+    height: 46px;
+    width: 42px;
+  }
+  .portrait svg {
+    width: 40px;
+  }
+  .objective p {
+    font-size: 10px;
+    margin: 5px 0;
+  }
+  .objective h3 {
+    font-size: 17px;
+    margin: 9px 0 5px;
+  }
+  .objective,
+  .diagnostics {
+    padding: 12px 0;
+  }
+  .crystal-progress {
+    margin-top: 9px;
+  }
+  .status-row {
+    margin-top: 9px;
+  }
+  .device-name {
+    min-height: 0;
+  }
+  .input-meter {
+    margin-top: 8px;
+  }
+  .raw-input {
+    margin-bottom: 0;
+  }
+}
+#journal-panel aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+#journal-panel .journal-heading {
+  display: none;
+}
+#journal-panel .objective,
+#journal-panel .diagnostics {
+  padding: 16px 0;
+}
+#journal-panel .explorer {
+  padding: 12px 0;
+}
+#journal-panel .status-row {
+  margin-top: 12px;
+}
+#journal-panel .journal-bottom {
+  padding-top: 16px;
+}
+#journal-back {
+  width: 100%;
+  margin-top: 20px;
+}

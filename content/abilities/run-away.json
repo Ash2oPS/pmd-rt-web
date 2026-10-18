@@ -1,0 +1,6 @@
+{
+  "id": "run-away",
+  "label": "Fuite",
+  "description": "Supports escaping encounters. Catalog example; no encounter effect is implemented.",
+  "effectId": "run-away"
+}

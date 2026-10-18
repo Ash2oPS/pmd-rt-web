@@ -1,0 +1,10 @@
+{
+  "id": "vine-whip",
+  "label": "Fouet Lianes",
+  "type": "grass",
+  "power": 45,
+  "category": "physical",
+  "effectId": "damage",
+  "accuracy": 100,
+  "pp": 20
+}

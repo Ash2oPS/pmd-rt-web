@@ -1,0 +1,29 @@
+{
+  "id": "pikachu",
+  "label": "Pikachu",
+  "dexNumber": 25,
+  "types": [
+    "electric"
+  ],
+  "stats": {
+    "hp": 35,
+    "attack": 40,
+    "defense": 35,
+    "specialAttack": 40,
+    "specialDefense": 35,
+    "speed": 45
+  },
+  "abilityIds": [
+    "static"
+  ],
+  "learnset": [
+    {
+      "level": 1,
+      "moveId": "thunder-shock"
+    },
+    {
+      "level": 3,
+      "moveId": "growl"
+    }
+  ]
+}

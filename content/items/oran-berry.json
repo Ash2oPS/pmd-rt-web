@@ -1,0 +1,7 @@
+{
+  "id": "oran-berry",
+  "label": "Baie Oran",
+  "description": "Example healing item; item use is not implemented.",
+  "effectId": "restore-hp",
+  "value": 10
+}

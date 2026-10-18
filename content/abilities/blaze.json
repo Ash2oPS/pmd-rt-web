@@ -1,0 +1,6 @@
+{
+  "id": "blaze",
+  "label": "Brasier",
+  "description": "Fire moves grow stronger at low HP. Catalog example; no combat effect is implemented.",
+  "effectId": "blaze"
+}

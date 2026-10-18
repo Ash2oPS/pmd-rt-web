@@ -1,0 +1,7 @@
+{
+  "id": "light-shard",
+  "label": "Éclat de lumière",
+  "description": "A collectible found in the awakening woods.",
+  "effectId": "collectible",
+  "value": 1
+}
