@@ -31,12 +31,6 @@ jobs:
         with:
           name: browser-results
           path: output/playwright
-          # Pokemon runtime/offline screenshots are uploaded separately below.
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: pokemon-browser-results
-          path: output/pokemon
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:
