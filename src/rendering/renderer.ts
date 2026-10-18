@@ -31,7 +31,7 @@ export function createRenderer(
   canvas: HTMLCanvasElement,
   world: RenderWorld,
   reducedMotion: boolean,
-  drawActors?: (context:CanvasRenderingContext2D,row:number,time:number)=>void,
+  drawActors?: (context:CanvasRenderingContext2D,row:number,time:number,state:GameState,visual:Point)=>boolean,
   drawPlayer?: (context:CanvasRenderingContext2D,state:GameState,visual:Point,time:number)=>boolean,
 ) {
   const columns = Math.max(0, ...world.map.map((row) => row.length));
@@ -79,8 +79,8 @@ export function createRenderer(
     drawCollectibles(context, rect, world.collectibles, state, reducedMotion, time);
     // Row ordering lets nearby tree canopies overlap the explorer naturally.
     for (let y = 0; y < world.map.length; y++) {
-      drawActors?.(context,y,time);
-      if (Math.floor(visual.y) === y && !drawPlayer?.(context,state,visual,time))
+      const playerDrawn = drawActors?.(context,y,time,state,visual);
+      if (Math.floor(visual.y) === y && !playerDrawn && !drawPlayer?.(context,state,visual,time))
         drawExplorer(rect, state, visual, time, visual.x * 32 + 16, visual.y * 32 + 16);
       const row = world.map[y] ?? "";
       for (let x = 0; x < row.length; x++)

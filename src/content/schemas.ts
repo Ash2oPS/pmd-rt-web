@@ -35,6 +35,14 @@ export const itemSchema = z.strictObject({
   effectId: z.enum(['collectible', 'restore-hp']),
   value: z.number().int().nonnegative(),
 });
+const roamingSchema = z.strictObject({
+  radius: z.number().min(0.5).max(6),
+  speed: z.number().min(0.2).max(2),
+  idleMinSeconds: z.number().min(0.2).max(15),
+  idleMaxSeconds: z.number().min(0.2).max(15),
+}).refine((profile) => profile.idleMaxSeconds >= profile.idleMinSeconds, {
+  message: 'Maximum idle duration must not be shorter than minimum idle duration',
+});
 export const dungeonSchema = z.strictObject({
   id, label, tileSize: z.number().int().min(8).max(128),
   playerSpeciesId: id.default('jigglypuff'),
@@ -45,6 +53,7 @@ export const dungeonSchema = z.strictObject({
     id, speciesId: id,
     facing: z.enum(['down', 'down-left', 'left', 'up-left', 'up', 'up-right', 'right', 'down-right']),
     animation: z.enum(['Idle', 'Walk']),
+    roaming: roamingSchema.optional(),
   })).default([]),
 });
 export const catalogSchema = z.strictObject({

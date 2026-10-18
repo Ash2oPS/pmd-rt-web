@@ -1,65 +1,52 @@
-import { createState, move } from "../domain/state.ts";
-import type { GameState, Point, World } from "../domain/state.ts";
-import type { Action } from "../platform/input/mapping.ts";
+import { createState } from '../domain/state.ts';
+import { moveContinuous } from '../domain/movement.ts';
+import type { GameState, Point, World } from '../domain/state.ts';
+import type { Action } from '../platform/input/mapping.ts';
 export class Runtime {
   state: GameState;
   visual: Point;
+  velocity: Point = { x: 0, y: 0 };
   time = 0;
   previous = new Set<Action>();
-  private held: Action | "" = "";
+  private held: Action | '' = '';
   private repeat = 0;
-  constructor(
-    readonly world: World,
-    state = createState(world),
-  ) {
+  constructor(readonly world: World, state = createState(world)) {
     this.state = state;
     this.visual = { ...state.player };
   }
   clear() {
-    this.held = "";
+    this.held = '';
     this.repeat = 0;
+    this.velocity = { x: 0, y: 0 };
   }
   replace(state: GameState) {
     this.state = state;
     this.visual = { ...state.player };
+    this.clear();
   }
-  direction(action: Action) {
-    const directions: Partial<Record<Action, [number, number]>> = {
-      up: [0, -1],
-      down: [0, 1],
-      left: [-1, 0],
-      right: [1, 0],
-    };
-    const delta = directions[action];
-    return delta ? move(this.state, ...delta, this.world) : false;
-  }
-  touch(action: Action) {
-    this.previous.add(action);
-    if (["up", "down", "left", "right"].includes(action)) {
-      this.held = action;
-      this.repeat = 0.25;
-    }
-  }
-  updateInput(actions: Set<Action>, dt: number, act: (action: Action) => void) {
-    for (const action of ["menu", "back", "confirm"] as const)
+  updateInput(actions: Set<Action>, dt: number, act: (action: Action) => void, paused: boolean) {
+    for (const action of ['menu', 'back', 'confirm'] as const)
       if (actions.has(action) && !this.previous.has(action)) act(action);
-    const direction = (["up", "down", "left", "right"] as const).find((a) =>
-      actions.has(a),
-    );
-    if (direction) {
+    const direction = (['up', 'down', 'left', 'right'] as const).find(action => actions.has(action));
+    if (paused && direction) {
       this.repeat -= dt;
       if (direction !== this.held || this.repeat <= 0) {
         act(direction);
-        this.repeat = direction !== this.held ? 0.25 : 0.14;
+        this.repeat = direction !== this.held ? .25 : .14;
       }
       this.held = direction;
-    } else this.clear();
+    } else { this.held = ''; this.repeat = 0; }
     this.previous = actions;
   }
-  animate(dt: number, reducedMotion: boolean) {
+  advance(vector: Point, dt: number) {
+    const before = { ...this.state.player };
+    const result = moveContinuous(this.state, vector, dt, this.world);
+    this.visual = { ...this.state.player };
+    this.velocity = dt > 0 ? {
+      x: (this.visual.x - before.x) / dt,
+      y: (this.visual.y - before.y) / dt,
+    } : { x: 0, y: 0 };
     this.time += dt;
-    const speed = reducedMotion ? 1 : Math.min(1, dt * 20);
-    this.visual.x += (this.state.player.x - this.visual.x) * speed;
-    this.visual.y += (this.state.player.y - this.visual.y) * speed;
+    return result;
   }
 }

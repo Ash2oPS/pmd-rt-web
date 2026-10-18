@@ -20,12 +20,14 @@ import { GamepadController } from "./gamepad.ts";
 import { Runtime } from "./runtime.ts";
 import { VERSION } from "./config.ts";
 import { setupPokemon } from "./pokemon.ts";
+import { setupInputPreferences } from "./input-preferences.ts";
+import { digitalMovement } from "../platform/input/movement.ts";
 
 const toast = createToast(),
   storage = createStorage(field),
   runtime = new Runtime(field, storage.state);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const pokemon = setupPokemon(field);
+const pokemon = setupPokemon(field, () => runtime.velocity);
 const renderer = createRenderer(
   element<HTMLCanvasElement>("game"),
   {
@@ -41,6 +43,7 @@ let lastFrame = performance.now();
 function clear() {
   controls.clear();
   runtime.clear();
+  pad.suppress();
 }
 function hud() {
   updateHUD(runtime.state, field.collectibles.length, storage.available);
@@ -118,6 +121,7 @@ const pad = new GamepadController(VERSION, storage.mapping, {
     clear();
   },
 });
+setupInputPreferences(pad);
 const diagnosticsView = createDiagnosticsView(
   pad.diagnostics,
   () => pad.mapping,
@@ -135,8 +139,10 @@ const controls = bindControls({
   },
   fullscreen,
   touch(action) {
-    act(action);
-    runtime.touch(action);
+    if (!["up", "down", "left", "right"].includes(action)) {
+      act(action);
+      runtime.previous.add(action);
+    }
   },
   recordKey(event) {
     pad.diagnostics.snapshot.lastKey = { key: event.key, code: event.code };
@@ -197,18 +203,8 @@ function act(action: Action) {
     else if (action === "confirm") menu.confirm();
     return;
   }
-  const before = runtime.state.collected.length;
-  if (runtime.direction(action)) {
-    save();
-    hud();
-    if (runtime.state.collected.length > before)
-      toast(
-        runtime.state.collected.length === field.collectibles.length
-          ? "Les trois éclats sont réunis. Belle première expédition !"
-          : "Un éclat de lumière retrouvé !",
-      );
-  }
 }
+let saveElapsed = 0, hudElapsed = 0, wasMoving = false;
 function update(dt: number) {
   const actions = pad.poll();
   diagnosticsView.update(pad.current);
@@ -217,8 +213,21 @@ function update(dt: number) {
     runtime.previous = new Set(actions);
     return;
   }
-  runtime.updateInput(new Set([...controls.actions(), ...actions]), dt, act);
-  if (!menu.paused) runtime.animate(dt, reducedMotion);
+  const local = controls.actions();
+  runtime.updateInput(new Set([...local, ...actions]), dt, act, menu.paused);
+  if (menu.paused) return;
+  const keys = digitalMovement(local);
+  const result = runtime.advance(Math.hypot(keys.x, keys.y) ? keys : pad.movement(), dt);
+  pokemon.update(dt);
+  saveElapsed += dt;
+  hudElapsed += dt;
+  if (result.collected.length) toast(runtime.state.collected.length === field.collectibles.length
+    ? "Les trois éclats sont réunis. Belle première expédition !" : "Un éclat de lumière retrouvé !");
+  if ((result.moved && saveElapsed >= .5) || (wasMoving && !result.moved) || result.collected.length) {
+    save(); saveElapsed = 0;
+  }
+  if (hudElapsed >= .1 || result.collected.length) { hud(); hudElapsed = 0; }
+  wasMoving = result.moved;
 }
 function draw() {
   renderer.draw(runtime.state, runtime.visual, runtime.time);
@@ -232,10 +241,11 @@ function frame(now: number) {
 }
 window.render_game_to_text = () =>
   JSON.stringify({
-    coordinates: "Tile grid; origin top-left, x right, y down",
+    coordinates: "Continuous tile units; integer coordinates are tile centers, x right, y down",
     mode: menu.paused ? "menu" : "play",
     player: runtime.state.player,
     steps: runtime.state.steps,
+    movement: { ...runtime.velocity, deadzone: pad.deadzone },
     collected: runtime.state.collected,
     crystals: field.collectibles.filter(
       (_, i) => !runtime.state.collected.includes(i),

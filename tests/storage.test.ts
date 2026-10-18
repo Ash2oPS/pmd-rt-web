@@ -13,10 +13,13 @@ test('existing browser save and custom mapping survive architecture migration',(
   const data=new Map([['pmd-field-save-v1',JSON.stringify(legacy)]]);
   const storage={getItem:(key:string)=>data.get(key)||null,setItem:(key:string,value:string)=>{data.set(key,value);}};
   const session=createStorage(world,storage);
-  assert.deepEqual(session.state,legacy);
+  const migrated={...legacy,version:2,distance:legacy.steps};
+  assert.deepEqual(session.state,migrated);
+  assert.equal(session.save(session.state),true);
+  assert.equal(JSON.parse(data.get('pmd-field-save-v1')!).version,2);
   session.mapping.confirm={type:'button',index:3};session.saveMapping(session.mapping);
   assert.equal(createStorage(world,storage).mapping.confirm.index,3);
-  assert.deepEqual(createStorage(world,storage).state,legacy);
+  assert.deepEqual(createStorage(world,storage).state,migrated);
 });
 test('unavailable storage and malformed imports cannot destroy live progress',()=>{
   const unavailable={getItem:()=>{throw new Error('denied');},setItem:()=>{throw new Error('denied');}};

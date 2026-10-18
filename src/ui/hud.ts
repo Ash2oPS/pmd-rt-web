@@ -5,7 +5,7 @@ export function updateHUD(state: GameState, total: number, storageOK: boolean) {
     `${state.collected.length} <span>/ ${total}</span>`;
   element("steps").textContent = `${state.steps} pas`;
   element("coordinates").textContent =
-    `${String(state.player.x).padStart(2, "0")} / ${String(state.player.y).padStart(2, "0")}`;
+    `${state.player.x.toFixed(1)} / ${state.player.y.toFixed(1)}`;
   element("objective-label").textContent =
     state.collected.length === total
       ? "EXPÉDITION RÉUSSIE"

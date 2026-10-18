@@ -46,7 +46,13 @@
       "animation": "Idle",
       "speciesId": "bulbasaur",
       "id": "bulbasaur-visitor",
-      "y": 3
+      "y": 3,
+      "roaming": {
+        "radius": 1.4,
+        "speed": 0.48,
+        "idleMinSeconds": 2.0,
+        "idleMaxSeconds": 4.0
+      }
     },
     {
       "facing": "down-left",
@@ -54,7 +60,13 @@
       "animation": "Idle",
       "speciesId": "charmander",
       "id": "charmander-visitor",
-      "y": 3
+      "y": 3,
+      "roaming": {
+        "radius": 2.1,
+        "speed": 0.72,
+        "idleMinSeconds": 1.1,
+        "idleMaxSeconds": 2.7
+      }
     },
     {
       "facing": "left",
@@ -62,7 +74,13 @@
       "animation": "Idle",
       "speciesId": "squirtle",
       "id": "squirtle-visitor",
-      "y": 4
+      "y": 4,
+      "roaming": {
+        "radius": 1.5,
+        "speed": 0.55,
+        "idleMinSeconds": 1.8,
+        "idleMaxSeconds": 3.5
+      }
     },
     {
       "facing": "down",
@@ -70,7 +88,13 @@
       "animation": "Idle",
       "speciesId": "pikachu",
       "id": "pikachu-visitor",
-      "y": 4
+      "y": 4,
+      "roaming": {
+        "radius": 2.3,
+        "speed": 0.95,
+        "idleMinSeconds": 0.7,
+        "idleMaxSeconds": 1.9
+      }
     },
     {
       "facing": "up-right",
@@ -78,7 +102,13 @@
       "animation": "Idle",
       "speciesId": "eevee",
       "id": "eevee-visitor",
-      "y": 6
+      "y": 6,
+      "roaming": {
+        "radius": 2.6,
+        "speed": 0.85,
+        "idleMinSeconds": 1.0,
+        "idleMaxSeconds": 2.4
+      }
     },
     {
       "facing": "up",
@@ -86,7 +116,13 @@
       "animation": "Idle",
       "speciesId": "clefairy",
       "id": "clefairy-visitor",
-      "y": 6
+      "y": 6,
+      "roaming": {
+        "radius": 1.2,
+        "speed": 0.44,
+        "idleMinSeconds": 2.2,
+        "idleMaxSeconds": 4.4
+      }
     },
     {
       "facing": "left",
@@ -94,7 +130,13 @@
       "animation": "Idle",
       "speciesId": "nidoran-m",
       "id": "nidoran-m-visitor",
-      "y": 5
+      "y": 5,
+      "roaming": {
+        "radius": 1.7,
+        "speed": 0.68,
+        "idleMinSeconds": 1.2,
+        "idleMaxSeconds": 3.0
+      }
     },
     {
       "facing": "up-right",
@@ -102,7 +144,13 @@
       "animation": "Idle",
       "speciesId": "nidoran-f",
       "id": "nidoran-f-visitor",
-      "y": 7
+      "y": 7,
+      "roaming": {
+        "radius": 1.5,
+        "speed": 0.61,
+        "idleMinSeconds": 1.6,
+        "idleMaxSeconds": 3.4
+      }
     },
     {
       "facing": "down-left",
@@ -110,7 +158,13 @@
       "animation": "Idle",
       "speciesId": "beedrill",
       "id": "beedrill-visitor",
-      "y": 2
+      "y": 2,
+      "roaming": {
+        "radius": 2.8,
+        "speed": 0.9,
+        "idleMinSeconds": 0.8,
+        "idleMaxSeconds": 2.2
+      }
     }
   ],
   "playerSpeciesId": "jigglypuff"

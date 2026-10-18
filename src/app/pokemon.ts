@@ -3,9 +3,11 @@ import type { GameState, Point } from '../domain/state.ts';
 import { createPokemonAssets } from '../platform/pokemon-assets.ts';
 import { createPokemonRenderer } from '../rendering/pokemon.ts';
 import { element } from '../ui/dom.ts';
+import { createRoamers, updateRoamers } from '../domain/roaming.ts';
 
 /** Connects authored field actors to locally imported art without species branches. */
-export function setupPokemon(field: Dungeon) {
+export function setupPokemon(field: Dungeon, velocity: () => Point) {
+  const actors = createRoamers(field.actors);
   let assets: Awaited<ReturnType<typeof createPokemonAssets>> | null = null;
   let painter: ReturnType<typeof createPokemonRenderer> | null = null;
   let state: 'loading' | 'ready' | 'error' = 'loading';
@@ -33,7 +35,7 @@ export function setupPokemon(field: Dungeon) {
     }
   })();
   function playerActor(game: GameState, visual: Point) {
-    const moving = Math.abs(visual.x - game.player.x) + Math.abs(visual.y - game.player.y) > .05;
+    const moving = Math.hypot(velocity().x, velocity().y) > .01;
     return {
       id: 'player', speciesId: field.playerSpeciesId,
       x: visual.x, y: visual.y, facing: game.facing,
@@ -42,12 +44,17 @@ export function setupPokemon(field: Dungeon) {
   }
   return {
     ready,
-    draw(context: CanvasRenderingContext2D, row: number, time: number) {
-      if (!painter) return;
-      for (const actor of field.actors) {
-        if (Math.floor(actor.y) !== row) continue;
+    update(dt: number) { updateRoamers(actors, field, dt); },
+    draw(context: CanvasRenderingContext2D, row: number, time: number, game: GameState, visual: Point) {
+      if (!painter) return false;
+      const player = playerActor(game, visual);
+      let playerDrawn = false;
+      const visible = [...actors, player].filter(actor => Math.floor(actor.y) === row).sort((a, b) => a.y - b.y);
+      for (const actor of visible) {
+        if (actor.id === 'player') playerDrawn = true;
         painter.draw(context, { ...actor, x: actor.x * 32 + 16, y: actor.y * 32 + 16 }, time * 1000);
       }
+      return playerDrawn;
     },
     drawPlayer(context: CanvasRenderingContext2D, game: GameState, visual: Point, time: number) {
       if (!painter) return false;
@@ -59,7 +66,9 @@ export function setupPokemon(field: Dungeon) {
       return {
         status: state, error,
         player: { ...player, frame: painter?.snapshot(player, time * 1000) },
-        actors: field.actors.map(actor => ({ ...actor, frame: painter?.snapshot(actor, time * 1000) })),
+        actors: actors.map(actor => ({ id: actor.id, speciesId: actor.speciesId, x: actor.x, y: actor.y,
+          facing: actor.facing, animation: actor.animation, behavior: actor.behavior, velocity: actor.velocity,
+          frame: painter?.snapshot(actor, time * 1000) })),
         loaded: assets?.status, elapsed: time,
       };
     },

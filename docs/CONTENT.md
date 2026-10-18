@@ -14,13 +14,15 @@ Species `source` records their PokéAPI identity. `spriteId` selects the matchin
 4. Run `npm run content:generate` to validate every file and regenerate the import manifest and JSON schemas.
 5. Run `npm run check` and `npm test` before sharing changes. Commit the JSON files and generated files together.
 
-Keep existing IDs stable: saved data and other records may reference them. The current playable dungeon must retain the ID `awakening-woods`. Preserve its existing collectible order when changing a map; version 1 saves store collectible indexes.
+Keep existing IDs stable: saved data and other records may reference them. The current playable dungeon must retain the ID `awakening-woods`. Preserve its existing collectible order when changing a map; versions 1 and 2 save collectible indexes.
 
 ## Dungeon rules
 
 Map rows must have equal widths. `#` is a wall, `~` is water and `.` is walkable floor. Coordinates start at zero in the top left. The spawn and every collectible must occupy floor; every collectible must be reachable from the spawn, and positions cannot repeat. `tileSize` is the source tile size used by rendering.
 
-`actors` lists visual Pokémon instances: stable instance `id`, catalog `speciesId`, tile coordinates `x`/`y`, eight-way `facing` and `animation` (`Idle` or `Walk`). The instances do not collide, fight or modify saves. Place them on reachable floor, without overlapping spawn, collectibles or each other. Instance IDs must be unique within a dungeon. `Walk` plays an animation in place; it does not imply autonomous movement.
+`actors` lists Pokémon instances: stable instance `id`, catalog `speciesId`, initial tile coordinates `x`/`y`, eight-way `facing` and initial `animation` (`Idle` or `Walk`). Place them on reachable floor, without overlapping spawn, collectibles or each other. Instance IDs must be unique within a dungeon. Actors do not fight or modify saves.
+
+Optional `roaming` enables autonomous movement between `Idle` and `Roaming` states. Set `radius` in tiles around the initial position, `speed` in tiles per second, and `idleMinSeconds`/`idleMaxSeconds` for rest duration. Maximum idle duration must be at least the minimum. Each instance has a deterministic independent random sequence. Destinations use clear walkable paths, respect walls and water, and remain within the home radius. Movement uses the same continuous collision rules as the player. Blocked movement returns to rest. Pause and suspension must stop simulation updates. Without `roaming`, the authored pose remains stationary. The current nine actors have deliberately varied profiles; species-specific renderer branches are unnecessary.
 
 ## Source boundaries
 

@@ -46,8 +46,10 @@ try {
   await check("window blur saves and clears held input without pausing", async () => {
     await viewportPage.keyboard.down("ArrowRight");
     await viewportPage.waitForTimeout(70);
-    const before = await state(viewportPage);
-    await viewportPage.evaluate(() => window.dispatchEvent(new Event("blur")));
+    const before = await viewportPage.evaluate(() => {
+      window.dispatchEvent(new Event("blur"));
+      return JSON.parse(window.render_game_to_text());
+    });
     assert.equal((await state(viewportPage)).mode, "play", "Clicking elsewhere keeps play active");
     await viewportPage.waitForTimeout(450);
     await viewportPage.keyboard.up("ArrowRight");
@@ -234,15 +236,15 @@ try {
       { x: before.player.x, y: before.player.y },
       { x: 3, y: 5 },
     );
-    await key(page, "ArrowRight");
+    await key(page, "ArrowRight", 500);
     let after = await state(page);
-    assert.equal(after.player.x, before.player.x + 1);
+    assert.ok(after.player.x > before.player.x, "Holding right moves continuously");
     assert.ok(after.steps > before.steps);
     await key(page, "ArrowLeft", 2200);
     after = await state(page);
-    assert.ok(after.player.x >= 1, "Cannot cross left boundary");
+    assert.ok(after.player.x > 0.5, "Collision body cannot cross left boundary");
     await key(page, "ArrowUp", 2200);
-    assert.ok((await state(page)).player.y >= 1, "Cannot cross top boundary");
+    assert.ok((await state(page)).player.y > 0.5, "Collision body cannot cross top boundary");
     await key(page, "Escape");
     before = await state(page);
     assert.equal(before.mode, "menu");
@@ -403,7 +405,7 @@ try {
           value: 1,
         };
       }, index);
-      await padPage.waitForTimeout(80);
+      await padPage.waitForTimeout(130);
       await padPage.evaluate((index) => {
         window.__testPad.buttons[index] = {
           pressed: false,
@@ -459,9 +461,9 @@ try {
     });
     await settled(padPage);
     const after = await state(padPage);
-    assert.equal(after.player.x, before.player.x + 1);
+    assert.ok(after.player.x > before.player.x, "D-pad moves right");
     await padPage.evaluate(() => {
-      window.__testPad.axes[0] = 0.2;
+      window.__testPad.axes[0] = 0.08;
     });
     await padPage.waitForTimeout(500);
     assert.deepEqual(
@@ -477,7 +479,7 @@ try {
       window.__testPad.axes[0] = 0;
     });
     await settled(padPage);
-    assert.equal((await state(padPage)).player.x, after.player.x - 1);
+    assert.ok((await state(padPage)).player.x < after.player.x, "Analog stick moves left");
   });
   await check("gamepad remapping works and persists", async () => {
     await key(padPage, "Escape");
@@ -515,7 +517,7 @@ try {
       };
     });
     await settled(padPage);
-    assert.equal((await state(padPage)).player.x, before.player.x + 1);
+    assert.ok((await state(padPage)).player.x > before.player.x, "Remapped button moves right");
     await padPage.reload();
     await padPage.waitForFunction(
       () => typeof window.render_game_to_text === "function",
@@ -558,13 +560,13 @@ try {
       ),
     );
     const before = await state(mobilePage);
-    await mobilePage.locator('[data-action="right"]').tap();
+    const touchButton = await mobilePage.locator('[data-action="right"]').boundingBox();
+    await mobilePage.mouse.move(touchButton.x + touchButton.width / 2, touchButton.y + touchButton.height / 2);
+    await mobilePage.mouse.down();
+    await mobilePage.waitForTimeout(180);
+    await mobilePage.mouse.up();
     await settled(mobilePage);
-    assert.equal(
-      (await state(mobilePage)).player.x,
-      before.player.x + 1,
-      "Touch d-pad moves one tile",
-    );
+    assert.ok((await state(mobilePage)).player.x > before.player.x, "Held touch d-pad moves continuously");
     await mobilePage.screenshot({
       path: `${output}/thor-game.png`,
       fullPage: true,
@@ -660,14 +662,15 @@ try {
     async () => {
       assert.equal((await state(denied)).storage, false);
       await key(denied, "ArrowRight");
-      assert.equal((await state(denied)).player.x, 4);
+      const moved = (await state(denied)).player.x;
+      assert.ok(moved > 3, "Movement works without browser storage");
       await key(denied, "Escape");
       const downloading = denied.waitForEvent("download");
       await denied.locator('[data-menu="export"]').click();
       const saved = JSON.parse(
         await readFile(await (await downloading).path(), "utf8"),
       );
-      assert.equal(saved.player.x, 4);
+      assert.equal(saved.player.x, moved);
       await denied.locator("#import-file").setInputFiles({
         name: "invalid.json",
         mimeType: "application/json",
@@ -676,7 +679,7 @@ try {
       await settled(denied);
       assert.equal(
         (await state(denied)).player.x,
-        4,
+        moved,
         "Invalid import preserves state",
       );
     },

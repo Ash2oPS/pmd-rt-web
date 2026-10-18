@@ -35,3 +35,5 @@
 - Follow `docs/ASSETS.md` for Pokémon imports. Keep source pins, hashes and named artist credits; never overwrite authored content with imported reference data.
 - Sprite sheet centers are world roots. White markers locate shadows, not sprite roots. Preserve source frame timing, direction rows, intentional motion and selected shadow masks; do not normalize each pose to its visible bounds.
 - Run `npm run pokemon:check` after asset changes. Only load scene assets at runtime; preserve first-visit offline caching before declaring sprites ready.
+- Player and roaming actors move in continuous tile-center coordinates through shared swept circle collision. Preserve analog magnitude, radial deadzones, custom remaps and normalized digital diagonals; do not reintroduce tile-step input or interpolation lag.
+- Saves use embedded version 2 under the original storage key, with an explicit tested version-1 migration. Pause/suspension freeze movement, AI and animation clocks. Blur clears held movement and requires stick release without pausing.

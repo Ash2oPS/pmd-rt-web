@@ -13,10 +13,12 @@ import type {
 } from "../platform/input/mapping.ts";
 import { createGamepadReader } from "../platform/input/devices.ts";
 import { createInputDiagnostics } from "../platform/input/diagnostics.ts";
+import { DEFAULT_DEADZONE, padMovement } from "../platform/input/movement.ts";
 export class GamepadController {
   mapping: Mapping;
   current: PadLike | null = null;
   capture: Action | null = null;
+  deadzone = DEFAULT_DEADZONE;
   private baseline = new Set<string>();
   private ready = false;
   private needsRelease = false;
@@ -62,7 +64,8 @@ export class GamepadController {
       return [];
     }
     if (this.needsRelease) {
-      if (!signals.length) this.needsRelease = false;
+      const movement = padMovement(pad, this.mapping, this.deadzone);
+      if (!signals.length && !Math.hypot(movement.x, movement.y)) this.needsRelease = false;
       return [];
     }
     return decodePad(pad, this.mapping);
@@ -88,5 +91,10 @@ export class GamepadController {
   }
   suppress() {
     this.needsRelease = true;
+  }
+  movement() {
+    return this.capture || this.needsRelease
+      ? { x: 0, y: 0 }
+      : padMovement(this.current, this.mapping, this.deadzone);
   }
 }

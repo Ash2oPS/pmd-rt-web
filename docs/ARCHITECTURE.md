@@ -27,7 +27,11 @@ Starter effect IDs describe planned behavior. No combat/effect engine exists yet
 
 ## Saves
 
-`src/domain/state.ts` validates imported version-1 state against the field. `src/platform/storage.ts` preserves the original save and binding storage keys. Future schema changes require explicit migration functions and fixtures for old saves. Reject unknown future versions.
+`src/domain/state.ts` validates version-2 continuous positions and migrates version-1 tile-center saves without losing progress. The existing `pmd-field-save-v1` storage key is retained; the embedded version identifies the format. Version 2 adds actual traveled `distance`; `steps` is its integer part. `src/platform/storage.ts` preserves original save and binding storage keys. Future schema changes require explicit tested migrations. Reject unknown future versions.
+
+## Real-time field
+
+`domain/movement.ts` owns continuous tile-center coordinates, circular collision, swept movement, wall sliding, eight-way facing and pickup proximity. `platform/input/movement.ts` preserves analog magnitude with a radial deadzone and normalizes digital diagonals. The app advances movement and independent `domain/roaming.ts` actors only while play is active. Rendering sorts actors and the player by vertical position. NPCs collide with terrain and remain non-solid to other creatures; no combat or creature-pushing mechanic exists. Deadzone preferences are separate from remaps. Blur clears movement and requires stick release without pausing the world.
 
 ## Size and growth
 

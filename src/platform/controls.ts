@@ -25,6 +25,7 @@ export function bindControls(callbacks: {
 }) {
   const keys = new Set<Action>(),
     touch = new Set<Action>();
+  const taps = new Map<Action, number>();
   document.addEventListener("keydown", (event) => {
     callbacks.recordKey(event);
     if (
@@ -69,15 +70,18 @@ export function bindControls(callbacks: {
         button.setPointerCapture(event.pointerId);
         callbacks.touch(action);
         touch.add(action);
+        if (["up", "down", "left", "right"].includes(action))
+          taps.set(action, performance.now() + 80);
       });
       for (const event of ["pointerup", "pointercancel", "lostpointercapture"])
         button.addEventListener(event, () => touch.delete(action));
     });
   return {
-    actions: () => new Set([...keys, ...touch]),
+    actions: () => new Set([...keys, ...touch, ...[...taps].filter(([, until]) => until > performance.now()).map(([action]) => action)]),
     clear() {
       keys.clear();
       touch.clear();
+      taps.clear();
     },
   };
 }

@@ -121,6 +121,38 @@
               "Idle",
               "Walk"
             ]
+          },
+          "roaming": {
+            "type": "object",
+            "properties": {
+              "radius": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 6
+              },
+              "speed": {
+                "type": "number",
+                "minimum": 0.2,
+                "maximum": 2
+              },
+              "idleMinSeconds": {
+                "type": "number",
+                "minimum": 0.2,
+                "maximum": 15
+              },
+              "idleMaxSeconds": {
+                "type": "number",
+                "minimum": 0.2,
+                "maximum": 15
+              }
+            },
+            "required": [
+              "radius",
+              "speed",
+              "idleMinSeconds",
+              "idleMaxSeconds"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
