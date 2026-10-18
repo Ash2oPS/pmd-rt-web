@@ -12,7 +12,11 @@ import {
 
 const $ = (id) => document.getElementById(id);
 const canvas = $("game"),
-  ctx = canvas.getContext("2d", { alpha: false });
+  screenCtx = canvas.getContext("2d", { alpha: false });
+const sceneCanvas = document.createElement("canvas");
+sceneCanvas.width = 768;
+sceneCanvas.height = 448;
+const ctx = sceneCanvas.getContext("2d", { alpha: false });
 ctx.imageSmoothingEnabled = false;
 const SAVE = "pmd-field-save-v1",
   BINDINGS = "pmd-field-bindings-v1";
@@ -36,6 +40,7 @@ try {
 }
 let mode = "play",
   submenu = false,
+  journalOpen = false,
   menuIndex = 0,
   capture = null;
 let keys = new Set(),
@@ -55,7 +60,7 @@ let visual = { ...state.player },
   lastFrame = performance.now(),
   lastInputLabel = "";
 const inputDiagnostics = {
-  build: "0.1.1",
+  build: "0.1.2",
   apiAvailable: typeof navigator.getGamepads === "function",
   secureContext: window.isSecureContext,
   error: null,
@@ -210,10 +215,13 @@ function clearInputs() {
 }
 function menuButtons() {
   return [
-    ...(submenu ? $("controls-panel") : $("menu-main")).querySelectorAll(
-      "button",
-    ),
-  ];
+    ...(journalOpen
+      ? $("journal-panel")
+      : submenu
+        ? $("controls-panel")
+        : $("menu-main")
+    ).querySelectorAll("button"),
+  ].filter((button) => !button.hidden);
 }
 function highlight() {
   const buttons = menuButtons();
@@ -227,12 +235,14 @@ function pause(reason = "L’aventure t’attend.", focus = true) {
   if (mode === "play") save();
   mode = "menu";
   submenu = false;
+  journalOpen = false;
   capture = null;
   menuIndex = 0;
   clearInputs();
   $("overlay").hidden = false;
   $("menu-main").hidden = false;
   $("controls-panel").hidden = true;
+  $("journal-panel").hidden = true;
   $("menu-title").textContent = "Une petite pause.";
   $("pause-reason").textContent = reason;
   $("scene-status").textContent = "En pause";
@@ -278,6 +288,18 @@ function controls() {
   $("menu-title").textContent = "À ta façon.";
   $("pause-reason").textContent =
     "Croix ou stick · A valider · B retour · Start menu";
+  highlight();
+  menuButtons()[0]?.focus({ preventScroll: true });
+}
+function journal() {
+  submenu = true;
+  journalOpen = true;
+  menuIndex = 0;
+  $("menu-main").hidden = true;
+  $("controls-panel").hidden = true;
+  $("journal-panel").hidden = false;
+  $("menu-title").textContent = "Carnet d’expédition.";
+  $("pause-reason").textContent = "Progression, sauvegarde et connexion.";
   highlight();
   menuButtons()[0]?.focus({ preventScroll: true });
 }
@@ -329,6 +351,7 @@ function exportSave() {
 }
 const commands = {
   resume,
+  journal,
   save: () => save(true),
   controls,
   fullscreen,
@@ -345,6 +368,7 @@ $("menu-toggle").addEventListener("click", () =>
   mode === "play" ? pause() : resume(),
 );
 $("controls-back").addEventListener("click", () => pause());
+$("journal-back").addEventListener("click", () => pause());
 $("reset-mapping").addEventListener("click", () => {
   mapping = defaultMapping();
   persistMapping();
@@ -465,9 +489,10 @@ document.addEventListener("visibilitychange", () => {
     lastFrame = performance.now();
   }
 });
-window.addEventListener("blur", () =>
-  suspend("Jeu mis en pause. Reprends quand tu es prêt."),
-);
+window.addEventListener("blur", () => {
+  clearInputs();
+  save();
+});
 window.addEventListener("pagehide", () => {
   clearInputs();
   save();
@@ -693,8 +718,44 @@ function explorer(x, y) {
     rect(x - 12, y + 4, 3, 5, "#b19a5c");
   }
 }
+const camera = { x: 0, y: 0, width: 768, height: 448, scale: 1 };
+function resizeCanvas() {
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  const width = Math.max(1, Math.round(canvas.clientWidth * ratio));
+  const height = Math.max(1, Math.round(canvas.clientHeight * ratio));
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+    screenCtx.imageSmoothingEnabled = false;
+  }
+}
+window.addEventListener("resize", resizeCanvas);
+new ResizeObserver(resizeCanvas).observe(canvas);
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, sceneCanvas.width, sceneCanvas.height);
+  const worldWidth = MAP[0].length * TILE,
+    worldHeight = MAP.length * TILE;
+  camera.scale = Math.max(
+    canvas.width / worldWidth,
+    canvas.height / worldHeight,
+  );
+  camera.width = canvas.width / camera.scale;
+  camera.height = canvas.height / camera.scale;
+  camera.x = Math.max(
+    0,
+    Math.min(
+      worldWidth - camera.width,
+      (visual.x + 0.5) * TILE - camera.width / 2,
+    ),
+  );
+  camera.y = Math.max(
+    0,
+    Math.min(
+      worldHeight - camera.height,
+      (visual.y + 0.5) * TILE - camera.height / 2,
+    ),
+  );
   for (let y = 0; y < MAP.length; y++)
     for (let x = 0; x < MAP[y].length; x++) {
       const px = x * TILE,
@@ -804,6 +865,19 @@ function draw() {
   ctx.lineTo(540, 448);
   ctx.lineTo(370, 448);
   ctx.fill();
+  // Scale the completed pixel scene once to avoid seams between tiles.
+  screenCtx.imageSmoothingEnabled = false;
+  screenCtx.drawImage(
+    sceneCanvas,
+    camera.x,
+    camera.y,
+    camera.width,
+    camera.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
 }
 function frame(now) {
   const dt = Math.min(0.05, Math.max(0, (now - lastFrame) / 1000));
@@ -822,6 +896,8 @@ window.render_game_to_text = () =>
     crystals: CRYSTALS.filter((_, i) => !state.collected.includes(i)),
     map: MAP,
     submenu,
+    journalOpen,
+    camera,
     capture,
     mapping,
     gamepad: currentPad
@@ -869,6 +945,7 @@ if ("serviceWorker" in navigator) {
       $("offline-status").textContent = "Indisponible";
     });
 } else $("offline-status").textContent = "Non pris en charge";
+resizeCanvas();
 updateHUD();
 draw();
 requestAnimationFrame(frame);

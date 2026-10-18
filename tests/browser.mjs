@@ -38,6 +38,54 @@ async function check(name, action) {
 }
 
 try {
+  const viewportContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const viewportPage = await viewportContext.newPage();
+  watch(viewportPage);
+  await viewportPage.goto(baseURL);
+  await viewportPage.waitForFunction(() => typeof window.render_game_to_text === "function");
+  await check("window blur saves and clears held input without pausing", async () => {
+    await viewportPage.keyboard.down("ArrowRight");
+    await viewportPage.waitForTimeout(70);
+    const before = await state(viewportPage);
+    await viewportPage.evaluate(() => window.dispatchEvent(new Event("blur")));
+    assert.equal((await state(viewportPage)).mode, "play", "Clicking elsewhere keeps play active");
+    await viewportPage.waitForTimeout(450);
+    await viewportPage.keyboard.up("ArrowRight");
+    const after = await state(viewportPage);
+    assert.deepEqual(after.player, before.player, "Held keyboard input is cleared on blur");
+    assert.equal(after.steps, before.steps);
+    const saved = await viewportPage.evaluate(() => JSON.parse(localStorage.getItem("pmd-field-save-v1")));
+    assert.deepEqual(saved.player, before.player);
+    assert.equal(saved.steps, before.steps);
+  });
+  await check("canvas fills every viewport without page scrolling", async () => {
+    for (const [width, height] of [[1440,900], [960,540], [390,844], [640,360]]) {
+      await viewportPage.setViewportSize({ width, height });
+      await settled(viewportPage);
+      const bounds = await viewportPage.locator("#game").boundingBox();
+      assert.deepEqual(bounds, { x: 0, y: 0, width, height }, `Canvas fills ${width}x${height}`);
+      assert.ok(await viewportPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight));
+      const view = await state(viewportPage);
+      const camera = view.camera;
+      assert.ok(camera && camera.scale > 0, "World camera is exposed");
+      assert.ok(Math.abs(camera.width / camera.height - width / height) < 0.01, "World view preserves viewport aspect ratio");
+      const playerX = view.player.x * 32 + 16, playerY = view.player.y * 32 + 16;
+      assert.ok(playerX >= camera.x && playerX <= camera.x + camera.width, "Camera keeps explorer visible horizontally");
+      assert.ok(playerY >= camera.y && playerY <= camera.y + camera.height, "Camera keeps explorer visible vertically");
+    }
+  });
+  await check("pause journal keeps connection and save details accessible", async () => {
+    await key(viewportPage, "Escape");
+    await viewportPage.locator('[data-menu="journal"]').click();
+    assert.equal(await viewportPage.locator("#journal-panel").isVisible(), true);
+    assert.equal(await viewportPage.locator("#copy-diagnostics").isVisible(), true);
+    assert.equal(await viewportPage.locator("#save-status").isVisible(), true);
+    await viewportPage.screenshot({ path: `${output}/journal-menu.png` });
+    await viewportPage.locator("#journal-back").click();
+    assert.equal(await viewportPage.locator('[data-menu="resume"]').isVisible(), true);
+    await resume(viewportPage);
+  });
+  await viewportContext.close();
   const diagnosticContext = await browser.newContext();
   await diagnosticContext.addInitScript(() => {
     window.__odinPad = {
@@ -155,6 +203,8 @@ try {
         (await state(diagnosticPage)).inputDiagnostics.error,
         /Gamepad access denied by test/,
       );
+      if ((await state(diagnosticPage)).mode === "play") await key(diagnosticPage, "Escape");
+      await diagnosticPage.locator('[data-menu="journal"]').click();
       assert.match(
         await diagnosticPage.locator("body").innerText(),
         /Gamepad access denied by test/,

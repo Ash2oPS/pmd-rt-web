@@ -32,7 +32,7 @@ For device input problems, move both sticks and press the affected buttons, then
 ## Saves and suspension
 
 - Position and collectible progress save after each movement and on pause/backgrounding.
-- Losing focus, backgrounding, browser freeze or gamepad disconnection pauses the scene. Resume explicitly from the menu.
+- Clicking elsewhere or losing window focus clears held inputs and saves, without pausing. Backgrounding the page, browser freeze or gamepad disconnection still pauses the scene. Resume explicitly from the menu.
 - Menu provides manual save, JSON export and validated JSON import. Invalid imports preserve current progress.
 - Saves belong to this browser profile and website address. Clearing browser data removes them; export a backup. Storage failure is displayed, and export remains available.
 
@@ -53,7 +53,7 @@ Browsers may reclaim site storage. Installation UI and fullscreen availability v
 - Sleep and wake the device while moving: the scene must stay paused until explicitly resumed.
 - Install the PWA, wait for offline readiness, enable airplane mode and relaunch.
 
-The desktop suite simulates gamepad signals and page suspension. Physical Thor input mapping, actual Android sleep and installation still need this device check. The prototype uses one screen; independent second-screen support is outside this milestone.
+The canvas fills the browser viewport, with an undistorted camera following the explorer when the full room does not fit the screen ratio. Open **Menu → Carnet et connexion** for progress, device status and diagnostic tools. The desktop suite simulates gamepad signals and page suspension. Physical Thor input mapping, actual Android sleep and installation still need this device check. The prototype uses one screen; independent second-screen support is outside this milestone.
 
 ## Verification
 

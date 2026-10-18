@@ -41,3 +41,13 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Raw data from the real Thor is needed before changing stick or shoulder decoding. Do not claim these fixed by the A/B patch.
 - Validation: 5 core tests and 15 browser checks pass; clipboard export verified from both sidebar and menu. Reviewed updated screenshots and independent diagnostic review found no blocking issues.
 - Important: Android native joystick fling can bypass DOM wheel events; a zero wheel count is not evidence against the reported scrolling.
+
+## Local full-page play surface — 0.1.2
+- User requests no pause when clicking outside the game and canvas filling the entire page, while viewing localhost.
+- Added failing browser regression for blur behavior and viewport canvas geometry before implementation.
+- Window blur now clears held input and saves without changing mode; real hidden/frozen pages and disconnections still pause.
+- Stage fills the viewport, rendering with a uniform camera clamped to the world and following the explorer; no distortion or page scroll.
+- Moved expedition journal/device controls into **Menu → Carnet et connexion**. Preserved existing saves/remaps.
+- Bumped offline cache to v4 and displayed build to 0.1.2. User subsequently requested publication to GitHub Pages.
+- Full browser suite passes 18 checks, including outside-click behavior, cleared held inputs, full viewport/camera geometry at four sizes and accessible journal. Screenshots inspected.
+- Final visual pass found seams from drawing tiles directly with a fractional scale; rendering the scene to a fixed pixel buffer before nearest-neighbor scaling removes them.

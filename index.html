@@ -17,25 +17,11 @@
     <title>PMD · Bois de l'Éveil</title>
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="./" aria-label="PMD accueil"
-        ><span class="brand-mark">✦</span> PMD
-        <span class="brand-sub">EXPLORATIONS</span></a
-      >
-      <span class="edition">PROTOTYPE <b>01</b></span>
-      <button id="menu-toggle" class="small-button" aria-label="Ouvrir le menu">
-        ☰ <span>Menu</span>
-      </button>
-    </header>
+    <button id="menu-toggle" class="small-button" aria-label="Ouvrir le menu">
+      ☰ <span>Menu</span>
+    </button>
     <main>
       <section class="expedition" aria-label="Zone de jeu">
-        <div class="location">
-          <div>
-            <span class="eyebrow">PREMIÈRE EXPÉDITION</span>
-            <h1>Bois de l’Éveil<span>.</span></h1>
-          </div>
-          <span class="floor">ÉTAGE <b>01</b></span>
-        </div>
         <div class="game-frame">
           <canvas
             id="game"
@@ -46,7 +32,10 @@
           ></canvas>
           <div class="scene-label">
             <span class="live-dot"></span>
-            <span id="scene-status">Exploration</span>
+            <span
+              >Bois de l’Éveil ·
+              <span id="scene-status">Exploration</span></span
+            >
           </div>
           <div id="toast" class="toast" role="status" aria-live="polite"></div>
           <div class="touch-controls" aria-label="Commandes tactiles">
@@ -65,87 +54,9 @@
             </button>
           </div>
         </div>
-        <div class="field-footer">
-          <span
-            ><i class="key">↑↓←→</i> Se déplacer
-            <span class="footer-sep">/</span>
-            <i class="key">START</i> Menu</span
-          ><span class="coordinates" id="coordinates">03 / 05</span>
-        </div>
       </section>
-      <aside aria-label="Carnet d’expédition">
-        <div class="journal-heading">
-          <span class="eyebrow">CARNET D’EXPÉDITION</span><span>↗</span>
-        </div>
-        <section class="explorer">
-          <div class="portrait" aria-hidden="true">
-            <svg viewBox="0 0 64 64">
-              <path fill="#9c7036" d="M16 8h7v19h18V8h7v30H16z" />
-              <path fill="#f1c765" d="M18 13h4v20h20V13h4v31h-4v9H22v-9h-4z" />
-              <path fill="#172c27" d="M24 35h4v5h-4zm13 0h4v5h-4z" />
-              <path fill="#db704f" d="M22 46h20v7H22zm12 7h7v7h-7z" />
-            </svg>
-          </div>
-          <div>
-            <span class="eyebrow">TON EXPLORATEUR</span>
-            <h2>Éclaireur</h2>
-            <span class="muted">Prêt pour l’inconnu.</span>
-          </div>
-        </section>
-        <section class="objective">
-          <div class="section-number">01 / OBJECTIF</div>
-          <h3>Une petite découverte.</h3>
-          <p>Explore la clairière et retrouve les trois éclats de lumière.</p>
-          <div class="crystal-progress">
-            <span class="crystal-symbol">◆</span
-            ><strong id="crystals">0 <span>/ 3</span></strong
-            ><span id="objective-label">ÉCLATS RETROUVÉS</span>
-          </div>
-        </section>
-        <section class="diagnostics">
-          <div class="section-number">02 / CONNEXION</div>
-          <div class="status-row">
-            <span>Manette</span><strong id="pad-status">À connecter</strong>
-          </div>
-          <p id="pad-name" class="device-name">
-            Appuie sur un bouton pour la détecter.
-          </p>
-          <div
-            class="input-meter"
-            id="input-meter"
-            aria-label="Activité des commandes"
-          >
-            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-          </div>
-          <p id="raw-input" class="raw-input">Aucun signal</p>
-          <details id="input-details" class="input-details">
-            <summary>Diagnostic des entrées</summary>
-            <pre id="input-report"></pre>
-          </details>
-          <button id="copy-diagnostics" class="secondary-button">
-            Copier le diagnostic
-          </button>
-          <div class="status-row">
-            <span>Sauvegarde</span><strong id="save-status">Automatique</strong>
-          </div>
-          <div class="status-row">
-            <span>Hors connexion</span
-            ><strong id="offline-status">Préparation…</strong>
-          </div>
-          <button id="install" class="install-button" hidden>
-            Installer le jeu ↗
-          </button>
-        </section>
-        <div class="journal-bottom">
-          <span id="steps">0 pas</span><span class="build">BUILD 0.1.1</span>
-        </div>
-      </aside>
     </main>
-    <footer class="app-footer">
-      <span>Un premier pas vers une nouvelle aventure.</span
-      ><span>CLAVIER · MANETTE · TACTILE</span>
-    </footer>
+
     <div id="overlay" class="overlay" hidden>
       <section
         class="menu-panel"
@@ -170,6 +81,87 @@
           <button data-menu="diagnostic">
             Copier le diagnostic <span>↗</span>
           </button>
+          <button data-menu="journal">
+            Carnet et connexion <span>↗</span>
+          </button>
+        </div>
+        <div id="journal-panel" hidden>
+          <aside aria-label="Carnet d’expédition">
+            <div class="journal-heading">
+              <span class="eyebrow">CARNET D’EXPÉDITION</span><span>↗</span>
+            </div>
+            <section class="explorer">
+              <div class="portrait" aria-hidden="true">
+                <svg viewBox="0 0 64 64">
+                  <path fill="#9c7036" d="M16 8h7v19h18V8h7v30H16z" />
+                  <path
+                    fill="#f1c765"
+                    d="M18 13h4v20h20V13h4v31h-4v9H22v-9h-4z"
+                  />
+                  <path fill="#172c27" d="M24 35h4v5h-4zm13 0h4v5h-4z" />
+                  <path fill="#db704f" d="M22 46h20v7H22zm12 7h7v7h-7z" />
+                </svg>
+              </div>
+              <div>
+                <span class="eyebrow">TON EXPLORATEUR</span>
+                <h2>Éclaireur</h2>
+                <span class="muted">Prêt pour l’inconnu.</span>
+              </div>
+            </section>
+            <section class="objective">
+              <div class="section-number">01 / OBJECTIF</div>
+              <h3>Une petite découverte.</h3>
+              <p>
+                Explore la clairière et retrouve les trois éclats de lumière.
+              </p>
+              <div class="crystal-progress">
+                <span class="crystal-symbol">◆</span
+                ><strong id="crystals">0 <span>/ 3</span></strong
+                ><span id="objective-label">ÉCLATS RETROUVÉS</span>
+              </div>
+            </section>
+            <section class="diagnostics">
+              <div class="section-number">02 / CONNEXION</div>
+              <div class="status-row">
+                <span>Manette</span><strong id="pad-status">À connecter</strong>
+              </div>
+              <p id="pad-name" class="device-name">
+                Appuie sur un bouton pour la détecter.
+              </p>
+              <div
+                class="input-meter"
+                id="input-meter"
+                aria-label="Activité des commandes"
+              >
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+                ><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+              <p id="raw-input" class="raw-input">Aucun signal</p>
+              <details id="input-details" class="input-details">
+                <summary>Diagnostic des entrées</summary>
+                <pre id="input-report"></pre>
+              </details>
+              <button id="copy-diagnostics" class="secondary-button">
+                Copier le diagnostic
+              </button>
+              <div class="status-row">
+                <span>Sauvegarde</span
+                ><strong id="save-status">Automatique</strong>
+              </div>
+              <div class="status-row">
+                <span>Hors connexion</span
+                ><strong id="offline-status">Préparation…</strong>
+              </div>
+              <button id="install" class="install-button" hidden>
+                Installer le jeu ↗
+              </button>
+            </section>
+            <div class="journal-bottom">
+              <span id="coordinates">03 / 05</span><span id="steps">0 pas</span
+              ><span class="build">BUILD 0.1.2</span>
+            </div>
+          </aside>
+          <button id="journal-back" class="secondary-button">Retour</button>
         </div>
         <div id="controls-panel" hidden>
           <p class="controls-help">

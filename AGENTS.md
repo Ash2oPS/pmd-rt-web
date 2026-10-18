@@ -17,3 +17,5 @@
 - Device input mapping and real Android sleep/install behavior require a physical AYN Thor test; never claim these were verified by desktop simulation.
 - Default face controls follow Thor labels: east A (button 1) confirms; south B (button 0) returns. Preserve custom remaps.
 - Use the copied input diagnostic for hardware issues. Native Android joystick scrolling may occur without DOM wheel events; a zero wheel count does not exclude it.
+- The canvas fills the viewport with a uniform camera following the explorer. Keep expedition details in the pause menu's journal panel.
+- Window blur clears held input and saves without pausing. Page hiding/freezing and controller disconnection still pause; do not restore blur-triggered pauses.

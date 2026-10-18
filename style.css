@@ -853,3 +853,91 @@ p {
     bottom: 90px;
   }
 }
+/* The play surface occupies the viewport. Expedition tools live in the menu. */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+main {
+  position: fixed;
+  inset: 0;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+}
+.expedition,
+.game-frame {
+  width: 100%;
+  height: 100%;
+}
+.game-frame {
+  aspect-ratio: auto;
+  border: 0;
+  box-shadow: none;
+}
+canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  background: #244335;
+}
+canvas:focus-visible {
+  outline: none;
+}
+#menu-toggle {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  z-index: 3;
+  background: #102824dd;
+}
+.scene-label {
+  top: max(17px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
+  max-width: calc(100% - 110px);
+}
+.touch-controls {
+  left: max(16px, env(safe-area-inset-left));
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+}
+#journal-panel aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+#journal-panel .journal-heading {
+  display: none;
+}
+#journal-panel .objective,
+#journal-panel .diagnostics {
+  padding: 16px 0;
+}
+#journal-panel .explorer {
+  padding: 12px 0;
+}
+#journal-panel .status-row {
+  margin-top: 12px;
+}
+#journal-panel .journal-bottom {
+  padding-top: 16px;
+}
+#journal-back {
+  width: 100%;
+  margin-top: 20px;
+}
+@media (max-height: 450px) {
+  .scene-label {
+    top: 12px;
+    font-size: 9px;
+  }
+  #menu-toggle {
+    top: 9px;
+  }
+}
