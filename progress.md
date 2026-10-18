@@ -23,7 +23,9 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Browser coverage: keyboard collision/pause/resume, local saves, visibility suspension, JSON import/export and invalid import, offline reload, simulated gamepad input/deadzone/remapping/disconnect, touch, storage denial and export fallback.
 - Inspected desktop 1440x900, Thor-like 960x540, portrait 390x844 and compact landscape 640x360 screenshots. Entire playfield is visible, no horizontal overflow.
 - Independent browser-test agent reviewed production code; no blocking findings.
+- Published initial commit to `origin/main`; enabled GitHub Pages from branch `main`, root `/`.
+- GitHub Pages build returned `built`; HTTPS endpoint returns 200 with the expected title.
+- Reran all 12 browser checks against `https://ash2ops.github.io/pmd-rt-web/`: all pass, including service-worker offline reload under the project subpath.
 
 ## Pending
-- Publish and verify actual HTTPS deployment.
 - Physical Thor: verify built-in gamepad, PWA installation and actual sleep/resume.
