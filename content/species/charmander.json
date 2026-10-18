@@ -6,12 +6,12 @@
     "fire"
   ],
   "stats": {
-    "hp": 35,
-    "attack": 40,
-    "defense": 35,
-    "specialAttack": 40,
-    "specialDefense": 35,
-    "speed": 45
+    "hp": 39,
+    "attack": 52,
+    "defense": 43,
+    "specialAttack": 60,
+    "specialDefense": 50,
+    "speed": 65
   },
   "abilityIds": [
     "blaze"
@@ -25,5 +25,10 @@
       "level": 3,
       "moveId": "growl"
     }
-  ]
+  ],
+  "spriteId": "charmander",
+  "source": {
+    "provider": "pokeapi",
+    "pokemonId": 4
+  }
 }

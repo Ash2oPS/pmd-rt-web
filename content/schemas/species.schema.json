@@ -16,6 +16,29 @@
       "minimum": 1,
       "maximum": 9007199254740991
     },
+    "spriteId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "const": "pokeapi"
+        },
+        "pokemonId": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "provider",
+        "pokemonId"
+      ],
+      "additionalProperties": false
+    },
     "types": {
       "minItems": 1,
       "maxItems": 2,

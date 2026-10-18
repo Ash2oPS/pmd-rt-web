@@ -2,7 +2,9 @@
 
 Every record lives in its own JSON file under `content/`. VS Code provides completion and field validation using the generated schemas in `content/schemas/` and `.vscode/settings.json`.
 
-The sample species, moves, abilities and items demonstrate the data model. Their values are example game balance, not a canonical Pokémon database. Combat, abilities, learning moves and usable items are not implemented. Only the `awakening-woods` dungeon's map, spawn and collectible positions currently drive gameplay. Effect IDs describe future behavior; they do not execute code.
+The ten species use imported PokéAPI names, types and base stats as their initial values. Their authored records remain editable game balance, with a curated subset of moves and abilities. Full imported source data stays separate under `imports/`; reimporting must never overwrite `content/`. Combat, abilities, learning moves and usable items are not implemented. Effect IDs describe future behavior; `unimplemented` explicitly marks catalog-only abilities.
+
+Species `source` records their PokéAPI identity. `spriteId` selects the matching imported sprite pack without adding species-specific renderer code. The current scene selects Jigglypuff as `playerSpeciesId` and places the other nine species through dungeon `actors`.
 
 ## Add or change a record
 
@@ -17,6 +19,8 @@ Keep existing IDs stable: saved data and other records may reference them. The c
 ## Dungeon rules
 
 Map rows must have equal widths. `#` is a wall, `~` is water and `.` is walkable floor. Coordinates start at zero in the top left. The spawn and every collectible must occupy floor; every collectible must be reachable from the spawn, and positions cannot repeat. `tileSize` is the source tile size used by rendering.
+
+`actors` lists visual Pokémon instances: stable instance `id`, catalog `speciesId`, tile coordinates `x`/`y`, eight-way `facing` and `animation` (`Idle` or `Walk`). The instances do not collide, fight or modify saves. Place them on reachable floor, without overlapping spawn, collectibles or each other. Instance IDs must be unique within a dungeon. `Walk` plays an animation in place; it does not imply autonomous movement.
 
 ## Source boundaries
 

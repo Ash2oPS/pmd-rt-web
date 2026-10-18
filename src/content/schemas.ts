@@ -11,6 +11,8 @@ const stat = z.number().int().min(1).max(999);
 const pointSchema = z.strictObject({ x: z.number().int().nonnegative(), y: z.number().int().nonnegative() });
 export const speciesSchema = z.strictObject({
   id, label, dexNumber: z.number().int().min(1),
+  spriteId: id.optional(),
+  source: z.strictObject({ provider: z.literal('pokeapi'), pokemonId: z.number().int().positive() }).optional(),
   types: z.array(elementalTypeSchema).min(1).max(2),
   stats: z.strictObject({ hp: stat, attack: stat, defense: stat, specialAttack: stat, specialDefense: stat, speed: stat }),
   abilityIds: z.array(id).min(1),
@@ -26,7 +28,7 @@ export const moveSchema = z.strictObject({
 });
 export const abilitySchema = z.strictObject({
   id, label, description: z.string().min(1),
-  effectId: z.enum(['static', 'overgrow', 'blaze', 'torrent', 'run-away']),
+  effectId: z.enum(['static', 'overgrow', 'blaze', 'torrent', 'run-away', 'unimplemented']),
 });
 export const itemSchema = z.strictObject({
   id, label, description: z.string().min(1),
@@ -35,9 +37,15 @@ export const itemSchema = z.strictObject({
 });
 export const dungeonSchema = z.strictObject({
   id, label, tileSize: z.number().int().min(8).max(128),
+  playerSpeciesId: id.default('jigglypuff'),
   map: z.array(z.string().min(3).regex(/^[#.~]+$/)).min(3),
   spawn: pointSchema,
   collectibles: z.array(pointSchema.extend({ itemId: id })),
+  actors: z.array(pointSchema.extend({
+    id, speciesId: id,
+    facing: z.enum(['down', 'down-left', 'left', 'up-left', 'up', 'up-right', 'right', 'down-right']),
+    animation: z.enum(['Idle', 'Walk']),
+  })).default([]),
 });
 export const catalogSchema = z.strictObject({
   species: z.array(speciesSchema).min(1), moves: z.array(moveSchema).min(1),

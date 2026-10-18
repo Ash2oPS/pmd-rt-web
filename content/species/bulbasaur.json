@@ -7,11 +7,11 @@
     "poison"
   ],
   "stats": {
-    "hp": 35,
-    "attack": 40,
-    "defense": 35,
-    "specialAttack": 40,
-    "specialDefense": 35,
+    "hp": 45,
+    "attack": 49,
+    "defense": 49,
+    "specialAttack": 65,
+    "specialDefense": 65,
     "speed": 45
   },
   "abilityIds": [
@@ -26,5 +26,10 @@
       "level": 3,
       "moveId": "growl"
     }
-  ]
+  ],
+  "spriteId": "bulbasaur",
+  "source": {
+    "provider": "pokeapi",
+    "pokemonId": 1
+  }
 }

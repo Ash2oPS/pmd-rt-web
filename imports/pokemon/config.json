@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "spriteCollabCommit": "6d3a03df44f4e9724884fda6ef53b611cc746adc",
+  "animations": ["Idle", "Walk", "Attack", "Hurt"],
+  "species": [
+    { "id": "bulbasaur", "dexNumber": 1 },
+    { "id": "charmander", "dexNumber": 4 },
+    { "id": "squirtle", "dexNumber": 7 },
+    { "id": "pikachu", "dexNumber": 25 },
+    { "id": "eevee", "dexNumber": 133 },
+    { "id": "jigglypuff", "dexNumber": 39 },
+    { "id": "clefairy", "dexNumber": 35 },
+    { "id": "nidoran-m", "dexNumber": 32 },
+    { "id": "nidoran-f", "dexNumber": 29 },
+    { "id": "beedrill", "dexNumber": 15 }
+  ]
+}

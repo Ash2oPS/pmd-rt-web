@@ -16,6 +16,11 @@
       "minimum": 8,
       "maximum": 128
     },
+    "playerSpeciesId": {
+      "default": "jigglypuff",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
     "map": {
       "minItems": 3,
       "type": "array",
@@ -72,15 +77,73 @@
         ],
         "additionalProperties": false
       }
+    },
+    "actors": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "y": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "speciesId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "facing": {
+            "type": "string",
+            "enum": [
+              "down",
+              "down-left",
+              "left",
+              "up-left",
+              "up",
+              "up-right",
+              "right",
+              "down-right"
+            ]
+          },
+          "animation": {
+            "type": "string",
+            "enum": [
+              "Idle",
+              "Walk"
+            ]
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "id",
+          "speciesId",
+          "facing",
+          "animation"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
     "id",
     "label",
     "tileSize",
+    "playerSpeciesId",
     "map",
     "spawn",
-    "collectibles"
+    "collectibles",
+    "actors"
   ],
   "additionalProperties": false
 }

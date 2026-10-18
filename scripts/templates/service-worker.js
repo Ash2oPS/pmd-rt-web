@@ -11,7 +11,13 @@ self.addEventListener('fetch',event=>{
   event.respondWith((async()=>{
     // Only build-emitted public assets are cached; preview CORS headers may vary by Origin.
     const cached=await caches.match(event.request,{ignoreVary:true});if(cached)return cached;
-    try{return await fetch(event.request);}
+    try{
+      const response=await fetch(event.request);
+      if(response.ok&&url.pathname.startsWith(new URL('./pokemon/',self.registration.scope).pathname)){
+        const cache=await caches.open(CACHE);await cache.put(event.request,response.clone());
+      }
+      return response;
+    }
     catch{if(event.request.mode==='navigate')return caches.match(new URL('./index.html',self.registration.scope));return Response.error();}
   })());
 });

@@ -1,0 +1,415 @@
+{
+  "version": 1,
+  "species": [
+    {
+      "id": "bulbasaur",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 24,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 48,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 88,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "charmander",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)",
+        "Emboarger",
+        "baronessfaron"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 32,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 32,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 88,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "squirtle",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 64,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 32,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 80,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "pikachu",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 48,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 32,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 80,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "eevee",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 56,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 88,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "jigglypuff",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)",
+        "JFain",
+        "Mojo",
+        "Emboarger"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 40,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 40,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 104,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "clefairy",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)",
+        "estelstarlight (https://estelstarlight.tumblr.com/post/186838449949)"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 48,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 64,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 80,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "nidoran-m",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)",
+        "JFain"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 40,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 48,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 80,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "nidoran-f",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)",
+        "JFain",
+        "Fearless-Quit"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 40,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 56,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 80,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    },
+    {
+      "id": "beedrill",
+      "animations": [
+        "Idle",
+        "Walk",
+        "Attack",
+        "Hurt"
+      ],
+      "missing": [],
+      "portrait": "Normal",
+      "credits": [
+        "CHUNSOFT (https://www.spike-chunsoft.com/)",
+        "Fable (https://twitter.com/fabledpainter)"
+      ],
+      "anchorAudit": {
+        "Idle": {
+          "frames": 32,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Walk": {
+          "frames": 32,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Attack": {
+          "frames": 144,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        },
+        "Hurt": {
+          "frames": 16,
+          "missing": 0,
+          "duplicate": 0,
+          "fallback": 0
+        }
+      }
+    }
+  ]
+}

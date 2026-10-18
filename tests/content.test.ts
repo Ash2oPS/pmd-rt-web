@@ -12,6 +12,40 @@ test('loads the playable field with collectible item definitions', () => {
   }
 });
 
+test('places all ten imported species in the current field', () => {
+  assert.equal(content.species.length, 10);
+  assert.equal(field.playerSpeciesId, 'jigglypuff');
+  assert.equal(field.actors.length, 9);
+  assert.deepEqual(new Set([field.playerSpeciesId, ...field.actors.map((actor) => actor.speciesId)]), new Set(content.species.map((species) => species.id)));
+  for (const species of content.species) {
+    assert.equal(species.spriteId, species.id);
+    assert.equal(species.source?.provider, 'pokeapi');
+    assert.equal(species.source?.pokemonId, species.dexNumber);
+  }
+});
+
+test('rejects unknown actors, duplicate IDs and invalid actor placements', () => {
+  const candidate = structuredClone(content);
+  const actor = candidate.dungeons[0]!.actors[0]!;
+  actor.speciesId = 'missing';
+  assert.throws(() => validateContent(candidate), /Unknown actor species/);
+  actor.speciesId = content.species[0]!.id;
+  actor.x = 0;
+  actor.y = 0;
+  assert.throws(() => validateContent(candidate), /Actor at .*blocked or unreachable/);
+  Object.assign(actor, candidate.dungeons[0]!.spawn);
+  assert.throws(() => validateContent(candidate), /overlaps/);
+  Object.assign(actor, field.actors[0]);
+  candidate.dungeons[0]!.actors[1]!.id = actor.id;
+  assert.throws(() => validateContent(candidate), /Duplicate actor ID/);
+});
+
+test('rejects an unknown playable species', () => {
+  const candidate = structuredClone(content);
+  candidate.dungeons[0]!.playerSpeciesId = 'missing';
+  assert.throws(() => validateContent(candidate), /Unknown player species/);
+});
+
 test('rejects duplicate IDs within a category', () => {
   const candidate = structuredClone(content);
   candidate.items.push(candidate.items[0]!);
@@ -21,7 +55,7 @@ test('rejects duplicate IDs within a category', () => {
 test('rejects unresolved species ability and learnset references', () => {
   const candidate = structuredClone(content);
   candidate.species[0]!.abilityIds = ['missing'];
-  candidate.species[0]!.learnset[0]!.moveId = 'missing';
+  candidate.species[0]!.learnset = [{ level: 1, moveId: 'missing' }];
   assert.throws(() => validateContent(candidate), /Unknown ability/);
   assert.throws(() => validateContent(candidate), /Unknown move/);
 });

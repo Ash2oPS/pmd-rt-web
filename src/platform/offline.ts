@@ -2,6 +2,25 @@ interface InstallPrompt extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<unknown>;
 }
+
+/** Let first-visit lazy asset requests pass through the worker's runtime cache. */
+export function waitForOfflineController(timeoutMs = 8000): Promise<boolean> {
+  if (import.meta.env.DEV || !("serviceWorker" in navigator)) return Promise.resolve(false);
+  const serviceWorker = navigator.serviceWorker;
+  if (serviceWorker.controller) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const finish = (controlled: boolean) => {
+      clearTimeout(timeout);
+      serviceWorker.removeEventListener("controllerchange", changed);
+      resolve(controlled);
+    };
+    const changed = () => { if (serviceWorker.controller) finish(true); };
+    const timeout = setTimeout(() => finish(false), timeoutMs);
+    serviceWorker.addEventListener("controllerchange", changed);
+    // Close the race between the initial controller read and installing the listener.
+    changed();
+  });
+}
 export function setupOffline(
   status: HTMLElement,
   button: HTMLButtonElement,

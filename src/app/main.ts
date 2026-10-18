@@ -19,11 +19,13 @@ import { createDiagnosticsView } from "../ui/diagnostics.ts";
 import { GamepadController } from "./gamepad.ts";
 import { Runtime } from "./runtime.ts";
 import { VERSION } from "./config.ts";
+import { setupPokemon } from "./pokemon.ts";
 
 const toast = createToast(),
   storage = createStorage(field),
   runtime = new Runtime(field, storage.state);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const pokemon = setupPokemon(field);
 const renderer = createRenderer(
   element<HTMLCanvasElement>("game"),
   {
@@ -32,6 +34,8 @@ const renderer = createRenderer(
     tileSize: field.tileSize,
   },
   reducedMotion,
+  pokemon.draw,
+  pokemon.drawPlayer,
 );
 let lastFrame = performance.now();
 function clear() {
@@ -240,6 +244,7 @@ window.render_game_to_text = () =>
     submenu: menu.submenu,
     journalOpen: menu.screen === "journal",
     camera: renderer.camera,
+    pokemon: pokemon.snapshot(runtime.time, runtime.state, runtime.visual),
     capture: pad.capture,
     mapping: pad.mapping,
     gamepad: pad.current

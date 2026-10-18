@@ -1,0 +1,4 @@
+# Source hashes and reproducible asset outputs depend on exact upstream bytes.
+imports/** -text
+public/pokemon/** -text
+public/credits/** -text

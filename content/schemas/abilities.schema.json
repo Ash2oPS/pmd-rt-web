@@ -22,7 +22,8 @@
         "overgrow",
         "blaze",
         "torrent",
-        "run-away"
+        "run-away",
+        "unimplemented"
       ]
     }
   },

@@ -1,0 +1,25 @@
+{
+  "id": "nidoran-m",
+  "label": "Nidoran♂",
+  "dexNumber": 32,
+  "types": [
+    "poison"
+  ],
+  "stats": {
+    "hp": 46,
+    "attack": 57,
+    "defense": 40,
+    "specialAttack": 40,
+    "specialDefense": 40,
+    "speed": 50
+  },
+  "abilityIds": [
+    "poison-point"
+  ],
+  "learnset": [],
+  "spriteId": "nidoran-m",
+  "source": {
+    "provider": "pokeapi",
+    "pokemonId": 32
+  }
+}

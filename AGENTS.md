@@ -32,3 +32,6 @@
 - Add behavioral regression tests for mechanics, save changes and bug fixes. Preserve legacy save keys and formats; introduce explicit tested migrations before changing them.
 - Keep starter catalog descriptions honest: species/moves/abilities are example definitions. Do not describe unimplemented combat or effects as playable.
 - Do not add speculative combat engines, ECS frameworks or plugin systems before a concrete mechanic requires them.
+- Follow `docs/ASSETS.md` for Pokémon imports. Keep source pins, hashes and named artist credits; never overwrite authored content with imported reference data.
+- Sprite sheet centers are world roots. White markers locate shadows, not sprite roots. Preserve source frame timing, direction rows, intentional motion and selected shadow masks; do not normalize each pose to its visible bounds.
+- Run `npm run pokemon:check` after asset changes. Only load scene assets at runtime; preserve first-visit offline caching before declaring sprites ready.

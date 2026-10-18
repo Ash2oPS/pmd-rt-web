@@ -35,6 +35,16 @@ function validateDungeon(dungeon: Dungeon, index: number, issues: Issue[]): void
     if (occupied.has(key)) report('collectibles', `Duplicate collectible position ${key}`);
     occupied.add(key);
   }
+  occupied.add(`${dungeon.spawn.x},${dungeon.spawn.y}`);
+  const actorIds = new Set<string>();
+  for (const actor of dungeon.actors) {
+    const key = `${actor.x},${actor.y}`;
+    if (!visited.has(key)) report('actors', `Actor at ${key} is blocked or unreachable`);
+    if (occupied.has(key)) report('actors', `Actor position ${key} overlaps another placement`);
+    if (actorIds.has(actor.id)) report('actors', `Duplicate actor ID: ${actor.id}`);
+    occupied.add(key);
+    actorIds.add(actor.id);
+  }
 }
 
 export function validateContent(input: unknown): Content {
@@ -50,6 +60,7 @@ export function validateContent(input: unknown): Content {
   const abilities = new Set(data.abilities.map((record) => record.id));
   const moves = new Set(data.moves.map((record) => record.id));
   const items = new Set(data.items.map((record) => record.id));
+  const speciesIds = new Set(data.species.map((record) => record.id));
   data.species.forEach((species, index) => {
     species.abilityIds.forEach((abilityId, offset) => {
       if (!abilities.has(abilityId)) issues.push({ code: 'custom', path: ['species', index, 'abilityIds', offset], message: `Unknown ability: ${abilityId}` });
@@ -60,8 +71,12 @@ export function validateContent(input: unknown): Content {
   });
   data.dungeons.forEach((dungeon, index) => {
     validateDungeon(dungeon, index, issues);
+    if (!speciesIds.has(dungeon.playerSpeciesId)) issues.push({ code: 'custom', path: ['dungeons', index, 'playerSpeciesId'], message: `Unknown player species: ${dungeon.playerSpeciesId}` });
     dungeon.collectibles.forEach((entry, offset) => {
       if (!items.has(entry.itemId)) issues.push({ code: 'custom', path: ['dungeons', index, 'collectibles', offset, 'itemId'], message: `Unknown item: ${entry.itemId}` });
+    });
+    dungeon.actors.forEach((entry, offset) => {
+      if (!speciesIds.has(entry.speciesId)) issues.push({ code: 'custom', path: ['dungeons', index, 'actors', offset, 'speciesId'], message: `Unknown actor species: ${entry.speciesId}` });
     });
   });
   if (issues.length) throw new z.ZodError(issues);

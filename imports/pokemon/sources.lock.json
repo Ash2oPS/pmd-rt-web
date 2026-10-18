@@ -1,0 +1,722 @@
+{
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/credit_names.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/credit_names.txt",
+    "sha256": "44c8c3d44716d87811767408b41c10851ec089ec9650d3ff62bd75a1157591f9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/LICENSE.md": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/LICENSE.md",
+    "sha256": "284233a8bc62ac54d878552845ef66ab94b25112e6fc8f902fcdfa6149748c31"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/README.md": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/README.md",
+    "sha256": "a3da413054b0cf19427bf87a1ab1401f153fce9aaa9e27e865b91ef589d37b92"
+  },
+  "imports/raw/pokeapi/pokemon-species-1.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/1/",
+    "sha256": "0841398912abb467d9292255f0ab1dc69ad13a59f30c0a1589525ec43a33909f"
+  },
+  "imports/raw/pokeapi/pokemon-1.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/1/",
+    "sha256": "bb86eb538386e767d6f6d35ae074754d54e9e773d5f6bfd7ca11cc27f0e38aa5"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/AnimData.xml",
+    "sha256": "c7722f5da724f40f35fccabb1135fbd1b70e770b2a38db3d9fbe7643af626162"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Idle-Shadow.png",
+    "sha256": "6785087105a1b704b818b35e0ed6ef94dcdf9b0b5862e4065db01b99611dc7ad"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Idle-Offsets.png",
+    "sha256": "70509c40eb59f9e37477716f941d45a286ca27389b1cfd6785a3632a071b8d3f"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Idle-Anim.png",
+    "sha256": "bae238b6ae50dc97781a03b2210dc3ee1954c9f6207826e49091227bb9c783d1"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Walk-Anim.png",
+    "sha256": "84e8e7a58f68204a47f990becc7e8c324e486e5127557261e8ccbe55e9e979b2"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Walk-Shadow.png",
+    "sha256": "1be89652e291dea28cdb83add389792a1e58e0573a4c891eb54963b8839e630a"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Walk-Offsets.png",
+    "sha256": "df5b701bac6401c90ec71798aee7bba4f4658494d73461355dbbddfb08520045"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Attack-Shadow.png",
+    "sha256": "b1ae42e82b7e0ce7e9252a894c5cf74122611c170bbddbc9d75d994a067bd2c5"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Attack-Anim.png",
+    "sha256": "f8b6b5fc9132d9fb701741086bacfc0e80d0a8d2b45473abb425d4c6b427a252"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Attack-Offsets.png",
+    "sha256": "6d0a0c1c7c8703f449d38e699cf89dd9eb561b990ceb8c6739292fc961239e33"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Hurt-Anim.png",
+    "sha256": "cbafac2615cfa0023288e2b2d01ba8c180a54164aa49430a06acd83756880976"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Hurt-Shadow.png",
+    "sha256": "c598a4c3fc9b723e5936bd5ed74086c34af796aa188d84466b4472b3fb8eb99c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/Hurt-Offsets.png",
+    "sha256": "f8a2969eddd6f415be51cfabcb7244571101e3f3715cb32019d525c54c11e268"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0001/credits.txt",
+    "sha256": "2f679733e9ac56ed51dd2cb1efd9376abc3b69f1993cc1d5f1fadec402faec47"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0001/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0001/credits.txt",
+    "sha256": "1035f39e8857b4c64dcaaf79b7cb7ae40a2886e7c8be076201fd12b99fecf467"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0001/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0001/Normal.png",
+    "sha256": "65fa5e2a0e655aff61e6b1bac0b4d8aab3d72496a7f0609761e3e9977ab8fa96"
+  },
+  "imports/raw/pokeapi/pokemon-species-4.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/4/",
+    "sha256": "a2313515bb25a69e00158dfc53ec265e27d8c4450589ad4645f58906740262de"
+  },
+  "imports/raw/pokeapi/pokemon-4.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/4/",
+    "sha256": "144639a8a4d1d8f7a64ec20bf2943bdcae19d56a3b14e61b23c05f9d45244bd8"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/AnimData.xml",
+    "sha256": "d14356987aafc0bc86c2bdd46fd026a479499032056dad58a0c8f13fbf0686ff"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Idle-Anim.png",
+    "sha256": "304a2a2d7f07e6a81bec42270b585b57d4ce0af78b20a6905a1bc704e2415350"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Idle-Shadow.png",
+    "sha256": "1ec150c932f208ce21ceccbfc72b21ef85a17cd42133734ce2a2e0638c49eed7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Idle-Offsets.png",
+    "sha256": "9e22ac2a6bf1010be3fd10d2bbdd8f830a81492e0d70232250015211be044340"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Walk-Offsets.png",
+    "sha256": "ecd149974509ba0afaeb4297dce244f9db80f9f2b237e3b04957354d4edd72ae"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Walk-Shadow.png",
+    "sha256": "986ed7e027135db592e146107bff26dac9ab00e787f7e4002bcca92696fc54b3"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Walk-Anim.png",
+    "sha256": "3e120c93b743fe30d10766114d54e230e851a43e4ffc174bcb7eb424a452a05a"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Attack-Anim.png",
+    "sha256": "4f98b662bdbe7d2e91c765d521f03509bad7500caf7d4f85c8566257cda13894"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Attack-Shadow.png",
+    "sha256": "bda8ebb413b23215d7346740eea9bc860a8dd859f084273e752110bc2d35ce2f"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Attack-Offsets.png",
+    "sha256": "89c974114f83393a1576417e7d5d52de2f440f8bb2b011150d616a8a41b0246f"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Hurt-Anim.png",
+    "sha256": "86e742d76d27fede779bde33ab956799de900361cf842946086c25eac2042ad1"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Hurt-Offsets.png",
+    "sha256": "71d95e578ab36bb8c2b07f4de23638ae4c546a795f4e27eb1cb53599c64ec4a2"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/Hurt-Shadow.png",
+    "sha256": "df7815c9541ff2a2416b89ee31260fb0bb23e9f9c037457468f59cf976f1d0bb"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0004/credits.txt",
+    "sha256": "cc37827c20b6eff5f8fb6218cda14d008257980c4db66d9ef49527484bb7e2cf"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0004/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0004/credits.txt",
+    "sha256": "48e7f167869a64f68429b1808b791469b78d65f15d9dadd0055cd1460da119fa"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0004/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0004/Normal.png",
+    "sha256": "19ece460b8336a72fba5c8615ee1746bb70aa357fd3d9dd5500cbb54cf7109f5"
+  },
+  "imports/raw/pokeapi/pokemon-species-7.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/7/",
+    "sha256": "e6e025716c0b323d1048aab287db084b4f5773ead4dd07e6c2e14ddca7d68985"
+  },
+  "imports/raw/pokeapi/pokemon-7.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/7/",
+    "sha256": "fd977577e71b52916cadcae2bcf1366a609f3b4894d95b536d1a85c34da98e9c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/AnimData.xml",
+    "sha256": "cd5137917a3d4fcf7131ad9b395edae4c0cc69a926c1ecfcd0e3b3cbb173bfc7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Idle-Anim.png",
+    "sha256": "d796b3b94475e4e2a5089bf10f392559989d4104d29c2fe387cfe003bcba5447"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Idle-Shadow.png",
+    "sha256": "3e55af3971cd731d2afd16aecc8c4a8740bee977600cedd4b6ae689aa7e836f2"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Idle-Offsets.png",
+    "sha256": "cb097f6680f708a232e44131828e29075913a35fd1e35d5f8006386721f134ce"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Walk-Anim.png",
+    "sha256": "0e71a8bf34299cf73e59eccebc0b9fc16dfb9bd9554d8009b2323c8e3c00504f"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Walk-Shadow.png",
+    "sha256": "986ed7e027135db592e146107bff26dac9ab00e787f7e4002bcca92696fc54b3"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Walk-Offsets.png",
+    "sha256": "fbe187e0e8a00d041c380ec57f9c0ebdb6a5ad6af00f91343d8291190bb18231"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Attack-Offsets.png",
+    "sha256": "dfe408e27558206e010c3cb9717b4cc8a38b34275adb62f0c3539046251fb461"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Attack-Shadow.png",
+    "sha256": "7ccdab0a54973ad8dfab7f0c2d78a641291e58cba72bb71ce2d53a89aab454e6"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Attack-Anim.png",
+    "sha256": "30f303366cf48558bed41d2a65fce9c9bf25d1cef57b3020e317b881af655ddb"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Hurt-Anim.png",
+    "sha256": "b08cd8679617df5ca9d1e87ed773a8b3265eae46ef945f4bec2c9153b645eceb"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Hurt-Shadow.png",
+    "sha256": "c598a4c3fc9b723e5936bd5ed74086c34af796aa188d84466b4472b3fb8eb99c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/Hurt-Offsets.png",
+    "sha256": "0877e1e6f038d0f484093d949873109eedf228714d1295dbcbac4c1b81a39c8a"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0007/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0007/credits.txt",
+    "sha256": "390d9783020faddb0df2144a3e1b74975783567840618afb18d926dbd63401c5"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0007/credits.txt",
+    "sha256": "b21862e27005032445b4c380713439f4908e72fbd2c6f881c9585931b03af0fb"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0007/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0007/Normal.png",
+    "sha256": "3d3f7f82309d1e422b4eedf689979584d70144921fa712daa06727e70731212c"
+  },
+  "imports/raw/pokeapi/pokemon-species-25.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/25/",
+    "sha256": "a2ed8553154a8436bebdfa8e96df529e9e046b21badbba333ebf0eb860cc3358"
+  },
+  "imports/raw/pokeapi/pokemon-25.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/25/",
+    "sha256": "496f79f6858cb31ce6318c6b0c1eee946af8968d0cbb4e3b048e8ec77b11e078"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/AnimData.xml",
+    "sha256": "0666eaa460b7e702dc6c6ecf4cf5095ca652052d4bd92ae4e859da2cd42b2418"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Idle-Anim.png",
+    "sha256": "f1021ac60879698076fdb80705f893d0646d2b9ddf2bdb8c81803fbb7e87ad86"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Idle-Offsets.png",
+    "sha256": "c2369b0b4f0e2b1882f58cc4ef65345780890228bfd7631be8156267d8474c53"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Idle-Shadow.png",
+    "sha256": "9b8ac64a8539e9770055aa7078289ab355e5695a599ce371c731114dca24e6de"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Walk-Shadow.png",
+    "sha256": "1ec150c932f208ce21ceccbfc72b21ef85a17cd42133734ce2a2e0638c49eed7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Walk-Anim.png",
+    "sha256": "5cfc2c775708c28c11f98e027e883261ab3ae4276e51621eec11c979598651f9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Walk-Offsets.png",
+    "sha256": "386f0d396c736312a871bb04604bf63f8b70b0decee8c146cc363ba1f09df836"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Attack-Anim.png",
+    "sha256": "06822d01f15ebb2c4f2cff9e94bb4ee615b8d25b41527c9297b80d81576be857"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Attack-Shadow.png",
+    "sha256": "8462e499f657df2640738a69cb624b5bca246a17854dd17731fdffedb81e3255"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Attack-Offsets.png",
+    "sha256": "2bbe49b2c846f3cfb84693a177ed30791340d636197b3e3cc7a295e5cbf888ba"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Hurt-Anim.png",
+    "sha256": "4f096cee94aab6e2c444e6e5a9e77680858d81ad90ddaded05f7e2fea69e3776"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Hurt-Shadow.png",
+    "sha256": "ac6de71c1c2d68f7b57c3628d73cabee468c84be9da37305bcf53ed6999365a5"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/Hurt-Offsets.png",
+    "sha256": "618547de1ce2dc5d696787c8731b3c30222728f6c4ae87a91223b3c325648a8e"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0025/credits.txt",
+    "sha256": "e5868696fdb34c89de896f1b6b0c4e7c874281ce8de8e1853186e44b337860e9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0025/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0025/credits.txt",
+    "sha256": "6056e9ac9ad5e502421b9bb78afa1d6f8517affb15f090c2ecb6984ab2392601"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0025/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0025/Normal.png",
+    "sha256": "d8b4b0ca1243cc868cf628a4b3bda9f57b99d05dbf5be372c17c1f3a5c255eba"
+  },
+  "imports/raw/pokeapi/pokemon-species-133.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/133/",
+    "sha256": "b397af6301a7ac885249cdd9221141827d3d5b915b5a6a432e61720e30a5d563"
+  },
+  "imports/raw/pokeapi/pokemon-133.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/133/",
+    "sha256": "c14bc4bd2ce36e57bb72634c8fc474de9b06a137901046aa75b322175078b95e"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/AnimData.xml",
+    "sha256": "f33b22fb64b51cd4f5868df7433ceb4fbb0c58606364ba3faa7f326960452b28"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Idle-Anim.png",
+    "sha256": "1dec7d7524844f35a8f7c8c0574d9741edad6cb319a980a5097a825a58bbe4de"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Idle-Shadow.png",
+    "sha256": "011747c99b3240c8032a6db3df2589fdcf15055e0aa918e6212d9f83c1d79934"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Idle-Offsets.png",
+    "sha256": "32893143fd1eae79830feb224ea42e2036e30d08418ef8160430186097a633be"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Walk-Shadow.png",
+    "sha256": "8af1557b7ec889e911360b32ed0344cd234e916da8897ef72eb9e1055948bd6a"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Walk-Offsets.png",
+    "sha256": "11ffc19f9f4965e57f44b684857660a12dd8a0a123861421450780e9ddcbe4b0"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Walk-Anim.png",
+    "sha256": "037329dca93572a20115e679f10a85d4981b7cb961b6c8f0fd9c78745ba98cc0"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Attack-Anim.png",
+    "sha256": "bbb12fdef01b8c5ab3e50a036a3f2c53813691c131f4720058823338712ff0d6"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Attack-Shadow.png",
+    "sha256": "024ea5cdcee9a4118879c0f66f34954ed1633a6e9581cda4d301a7cf88f5a94d"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Attack-Offsets.png",
+    "sha256": "9f8c40c902c88f9c4b2eb847b53f736b09aaa59ed29bde2328c34013ae22c857"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Hurt-Anim.png",
+    "sha256": "88acd2fcdb83a00dd529c10b350e29eecc24af9c79ae96ba2e8d5430b720ca48"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Hurt-Shadow.png",
+    "sha256": "6006903f76b46552bd5f391130a9bc1f63407b771d4e9a57a2145e75267b9ea0"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/Hurt-Offsets.png",
+    "sha256": "baa5f86c5d384d6a469991881d4f56aa74e5f39e6dd2370aab2858baa0aa22a7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0133/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0133/credits.txt",
+    "sha256": "fbedf9c61160874d32d5677774e354a34d574117b0891a2469ebbad57b3f35d7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0133/credits.txt",
+    "sha256": "b60cb07a46c6f701f6098300f2860e09e5619dd71eef529fd4643f22536942ca"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0133/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0133/Normal.png",
+    "sha256": "daa8255f13f8c2cf8abd99ebf8b54a862ba018f6fea53b754367ceb3c8d60ab5"
+  },
+  "imports/raw/pokeapi/pokemon-species-39.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/39/",
+    "sha256": "9582f212400448df48a9ace8bc125fc202e5291a072436114c6794cad21dfa03"
+  },
+  "imports/raw/pokeapi/pokemon-39.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/39/",
+    "sha256": "eeaa5e077ea2140639e3fc8e88e184d7e99291da6e2264ebab730c5307c24c03"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/AnimData.xml",
+    "sha256": "e0f1bb73a4121a3434a4e1f074a96e6c447f79611ba8dac5e14774d05f3531d8"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Idle-Anim.png",
+    "sha256": "c3d863ca58d1a2bb37b5b6413809f5760b98b8879abc9fa4b56e860d62fe90a9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Idle-Shadow.png",
+    "sha256": "ff99ca7deb380ed3d9bfea9c38922f293ddb62414ff98e15d8971aa9ca307e39"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Idle-Offsets.png",
+    "sha256": "22e8f62675049087c0691639298257995a2ab6ebaff31ce0bdc9ee546707f3c9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Walk-Anim.png",
+    "sha256": "ac5b6bcd172e6dbf6c6dd9978d4b69c093f6d540f9fa41050212c6aa3946f21c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Walk-Shadow.png",
+    "sha256": "557429478f47414664c1cf93807ff2b949e725b3916d8ccc2c88f6109954d959"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Walk-Offsets.png",
+    "sha256": "1e206716f034760ebe9def02f3b210dd33d10484ecd95d914df2a7e7a3a7aa00"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Attack-Anim.png",
+    "sha256": "b772c33f6e8253056d0b74e8de7433c3f3cf47d10fce928919c5bf2d642dac04"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Attack-Shadow.png",
+    "sha256": "7407ed45cdcb6d864d62bffae3ec013719630ee4db8ba197abb42a14a2ff6a23"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Attack-Offsets.png",
+    "sha256": "bbf469dd936d90933150ba3728fa776dec189fc42b42d6befe560e81a782fd20"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Hurt-Anim.png",
+    "sha256": "aff49b2ffab49c9d83db38da026a8d4ee9ea766ee3144c2c3574617b22c9f2b7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Hurt-Shadow.png",
+    "sha256": "698903e1ad774ea45deaeb2b33d7e7c26cad316b95c9bb6b6ff57cd3f31b4a14"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/Hurt-Offsets.png",
+    "sha256": "8bf421d78259ef7fda4f2b054b4e18797ecb61b453081b617229825a554aeddf"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0039/credits.txt",
+    "sha256": "8150e6b196bb7687d65d9d0d2b0791e3f26b9ef80bfbadd48b50292aaffb5f9c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/credits.txt",
+    "sha256": "06608d5aa368c155848955005c6e549cb1cc27648444298a9951cc3eb90de277"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/Normal.png",
+    "sha256": "2aa672368217d7ac9d466276db868e90f937ddf7b9dff676ca7455aaa20cd6d8"
+  },
+  "imports/raw/pokeapi/pokemon-species-35.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/35/",
+    "sha256": "290d21e42e4027e298d5e82e6075ff9350bf5271fd16e6a8e48f8456c16b142c"
+  },
+  "imports/raw/pokeapi/pokemon-35.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/35/",
+    "sha256": "e080a8d6dd24bc223425d799616f54cbefa995bd823f7e689dd88f7c9e916474"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/AnimData.xml",
+    "sha256": "9b837d210d30575ba8e26347e153e82a7604a6a0952ccd5087ac17fe00dc3f7b"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Idle-Shadow.png",
+    "sha256": "d5beab8011ba1f0d5b7502d2e1acca4d7774de0faa2966494463c6fc81d0921e"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Idle-Anim.png",
+    "sha256": "6330cffab1a8439a710e5489779ec97f118441c2cac68a87d6c0b06ed988b7a7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Idle-Offsets.png",
+    "sha256": "52b9d985a1ff0c493c083105fcae8c16c2945cbffa41d612cf2a9264b5872c4b"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Walk-Shadow.png",
+    "sha256": "e07f274100f92c94a33e4d1d11c81af02b0273cd5c3a2d472b2f60fcc203ed96"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Walk-Offsets.png",
+    "sha256": "7b7bfd21ad01ed6eb5b31ee7e90743f9e390b46ac2f617a7a32e45014cd174d2"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Walk-Anim.png",
+    "sha256": "44f655d401567a7b9e409078d1b104eca91143efe9144f86c35bae94b5c8a83d"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Attack-Shadow.png",
+    "sha256": "cfd7afaea8763b2bed4fc8179ab407c80748ee076ed985adcf1c09f66a282905"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Attack-Offsets.png",
+    "sha256": "2c24bf11caa3748da1f8455e2e54f0528e9b39253683bd44ddba1361cf3df6d4"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Attack-Anim.png",
+    "sha256": "3ad493a05c22a89e7660ebe6c7d3752bca0b670c8461b19b895cc3d4fbd56fd3"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Hurt-Anim.png",
+    "sha256": "44deb0305f909793d8c3f85971d8af4e7e7afeb5dadf94b1dfdba5af84d3e820"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Hurt-Shadow.png",
+    "sha256": "27460f4e95792f39094074aaddec0c52b77358c4be98ca5fbfcfdcaacc074877"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/Hurt-Offsets.png",
+    "sha256": "88dae86c2a678711a6e37d0513905f21ec4b92849f9d6052227e4bfce77382de"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0035/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0035/credits.txt",
+    "sha256": "6b5faf6c0d82756f770651c3ef709055a642ea1165d3e0b0b5dd618fec2ca876"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0035/credits.txt",
+    "sha256": "3cbf35c324ff57c0d0e8a5485328c1c7c2eefd979e41384c93156c31d2f24095"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0035/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0035/Normal.png",
+    "sha256": "7aaae3c9a92a922d0671033997cfbcd854976afca53b355f6a549c610846ae35"
+  },
+  "imports/raw/pokeapi/pokemon-species-32.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/32/",
+    "sha256": "0bf0f77b2d48dfc5101aeeb7455b61a60816e795980ab306dca5ea663526e242"
+  },
+  "imports/raw/pokeapi/pokemon-32.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/32/",
+    "sha256": "e91854ff0fa7ab9734b96b2936a3475309fa221ea2c0ee795520567c1726ec49"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/AnimData.xml",
+    "sha256": "a675d6e5571b1a3c8d42097f8641add76252dbd6629ac5f9ad4b1d3dcaab54be"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Idle-Shadow.png",
+    "sha256": "3663469be3cd3881d44f891f3c05fe6c84d2f5122c92587509664872783b1c5f"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Idle-Anim.png",
+    "sha256": "0c41f6e99f4418645f35cfce79a5002bfc6af245f3060a40f0c718223423d768"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Idle-Offsets.png",
+    "sha256": "8ad4911be78910831af870e37ee45e7ffa0da0107cea51716cc55701f5fbbef9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Walk-Shadow.png",
+    "sha256": "b91f67009cfe0a2192980b5d594f327a6d19e631ab97c702fb2c6b9088d2c85e"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Walk-Anim.png",
+    "sha256": "526d8779bf170b841fde3b324b17b83d4bc0ddc70fb46b07b6b911060ecc1ee7"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Walk-Offsets.png",
+    "sha256": "e8c21b7d4ef417faed8ff2e0dbec92be4c5c7bd002c77de6998b03ed2156c917"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Attack-Offsets.png",
+    "sha256": "7b70af70f61f082628ad91295cc8772b0572b12bfc0462400c798b31be3ead0d"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Attack-Anim.png",
+    "sha256": "7e727f27d3f7ddf0dc40665372aa44b509e0eccf84f07c11440ddb1e01aad088"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Attack-Shadow.png",
+    "sha256": "2a162f27e288c27f41c68a71882d20ebbd98a5cebb70514011ae6e59f1b54083"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Hurt-Shadow.png",
+    "sha256": "77efa39429ea5bd928ff1865f3039982c9d6152b457d97c2055abde373da99a5"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Hurt-Offsets.png",
+    "sha256": "82e236e23be8081cbdb25e87ec901d2c635d17eb1718e0cd6fac4edc2e784957"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/Hurt-Anim.png",
+    "sha256": "7ee7d5bc7bb2cbed7f645a0fa362c5b75813a1dcb1dcb68a8edb59426df7e987"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0032/credits.txt",
+    "sha256": "9dcaa1ec7a3a13fa91f6ab26e612d0fc329c1acf57760bb1eb8981cf1e0c3393"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0032/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0032/credits.txt",
+    "sha256": "996b8f6ce18a510227e9c3236c4874da226ae8764a7090ae3ad16c6835d128ba"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0032/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0032/Normal.png",
+    "sha256": "a3409a399ccf69008f46fbed196aada6c293d0a694c0a376989c94e465e09e65"
+  },
+  "imports/raw/pokeapi/pokemon-species-29.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/29/",
+    "sha256": "f2f5437ff002d697d45458b375b447d7d99618b31b9984eb61e0b6287ab724fc"
+  },
+  "imports/raw/pokeapi/pokemon-29.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/29/",
+    "sha256": "d707b87468d5368484d603141230acf2bd635ae4ad9412cedda8eeef27ea5598"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/AnimData.xml",
+    "sha256": "55182fa83c9f71dcf4f3b41025518d0a68fc1cd5d606ff50bdf55f46a6e52d40"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Idle-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Idle-Offsets.png",
+    "sha256": "90cfa5d34d6616779128b0f8bfabc595659b935fac7b48c08d9f1d7efed962ee"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Idle-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Idle-Anim.png",
+    "sha256": "7fad50149def4b8e7e17fc39c445a1eda624aac518e3febaa2b2d4a92dd0efb3"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Idle-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Idle-Shadow.png",
+    "sha256": "b07bb48ae056f1c6f015c4c0d182cf7325ae0db88a15ab3bcf089e86e0dee1de"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Walk-Shadow.png",
+    "sha256": "343239379e0e3d4088ad100ea0cd00963d2672b9d784aac4dadc478aade5974c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Walk-Offsets.png",
+    "sha256": "01d35c3264cf3e11e33336fb4abc2a8ed38f806ea2f89617a96db847fb6816a5"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Walk-Anim.png",
+    "sha256": "dc18d551e31e96fa2c73461c052c243a621df088e54e93c978ba876e8cb20c42"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Attack-Offsets.png",
+    "sha256": "87204faa07d5dc0d2cc57d5ad721607020be267b247816c70be1cef1fb7dec79"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Attack-Shadow.png",
+    "sha256": "01b5cc377502b9f1143ea657880fdfe8f42b7a5667efd62f7f88d629b1deeed0"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Attack-Anim.png",
+    "sha256": "2aadacb375152c48349304f9b9265aedf1eab55c36182479764b40461857d395"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Hurt-Anim.png",
+    "sha256": "f5326980a4b95359df6045d98a967b01b200daf2ba34f67624ff6b270231639a"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Hurt-Shadow.png",
+    "sha256": "c598a4c3fc9b723e5936bd5ed74086c34af796aa188d84466b4472b3fb8eb99c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/Hurt-Offsets.png",
+    "sha256": "a1ef7e1ca427b2c88cf898b84ace034877c723288a706c87f7d38ecabd1d3fa6"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0029/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0029/credits.txt",
+    "sha256": "aa2f67fe5883b8960597326e84aee42bef09e9ea3f70b0c03ca1f573a5b7c006"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0029/credits.txt",
+    "sha256": "6a68ac9f77a6597bdbdd7e74e64b267f5d79490dc256b74c93a41a382a426a91"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0029/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0029/Normal.png",
+    "sha256": "e18f339de0d03de00f5e41eb69350c694d045ce7befb061eb35b7b8ef2385337"
+  },
+  "imports/raw/pokeapi/pokemon-species-15.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon-species/15/",
+    "sha256": "cc7b4619df07be59ccfe172f79d9022fb78bd40750bd57b803b5d9d1733df89f"
+  },
+  "imports/raw/pokeapi/pokemon-15.json": {
+    "url": "https://pokeapi.co/api/v2/pokemon/15/",
+    "sha256": "e39dbbcb5f57804df2329b234cb2a45c3c7f1890be10e72143cafe3e4c17a690"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/AnimData.xml": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/AnimData.xml",
+    "sha256": "99a360f037affb80ee03424b9fa4f301c4d629850543a2a8cd2c2bd61cfb4eca"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Walk-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Walk-Anim.png",
+    "sha256": "832dfdb59cdd0cd8a17671e077266028198d9497fcc0c31f5016f3abe4ddb0b0"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Walk-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Walk-Shadow.png",
+    "sha256": "0843ac7aa314a5a302a0c1998ceb6f73720007a70ca7d3e0684e86d5e608f0c3"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Walk-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Walk-Offsets.png",
+    "sha256": "924b587170a6cdd62aac1ce587e8d3e27819d9f14063292bc15c2d6483d4ed2c"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Attack-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Attack-Anim.png",
+    "sha256": "ce93e28493426109af24ff6bd1b61d37f26fab406122967e44481e128da5474f"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Attack-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Attack-Offsets.png",
+    "sha256": "6effa3222f6055b4ac0f70be2b70460b9aeea1a5223e5275abb5b113993535f0"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Attack-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Attack-Shadow.png",
+    "sha256": "98977bdf4805124ce7dc7a1417bd776b5f0a0ff829dc4d952d3a2c168d41d007"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Hurt-Shadow.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Hurt-Shadow.png",
+    "sha256": "59e15793497a8122091a82c72c5a51beee94f1f6d7103dfedfb2604d57a02f51"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Hurt-Anim.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Hurt-Anim.png",
+    "sha256": "b4972eededcb5758b6cb6c8dc189388c63aaa94954baf51a1309a9bce3f51688"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Hurt-Offsets.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/Hurt-Offsets.png",
+    "sha256": "9a9027844994c22fc24d20e966f5ec80b535bef98858a933e8df56fba02a61c9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0015/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0015/credits.txt",
+    "sha256": "512196632b51893f25800d309d1b9134a83a41ede48940cf096853dee1af41e9"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/sprite/0015/credits.txt",
+    "sha256": "1a9a06986a6895ec217513479bdf125d483c010624d63117aabad77cc2011dff"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0015/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0015/Normal.png",
+    "sha256": "c7b8a8bbc62ac0e6cf5eebb18b1ce87f5b054c0d4f9afbdcd790fbb62ee6771e"
+  }
+}

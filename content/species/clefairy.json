@@ -1,0 +1,25 @@
+{
+  "id": "clefairy",
+  "label": "Mélofée",
+  "dexNumber": 35,
+  "types": [
+    "fairy"
+  ],
+  "stats": {
+    "hp": 70,
+    "attack": 45,
+    "defense": 48,
+    "specialAttack": 60,
+    "specialDefense": 65,
+    "speed": 35
+  },
+  "abilityIds": [
+    "cute-charm"
+  ],
+  "learnset": [],
+  "spriteId": "clefairy",
+  "source": {
+    "provider": "pokeapi",
+    "pokemonId": 35
+  }
+}

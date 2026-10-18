@@ -38,5 +38,80 @@
       "y": 11,
       "itemId": "light-shard"
     }
-  ]
+  ],
+  "actors": [
+    {
+      "facing": "down-right",
+      "x": 2,
+      "animation": "Idle",
+      "speciesId": "bulbasaur",
+      "id": "bulbasaur-visitor",
+      "y": 3
+    },
+    {
+      "facing": "down-left",
+      "x": 7,
+      "animation": "Idle",
+      "speciesId": "charmander",
+      "id": "charmander-visitor",
+      "y": 3
+    },
+    {
+      "facing": "left",
+      "x": 9,
+      "animation": "Idle",
+      "speciesId": "squirtle",
+      "id": "squirtle-visitor",
+      "y": 4
+    },
+    {
+      "facing": "down",
+      "x": 5,
+      "animation": "Idle",
+      "speciesId": "pikachu",
+      "id": "pikachu-visitor",
+      "y": 4
+    },
+    {
+      "facing": "up-right",
+      "x": 2,
+      "animation": "Idle",
+      "speciesId": "eevee",
+      "id": "eevee-visitor",
+      "y": 6
+    },
+    {
+      "facing": "up",
+      "x": 8,
+      "animation": "Idle",
+      "speciesId": "clefairy",
+      "id": "clefairy-visitor",
+      "y": 6
+    },
+    {
+      "facing": "left",
+      "x": 10,
+      "animation": "Idle",
+      "speciesId": "nidoran-m",
+      "id": "nidoran-m-visitor",
+      "y": 5
+    },
+    {
+      "facing": "up-right",
+      "x": 6,
+      "animation": "Idle",
+      "speciesId": "nidoran-f",
+      "id": "nidoran-f-visitor",
+      "y": 7
+    },
+    {
+      "facing": "down-left",
+      "x": 9,
+      "animation": "Idle",
+      "speciesId": "beedrill",
+      "id": "beedrill-visitor",
+      "y": 2
+    }
+  ],
+  "playerSpeciesId": "jigglypuff"
 }

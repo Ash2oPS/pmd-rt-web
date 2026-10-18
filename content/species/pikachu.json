@@ -7,11 +7,11 @@
   ],
   "stats": {
     "hp": 35,
-    "attack": 40,
-    "defense": 35,
-    "specialAttack": 40,
-    "specialDefense": 35,
-    "speed": 45
+    "attack": 55,
+    "defense": 40,
+    "specialAttack": 50,
+    "specialDefense": 50,
+    "speed": 90
   },
   "abilityIds": [
     "static"
@@ -25,5 +25,10 @@
       "level": 3,
       "moveId": "growl"
     }
-  ]
+  ],
+  "spriteId": "pikachu",
+  "source": {
+    "provider": "pokeapi",
+    "pokemonId": 25
+  }
 }
