@@ -1,4 +1,4 @@
-import { field } from "../content/catalog.ts";
+import { field, movementSettings } from "../content/catalog.ts";
 import { restore } from "../domain/state.ts";
 import { createStorage } from "../platform/storage.ts";
 import { downloadSave, toggleFullscreen } from "../platform/files.ts";
@@ -21,11 +21,11 @@ import { Runtime } from "./runtime.ts";
 import { VERSION } from "./config.ts";
 import { setupPokemon } from "./pokemon.ts";
 import { setupInputPreferences } from "./input-preferences.ts";
-import { digitalMovement } from "../platform/input/movement.ts";
+import { selectMovement } from "../platform/input/movement.ts";
 
 const toast = createToast(),
   storage = createStorage(field),
-  runtime = new Runtime(field, storage.state);
+  runtime = new Runtime(field, storage.state, movementSettings.playerMaxSpeed);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const pokemon = setupPokemon(field, () => runtime.velocity);
 const renderer = createRenderer(
@@ -48,8 +48,8 @@ function clear() {
 function hud() {
   updateHUD(runtime.state, field.collectibles.length, storage.available);
 }
-function save(manual = false) {
-  const saved = storage.save(runtime.state);
+function save(manual = false, replaceInvalid = false) {
+  const saved = storage.save(runtime.state, { replaceInvalid });
   element("save-status").textContent = saved ? "Enregistrée" : "Indisponible";
   if (manual)
     toast(
@@ -165,7 +165,7 @@ element<HTMLInputElement>("import-file").addEventListener(
       const state = restore(await file.text(), field);
       if (!state) throw new Error("format");
       runtime.replace(state);
-      const saved = save();
+      const saved = save(false, true);
       hud();
       toast(
         saved
@@ -216,8 +216,10 @@ function update(dt: number) {
   const local = controls.actions();
   runtime.updateInput(new Set([...local, ...actions]), dt, act, menu.paused);
   if (menu.paused) return;
-  const keys = digitalMovement(local);
-  const result = runtime.advance(Math.hypot(keys.x, keys.y) ? keys : pad.movement(), dt);
+  const movement = selectMovement(local, pad.movementSelection());
+  const result = runtime.advance(movement.vector, dt);
+  pad.diagnostics.snapshot.movement = { ...movement, maxSpeed: runtime.maxSpeed,
+    resolvedSpeed: Math.hypot(runtime.velocity.x, runtime.velocity.y) };
   pokemon.update(dt);
   saveElapsed += dt;
   hudElapsed += dt;
@@ -245,7 +247,7 @@ window.render_game_to_text = () =>
     mode: menu.paused ? "menu" : "play",
     player: runtime.state.player,
     steps: runtime.state.steps,
-    movement: { ...runtime.velocity, deadzone: pad.deadzone },
+    movement: { ...runtime.velocity, deadzone: pad.deadzone, ...pad.diagnostics.snapshot.movement },
     collected: runtime.state.collected,
     crystals: field.collectibles.filter(
       (_, i) => !runtime.state.collected.includes(i),
@@ -279,7 +281,7 @@ document
   .forEach((node) => (node.textContent = `BUILD ${VERSION}`));
 if (storage.invalidSave)
   setTimeout(
-    () => toast("Sauvegarde illisible. Une nouvelle exploration commence."),
+    () => toast("Sauvegarde illisible conservée. Partie temporaire : exporte ta progression ou importe une sauvegarde valide."),
     500,
   );
 setupOffline(

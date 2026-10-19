@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "const": "movement"
+    },
+    "playerMaxSpeed": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 15
+    },
+    "relativeSpeedExponent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "minSpeedRatio": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 5
+    },
+    "maxSpeedRatio": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 5
+    },
+    "pursuitMultiplier": {
+      "type": "number",
+      "minimum": 0.01,
+      "maximum": 2
+    }
+  },
+  "required": [
+    "id",
+    "playerMaxSpeed",
+    "relativeSpeedExponent",
+    "minSpeedRatio",
+    "maxSpeedRatio",
+    "pursuitMultiplier"
+  ],
+  "additionalProperties": false
+}

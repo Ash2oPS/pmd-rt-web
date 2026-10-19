@@ -33,6 +33,8 @@ Starter effect IDs describe planned behavior. No combat/effect engine exists yet
 
 `domain/movement.ts` owns continuous tile-center coordinates, circular collision, swept movement, wall sliding, eight-way facing and pickup proximity. `platform/input/movement.ts` preserves analog magnitude with a radial deadzone and normalizes digital diagonals. The app advances movement and independent `domain/roaming.ts` actors only while play is active. Rendering sorts actors and the player by vertical position. NPCs collide with terrain and remain non-solid to other creatures; no combat or creature-pushing mechanic exists. Deadzone preferences are separate from remaps. Blur clears movement and requires stick release without pausing the world.
 
+`content/settings/movement.json` defines the player's species-independent maximum speed and the bounded relative Speed-stat curve. `domain/speed.ts` resolves NPC speed relative to the player's stat and maximum, with a separate authored roaming behavior multiplier. Stick deflection changes only actual player movement. Active analog axes take precedence over duplicated default digital signals; explicit custom mappings remain active. Diagnostics expose the movement source, raw magnitude and actual resolved player speed.
+
 ## Size and growth
 
 TypeScript modules above 350 lines fail; 300 produces a warning. Split by responsibility and change frequency, not arbitrary line ranges. Keep styles focused as well. Generated manifests may exceed the line budget; handwritten safety and dependency checks still apply.

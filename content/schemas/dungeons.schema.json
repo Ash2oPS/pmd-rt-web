@@ -130,9 +130,9 @@
                 "minimum": 0.5,
                 "maximum": 6
               },
-              "speed": {
+              "behaviorMultiplier": {
                 "type": "number",
-                "minimum": 0.2,
+                "minimum": 0.01,
                 "maximum": 2
               },
               "idleMinSeconds": {
@@ -148,7 +148,7 @@
             },
             "required": [
               "radius",
-              "speed",
+              "behaviorMultiplier",
               "idleMinSeconds",
               "idleMaxSeconds"
             ],

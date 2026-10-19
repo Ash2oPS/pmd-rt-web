@@ -1,0 +1,8 @@
+{
+  "id": "movement",
+  "playerMaxSpeed": 3,
+  "relativeSpeedExponent": 0.5,
+  "minSpeedRatio": 0.6,
+  "maxSpeedRatio": 1.6,
+  "pursuitMultiplier": 1
+}

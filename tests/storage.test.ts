@@ -29,3 +29,34 @@ test('unavailable storage and malformed imports cannot destroy live progress',()
   const invalid=createStorage(world,{getItem:key=>key==='pmd-field-save-v1'?'bad JSON':null,setItem:()=>{}});
   assert.equal(invalid.invalidSave,true);
 });
+
+test('rejected saves survive automatic and manual saves until an explicit valid import',()=>{
+  for (const original of ['bad JSON', JSON.stringify({version:3,progress:'future data'})]) {
+    const data=new Map([['pmd-field-save-v1',original]]);
+    const storage={getItem:(key:string)=>data.get(key)??null,setItem:(key:string,value:string)=>{data.set(key,value);}};
+    const session=createStorage(world,storage);
+    assert.equal(session.invalidSave,true);
+    assert.equal(session.available,false);
+    for (let attempt=0;attempt<3;attempt++) assert.equal(session.save(session.state),false);
+    assert.equal(session.saveMapping(session.mapping),true);
+    assert.equal(data.get('pmd-field-save-v1'),original);
+    assert.equal(createStorage(world,storage).invalidSave,true);
+    assert.equal(session.save(session.state,{replaceInvalid:true}),true);
+    assert.equal(session.invalidSave,false);
+    assert.equal(session.available,true);
+    assert.equal(session.save(session.state),true);
+    assert.deepEqual(createStorage(world,storage).state,session.state);
+  }
+});
+
+test('failed reads and failed replacements preserve the original save protection',()=>{
+  let writes=0;
+  const unreadable=createStorage(world,{getItem:()=>{throw new Error('read denied');},setItem:()=>{writes++;}});
+  assert.equal(unreadable.save(unreadable.state),false);
+  assert.equal(unreadable.save(unreadable.state,{replaceInvalid:true}),false);
+  assert.equal(writes,0);
+  const rejected=createStorage(world,{getItem:key=>key==='pmd-field-save-v1'?'bad JSON':null,setItem:()=>{throw new Error('write denied');}});
+  assert.equal(rejected.save(rejected.state,{replaceInvalid:true}),false);
+  assert.equal(rejected.invalidSave,true);
+  assert.equal(rejected.available,false);
+});

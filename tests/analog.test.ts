@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { defaultMapping } from '../src/platform/input/mapping.ts';
 import type { PadLike } from '../src/platform/input/mapping.ts';
-import { digitalMovement, padMovement, radialStick } from '../src/platform/input/movement.ts';
+import { digitalMovement, padMovement, radialStick, samplePadMovement, selectMovement } from '../src/platform/input/movement.ts';
 const pad = (axes: number[], buttons: number[] = []): PadLike => ({
   id: 'Analog', index: 0, axes,
   buttons: Array.from({ length: 17 }, (_, i) => ({ pressed: buttons.includes(i), value: buttons.includes(i) ? 1 : 0 })),
@@ -39,4 +39,27 @@ test('a completely remapped analog stick still preserves its exact angle', () =>
   mapping.down = { type: 'axis', index: 3, sign: 1 };
   const vector = padMovement(pad([0, 0, .8, .4]), mapping);
   assert.ok(Math.abs(vector.y / vector.x - .5) < 1e-12);
+});
+
+test('partial stick wins over duplicate digital buttons and keyboard signals', () => {
+  const device = pad([.55, .2], [15]);
+  const sample = samplePadMovement(device, defaultMapping());
+  const selected = selectMovement(new Set(['right']), sample);
+  assert.equal(selected.source, 'analog');
+  assert.deepEqual(selected.vector, radialStick(.55, .2));
+  assert.ok(Math.hypot(selected.vector.x, selected.vector.y) < .6);
+  assert.equal(selected.rawMagnitude, Math.hypot(.55, .2));
+  assert.equal(selectMovement(new Set(['left']), samplePadMovement(pad([0, 0]), defaultMapping())).source, 'local-digital');
+  assert.deepEqual(padMovement(pad([0, 0], [15]), defaultMapping()), { x: 1, y: 0 });
+});
+
+test('active analog input preserves explicitly remapped directional buttons', () => {
+  const mapping = defaultMapping();
+  mapping.up = { type: 'button', index: 4 };
+  const selection = samplePadMovement(pad([.5, 0], [4]), mapping);
+  assert.equal(selection.source, 'analog');
+  assert.ok(selection.vector.x > 0);
+  assert.ok(selection.vector.y < 0);
+  assert.ok(Math.abs(selection.vector.x / -selection.vector.y - radialStick(.5, 0).x) < 1e-12);
+  assert.ok(Math.abs(Math.hypot(selection.vector.x, selection.vector.y) - 1) < 1e-12);
 });

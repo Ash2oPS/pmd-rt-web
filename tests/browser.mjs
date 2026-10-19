@@ -685,6 +685,42 @@ try {
     },
   );
   await deniedContext.close();
+  await check("future save survives movement, menu, blur and reload until a valid import", async () => {
+    const context = await browser.newContext();
+    try {
+      const original = JSON.stringify({ version: 3, progress: "future expedition" });
+      await context.addInitScript(raw => {
+        if (!sessionStorage.getItem("future-save-seeded")) {
+          localStorage.setItem("pmd-field-save-v1", raw);
+          sessionStorage.setItem("future-save-seeded", "true");
+        }
+      }, original);
+      const page = await context.newPage();
+      watch(page);
+      await page.goto(baseURL);
+      await page.waitForFunction(() => typeof window.render_game_to_text === "function");
+      assert.equal((await state(page)).storage, false);
+      await key(page, "ArrowRight", 600);
+      await key(page, "Escape");
+      await page.locator('[data-menu="save"]').click();
+      await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+      assert.equal(await page.evaluate(() => localStorage.getItem("pmd-field-save-v1")), original);
+      await page.locator("#import-file").setInputFiles({ name: "invalid.json", mimeType: "application/json", buffer: Buffer.from("bad JSON") });
+      await settled(page);
+      assert.equal(await page.evaluate(() => localStorage.getItem("pmd-field-save-v1")), original);
+      await page.reload();
+      await page.waitForFunction(() => typeof window.render_game_to_text === "function");
+      assert.equal(await page.evaluate(() => localStorage.getItem("pmd-field-save-v1")), original);
+      const imported = { version: 1, player: { x: 3, y: 5 }, steps: 42, collected: [0], facing: "right" };
+      await page.locator("#import-file").setInputFiles({ name: "valid.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(imported)) });
+      await settled(page);
+      assert.equal((await state(page)).storage, true);
+      const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("pmd-field-save-v1")));
+      assert.equal(saved.version, 2);
+      assert.equal(saved.steps, 42);
+      assert.deepEqual(saved.collected, [0]);
+    } finally { await context.close(); }
+  });
   assert.deepEqual(errors, [], "Browser console has no errors");
   await writeFile(
     `${output}/results.json`,

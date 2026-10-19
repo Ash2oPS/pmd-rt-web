@@ -37,7 +37,7 @@ export const itemSchema = z.strictObject({
 });
 const roamingSchema = z.strictObject({
   radius: z.number().min(0.5).max(6),
-  speed: z.number().min(0.2).max(2),
+  behaviorMultiplier: z.number().min(0.01).max(2),
   idleMinSeconds: z.number().min(0.2).max(15),
   idleMaxSeconds: z.number().min(0.2).max(15),
 }).refine((profile) => profile.idleMaxSeconds >= profile.idleMinSeconds, {
@@ -56,14 +56,26 @@ export const dungeonSchema = z.strictObject({
     roaming: roamingSchema.optional(),
   })).default([]),
 });
+export const movementSettingsSchema = z.strictObject({
+  id: z.literal('movement'),
+  playerMaxSpeed: z.number().min(0.1).max(15),
+  relativeSpeedExponent: z.number().min(0).max(2),
+  minSpeedRatio: z.number().min(0.05).max(5),
+  maxSpeedRatio: z.number().min(0.05).max(5),
+  pursuitMultiplier: z.number().min(0.01).max(2),
+}).refine(settings => settings.maxSpeedRatio >= settings.minSpeedRatio, {
+  message: 'Maximum speed ratio must not be smaller than minimum speed ratio',
+});
+export type MovementSettings = z.infer<typeof movementSettingsSchema>;
 export const catalogSchema = z.strictObject({
   species: z.array(speciesSchema).min(1), moves: z.array(moveSchema).min(1),
   abilities: z.array(abilitySchema).min(1), items: z.array(itemSchema).min(1),
   dungeons: z.array(dungeonSchema).min(1),
+  settings: z.array(movementSettingsSchema).length(1),
 });
 export const recordSchemas = {
   species: speciesSchema, moves: moveSchema, abilities: abilitySchema,
-  items: itemSchema, dungeons: dungeonSchema,
+  items: itemSchema, dungeons: dungeonSchema, settings: movementSettingsSchema,
 };
 export type Content = z.infer<typeof catalogSchema>;
 export type Species = z.infer<typeof speciesSchema>;

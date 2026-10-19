@@ -9,16 +9,18 @@ export function createStorage(
   storage?: Pick<Storage, "getItem" | "setItem">,
 ) {
   let available = true,
+    saveProtected = true,
     invalidSave = false,
     state = createState(world),
     mapping = defaultMapping();
   try {
     storage ??= localStorage;
     const raw = storage.getItem(SAVE);
+    saveProtected = false;
     if (raw) {
       const parsed = restore(raw, world);
       if (parsed) state = parsed;
-      else invalidSave = true;
+      else { invalidSave = true; saveProtected = true; }
     }
     const saved: unknown = JSON.parse(storage.getItem(BINDINGS) || "null");
     if (validateMapping(saved)) mapping = saved;
@@ -28,14 +30,18 @@ export function createStorage(
   return {
     state,
     mapping,
-    invalidSave,
+    get invalidSave() { return invalidSave; },
     get available() {
-      return available;
+      return available && !saveProtected;
     },
-    save(state: GameState) {
+    save(state: GameState, options: { replaceInvalid?: boolean } = {}) {
       try {
         if (!storage) return false;
+        // Only an explicitly imported, validated save may replace an unreadable original.
+        if (saveProtected && (!invalidSave || !options.replaceInvalid)) return false;
         storage.setItem(SAVE, JSON.stringify(state));
+        saveProtected = false;
+        invalidSave = false;
         available = true;
         return true;
       } catch {

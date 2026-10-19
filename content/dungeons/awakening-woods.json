@@ -49,9 +49,9 @@
       "y": 3,
       "roaming": {
         "radius": 1.4,
-        "speed": 0.48,
         "idleMinSeconds": 2.0,
-        "idleMaxSeconds": 4.0
+        "idleMaxSeconds": 4.0,
+        "behaviorMultiplier": 0.16
       }
     },
     {
@@ -63,9 +63,9 @@
       "y": 3,
       "roaming": {
         "radius": 2.1,
-        "speed": 0.72,
         "idleMinSeconds": 1.1,
-        "idleMaxSeconds": 2.7
+        "idleMaxSeconds": 2.7,
+        "behaviorMultiplier": 0.24
       }
     },
     {
@@ -77,9 +77,9 @@
       "y": 4,
       "roaming": {
         "radius": 1.5,
-        "speed": 0.55,
         "idleMinSeconds": 1.8,
-        "idleMaxSeconds": 3.5
+        "idleMaxSeconds": 3.5,
+        "behaviorMultiplier": 0.183
       }
     },
     {
@@ -91,9 +91,9 @@
       "y": 4,
       "roaming": {
         "radius": 2.3,
-        "speed": 0.95,
         "idleMinSeconds": 0.7,
-        "idleMaxSeconds": 1.9
+        "idleMaxSeconds": 1.9,
+        "behaviorMultiplier": 0.317
       }
     },
     {
@@ -105,9 +105,9 @@
       "y": 6,
       "roaming": {
         "radius": 2.6,
-        "speed": 0.85,
         "idleMinSeconds": 1.0,
-        "idleMaxSeconds": 2.4
+        "idleMaxSeconds": 2.4,
+        "behaviorMultiplier": 0.283
       }
     },
     {
@@ -119,9 +119,9 @@
       "y": 6,
       "roaming": {
         "radius": 1.2,
-        "speed": 0.44,
         "idleMinSeconds": 2.2,
-        "idleMaxSeconds": 4.4
+        "idleMaxSeconds": 4.4,
+        "behaviorMultiplier": 0.147
       }
     },
     {
@@ -133,9 +133,9 @@
       "y": 5,
       "roaming": {
         "radius": 1.7,
-        "speed": 0.68,
         "idleMinSeconds": 1.2,
-        "idleMaxSeconds": 3.0
+        "idleMaxSeconds": 3.0,
+        "behaviorMultiplier": 0.227
       }
     },
     {
@@ -147,9 +147,9 @@
       "y": 7,
       "roaming": {
         "radius": 1.5,
-        "speed": 0.61,
         "idleMinSeconds": 1.6,
-        "idleMaxSeconds": 3.4
+        "idleMaxSeconds": 3.4,
+        "behaviorMultiplier": 0.203
       }
     },
     {
@@ -161,9 +161,9 @@
       "y": 2,
       "roaming": {
         "radius": 2.8,
-        "speed": 0.9,
         "idleMinSeconds": 0.8,
-        "idleMaxSeconds": 2.2
+        "idleMaxSeconds": 2.2,
+        "behaviorMultiplier": 0.3
       }
     }
   ],

@@ -26,6 +26,7 @@ import abilities7 from '../../content/abilities/torrent.json';
 import items0 from '../../content/items/light-shard.json';
 import items1 from '../../content/items/oran-berry.json';
 import dungeons0 from '../../content/dungeons/awakening-woods.json';
+import settings0 from '../../content/settings/movement.json';
 
 export const rawContent = {
   species: [species0, species1, species2, species3, species4, species5, species6, species7, species8, species9],
@@ -33,4 +34,5 @@ export const rawContent = {
   abilities: [abilities0, abilities1, abilities2, abilities3, abilities4, abilities5, abilities6, abilities7],
   items: [items0, items1],
   dungeons: [dungeons0],
+  settings: [settings0],
 };

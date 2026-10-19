@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dungeonSchema } from '../src/content/schemas.ts';
+import { content, movementSettings } from '../src/content/catalog.ts';
+import { relativeMovementSpeed } from '../src/domain/speed.ts';
 import { canOccupy } from '../src/domain/movement.ts';
 import { createRoamers, updateRoamers } from '../src/domain/roaming.ts';
 
@@ -9,8 +11,14 @@ const dungeon = dungeonSchema.parse(JSON.parse(readFileSync(
   new URL('../content/dungeons/awakening-woods.json', import.meta.url), 'utf8',
 )));
 
+const speedFor = (actor: typeof dungeon.actors[number]) => relativeMovementSpeed(
+  content.species.find(species => species.id === actor.speciesId)!.stats.speed,
+  content.species.find(species => species.id === dungeon.playerSpeciesId)!.stats.speed,
+  movementSettings, actor.roaming?.behaviorMultiplier ?? 0,
+);
+
 test('every authored Pokémon alternates rest and coherent local roaming without crossing walls or water', () => {
-  const actors = createRoamers(dungeon.actors);
+  const actors = createRoamers(dungeon.actors, speedFor);
   const observed = actors.map(() => new Set<string>());
   const traveled = actors.map(() => 0);
   for (let frame = 0; frame < 60 * 180; frame++) {
@@ -24,7 +32,7 @@ test('every authored Pokémon alternates rest and coherent local roaming without
       assert.ok(Math.hypot(actor.x - actor.home.x, actor.y - actor.home.y) <= profile.radius + 0.00001);
       const distance = Math.hypot(actor.x - previous[index]!.x, actor.y - previous[index]!.y);
       traveled[index]! += distance;
-      assert.ok(distance <= profile.speed / 60 + 0.00001, `${actor.id} teleported`);
+      assert.ok(distance <= actor.resolvedSpeed / 60 + 0.00001, `${actor.id} teleported`);
       if (actor.animation === 'Walk') assert.ok(distance > 0);
       if (actor.behavior === 'Idle') assert.deepEqual(actor.velocity, { x: 0, y: 0 });
     }
@@ -37,7 +45,7 @@ test('every authored Pokémon alternates rest and coherent local roaming without
 });
 
 test('roaming is seeded per instance and frozen when no simulation time passes', () => {
-  const first = createRoamers(dungeon.actors), second = createRoamers(dungeon.actors);
+  const first = createRoamers(dungeon.actors, speedFor), second = createRoamers(dungeon.actors, speedFor);
   for (let frame = 0; frame < 1200; frame++) {
     updateRoamers(first, dungeon, 0.025);
     updateRoamers(second, dungeon, 0.025);
@@ -46,18 +54,18 @@ test('roaming is seeded per instance and frozen when no simulation time passes',
   const snapshot = structuredClone(first);
   for (const dt of [0, -1, Infinity, NaN]) updateRoamers(first, dungeon, dt);
   assert.deepEqual(first, snapshot);
-  const reordered = createRoamers([...dungeon.actors].reverse());
+  const reordered = createRoamers([...dungeon.actors].reverse(), speedFor);
   for (let frame = 0; frame < 1200; frame++) updateRoamers(reordered, dungeon, 0.025);
   assert.deepEqual(reordered.reverse(), first);
 });
 
 test('unconfigured actors remain authored poses and enclosed actors retry without jitter or teleportation', () => {
   const definition = dungeon.actors[0]!;
-  const staticActors = createRoamers([{ ...definition, roaming: undefined }]);
+  const staticActors = createRoamers([{ ...definition, roaming: undefined }], speedFor);
   const original = structuredClone(staticActors);
   updateRoamers(staticActors, dungeon, 30);
   assert.deepEqual(staticActors, original);
-  const actors = createRoamers([{ ...definition, x: 1, y: 1 }]);
+  const actors = createRoamers([{ ...definition, x: 1, y: 1 }], speedFor);
   const tinyWorld = { map: ['###', '#.#', '###'] };
   for (let frame = 0; frame < 1200; frame++) {
     updateRoamers(actors, tinyWorld, 0.025);
@@ -71,4 +79,16 @@ test('roaming duration ranges reject inverted values', () => {
   invalid.actors[0]!.roaming!.idleMinSeconds = 10;
   invalid.actors[0]!.roaming!.idleMaxSeconds = 1;
   assert.equal(dungeonSchema.safeParse(invalid).success, false);
+});
+
+test('slow roamers receive enough travel time to reach their selected destination', () => {
+  const actors = createRoamers([dungeon.actors[0]!], () => .05);
+  const actor = actors[0]!;
+  actor.remaining = 0;
+  updateRoamers(actors, dungeon, .025);
+  const target = { ...actor.target! };
+  const start = { x: actor.x, y: actor.y };
+  assert.ok(actor.remaining >= Math.hypot(target.x - start.x, target.y - start.y) / .05);
+  for (let i = 0; i < 10000 && actor.behavior === 'Roaming'; i++) updateRoamers(actors, dungeon, .025);
+  assert.ok(Math.hypot(actor.x - target.x, actor.y - target.y) < .02);
 });

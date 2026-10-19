@@ -1,9 +1,40 @@
 {
   "json.schemas": [
-    { "fileMatch": ["/content/species/*.json"], "url": "./content/schemas/species.schema.json" },
-    { "fileMatch": ["/content/moves/*.json"], "url": "./content/schemas/moves.schema.json" },
-    { "fileMatch": ["/content/abilities/*.json"], "url": "./content/schemas/abilities.schema.json" },
-    { "fileMatch": ["/content/items/*.json"], "url": "./content/schemas/items.schema.json" },
-    { "fileMatch": ["/content/dungeons/*.json"], "url": "./content/schemas/dungeons.schema.json" }
+    {
+      "fileMatch": [
+        "/content/species/*.json"
+      ],
+      "url": "./content/schemas/species.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/content/moves/*.json"
+      ],
+      "url": "./content/schemas/moves.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/content/abilities/*.json"
+      ],
+      "url": "./content/schemas/abilities.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/content/items/*.json"
+      ],
+      "url": "./content/schemas/items.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/content/dungeons/*.json"
+      ],
+      "url": "./content/schemas/dungeons.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/content/settings/*.json"
+      ],
+      "url": "./content/schemas/settings.schema.json"
+    }
   ]
 }

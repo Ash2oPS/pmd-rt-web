@@ -1,3 +1,5 @@
+import { content, movementSettings } from '../content/catalog.ts';
+import { relativeMovementSpeed } from '../domain/speed.ts';
 import type { Dungeon } from '../content/schemas.ts';
 import type { GameState, Point } from '../domain/state.ts';
 import { createPokemonAssets } from '../platform/pokemon-assets.ts';
@@ -7,7 +9,11 @@ import { createRoamers, updateRoamers } from '../domain/roaming.ts';
 
 /** Connects authored field actors to locally imported art without species branches. */
 export function setupPokemon(field: Dungeon, velocity: () => Point) {
-  const actors = createRoamers(field.actors);
+  const playerStat = content.species.find(species => species.id === field.playerSpeciesId)!.stats.speed;
+  const actors = createRoamers(field.actors, definition => relativeMovementSpeed(
+    content.species.find(species => species.id === definition.speciesId)!.stats.speed,
+    playerStat, movementSettings, definition.roaming?.behaviorMultiplier ?? 0,
+  ));
   let assets: Awaited<ReturnType<typeof createPokemonAssets>> | null = null;
   let painter: ReturnType<typeof createPokemonRenderer> | null = null;
   let state: 'loading' | 'ready' | 'error' = 'loading';
@@ -67,7 +73,7 @@ export function setupPokemon(field: Dungeon, velocity: () => Point) {
         status: state, error,
         player: { ...player, frame: painter?.snapshot(player, time * 1000) },
         actors: actors.map(actor => ({ id: actor.id, speciesId: actor.speciesId, x: actor.x, y: actor.y,
-          facing: actor.facing, animation: actor.animation, behavior: actor.behavior, velocity: actor.velocity,
+          facing: actor.facing, animation: actor.animation, behavior: actor.behavior, velocity: actor.velocity, resolvedSpeed: actor.resolvedSpeed,
           frame: painter?.snapshot(actor, time * 1000) })),
         loaded: assets?.status, elapsed: time,
       };

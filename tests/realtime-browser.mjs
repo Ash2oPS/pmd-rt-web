@@ -50,6 +50,26 @@ try {
     assert.equal(angled.after.pokemon.player.animation, 'Walk');
     assert.equal(angled.after.pokemon.player.frame.direction, 1, 'Down-right art follows diagonal travel');
   });
+  await check('partial axes remain proportional with duplicate keyboard and Dpad signals', async () => {
+    const { page, context } = await scene();
+    await axes(page, .55, .2);
+    await page.evaluate(() => { window.__testPad.buttons[15] = { pressed: true, value: 1 }; });
+    await page.keyboard.down('ArrowRight');
+    const before = (await state(page)).player;
+    await advance(page, 400);
+    const view = await state(page);
+    assert.equal(view.movement.source, 'analog');
+    assert.ok(view.movement.resolvedSpeed > 0 && view.movement.resolvedSpeed < view.movement.maxSpeed * .6);
+    assert.ok(Math.abs((view.player.y - before.y) / (view.player.x - before.x) - .2 / .55) < .01);
+    const actorsWithStick = view.pokemon.actors.map(actor => ({ id: actor.id, speed: actor.resolvedSpeed }));
+    await page.keyboard.up('ArrowRight');
+    await axes(page, 0, 0);
+    await page.evaluate(() => { window.__testPad.buttons[15] = { pressed: false, value: 0 }; });
+    await advance(page, 400);
+    assert.deepEqual((await state(page)).pokemon.actors.map(actor => ({ id: actor.id, speed: actor.resolvedSpeed })), actorsWithStick);
+    await page.screenshot({ path: `${output}/proportional-input.png` });
+    await context.close();
+  });
   await check('diagonal speed equals straight speed and deadzone prevents drift', async () => {
     const straight = await travel(1, 0), diagonal = await travel(1, 1), drift = await travel(0.06, 0.06, 1000);
     assert.ok(Math.abs(straight.length - diagonal.length) < 0.01, 'Diagonal travel is normalized');
@@ -111,7 +131,7 @@ try {
         const definition = field.actors.find((entry) => entry.id === actor.id);
         if (distance(initial, actor) > 0.05) moved.add(actor.id);
         assert.ok(distance(definition, actor) <= definition.roaming.radius + 0.02, `${actor.id} stays near its home`);
-        assert.ok(distance(previous.get(actor.id), actor) <= definition.roaming.speed * 0.25 + 0.01, `${actor.id} respects its authored speed`);
+        assert.ok(distance(previous.get(actor.id), actor) <= actor.resolvedSpeed * 0.25 + 0.01, `${actor.id} respects its authored speed`);
         previous.set(actor.id, actor);
         assert.equal(view.map[Math.round(actor.y)]?.[Math.round(actor.x)], '.', `${actor.id} remains on traversable terrain`);
         assert.ok(Number.isFinite(actor.velocity.x) && Number.isFinite(actor.velocity.y));

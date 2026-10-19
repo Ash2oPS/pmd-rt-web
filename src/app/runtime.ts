@@ -1,5 +1,5 @@
 import { createState } from '../domain/state.ts';
-import { moveContinuous } from '../domain/movement.ts';
+import { WALK_SPEED, moveContinuous } from '../domain/movement.ts';
 import type { GameState, Point, World } from '../domain/state.ts';
 import type { Action } from '../platform/input/mapping.ts';
 export class Runtime {
@@ -10,7 +10,7 @@ export class Runtime {
   previous = new Set<Action>();
   private held: Action | '' = '';
   private repeat = 0;
-  constructor(readonly world: World, state = createState(world)) {
+  constructor(readonly world: World, state = createState(world), readonly maxSpeed = WALK_SPEED) {
     this.state = state;
     this.visual = { ...state.player };
   }
@@ -40,7 +40,7 @@ export class Runtime {
   }
   advance(vector: Point, dt: number) {
     const before = { ...this.state.player };
-    const result = moveContinuous(this.state, vector, dt, this.world);
+    const result = moveContinuous(this.state, vector, dt, this.world, this.maxSpeed);
     this.visual = { ...this.state.player };
     this.velocity = dt > 0 ? {
       x: (this.visual.x - before.x) / dt,

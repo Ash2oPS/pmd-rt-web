@@ -20,6 +20,7 @@ export interface Roamer {
   remaining: number;
   blockedSeconds: number;
   seed: number;
+  resolvedSpeed: number;
 }
 
 function seedFromId(id: string): number {
@@ -45,10 +46,11 @@ function beginIdle(actor: Roamer): void {
     : Infinity;
 }
 
-export function createRoamers(definitions: readonly ActorDefinition[]): Roamer[] {
+export function createRoamers(definitions: readonly ActorDefinition[], speedFor: (definition: ActorDefinition) => number): Roamer[] {
   return definitions.map((definition) => {
     const actor: Roamer = {
       id: definition.id, speciesId: definition.speciesId,
+      resolvedSpeed: speedFor(definition),
       x: definition.x, y: definition.y, facing: definition.facing,
       animation: definition.animation, behavior: 'Idle',
       velocity: { x: 0, y: 0 }, home: { x: definition.x, y: definition.y },
@@ -86,7 +88,7 @@ function beginRoaming(actor: Roamer, world: CollisionWorld): void {
     if (distance < 0.35 || !clearPath(world, actor, target)) continue;
     actor.target = target;
     actor.behavior = 'Roaming';
-    actor.remaining = distance / profile.speed + 0.6;
+    actor.remaining = distance / actor.resolvedSpeed + 0.6;
     actor.blockedSeconds = 0;
     return;
   }
@@ -105,7 +107,7 @@ function tick(actor: Roamer, world: CollisionWorld, dt: number): void {
   const dx = target.x - actor.x, dy = target.y - actor.y;
   const distance = Math.hypot(dx, dy);
   if (distance < 0.015) { beginIdle(actor); return; }
-  const length = Math.min(actor.profile.speed * dt, distance);
+  const length = Math.min(actor.resolvedSpeed * dt, distance);
   const next = movePoint(world, actor, { x: dx / distance * length, y: dy / distance * length });
   actor.velocity = { x: (next.x - actor.x) / dt, y: (next.y - actor.y) / dt };
   const moved = Math.hypot(next.x - actor.x, next.y - actor.y);

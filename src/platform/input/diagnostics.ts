@@ -1,3 +1,4 @@
+import type { MovementSelection } from './movement';
 import type { Mapping, PadLike } from './mapping';
 
 export interface DeviceDiagnostic {
@@ -20,6 +21,7 @@ export interface DiagnosticSnapshot {
   devices: DeviceDiagnostic[];
   lastKey: { key: string; code: string } | null;
   wheelEvents: number;
+  movement?: MovementSelection & { resolvedSpeed: number; maxSpeed: number };
 }
 export interface DiagnosticEnvironment {
   apiAvailable: boolean;

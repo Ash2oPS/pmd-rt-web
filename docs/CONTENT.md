@@ -8,7 +8,7 @@ Species `source` records their PokéAPI identity. `spriteId` selects the matchin
 
 ## Add or change a record
 
-1. Copy a file in the relevant category: `species`, `moves`, `abilities`, `items` or `dungeons`.
+1. Copy a file in the relevant category: `species`, `moves`, `abilities`, `items`, `dungeons` or `settings`.
 2. Give it a unique, stable lowercase hyphenated `id`; the filename must be `<id>.json`.
 3. Edit its fields. Species reference abilities through `abilityIds` and moves through `learnset[].moveId`. Dungeons reference items through `collectibles[].itemId`.
 4. Run `npm run content:generate` to validate every file and regenerate the import manifest and JSON schemas.
@@ -22,7 +22,7 @@ Map rows must have equal widths. `#` is a wall, `~` is water and `.` is walkable
 
 `actors` lists Pokémon instances: stable instance `id`, catalog `speciesId`, initial tile coordinates `x`/`y`, eight-way `facing` and initial `animation` (`Idle` or `Walk`). Place them on reachable floor, without overlapping spawn, collectibles or each other. Instance IDs must be unique within a dungeon. Actors do not fight or modify saves.
 
-Optional `roaming` enables autonomous movement between `Idle` and `Roaming` states. Set `radius` in tiles around the initial position, `speed` in tiles per second, and `idleMinSeconds`/`idleMaxSeconds` for rest duration. Maximum idle duration must be at least the minimum. Each instance has a deterministic independent random sequence. Destinations use clear walkable paths, respect walls and water, and remain within the home radius. Movement uses the same continuous collision rules as the player. Blocked movement returns to rest. Pause and suspension must stop simulation updates. Without `roaming`, the authored pose remains stationary. The current nine actors have deliberately varied profiles; species-specific renderer branches are unnecessary.
+Optional `roaming` enables autonomous movement between `Idle` and `Roaming` states. Set `radius` in tiles around the initial position, `behaviorMultiplier` as a fraction of its stat-relative movement speed, and `idleMinSeconds`/`idleMaxSeconds` for rest duration. Maximum idle duration must be at least the minimum. Each instance has a deterministic independent random sequence. Destinations use clear walkable paths, respect walls and water, and remain within the home radius. Movement uses the same continuous collision rules as the player. Blocked movement returns to rest. Pause and suspension must stop simulation updates. Without `roaming`, the authored pose remains stationary. The current nine actors have deliberately varied profiles; species-specific renderer branches are unnecessary.
 
 ## Source boundaries
 
@@ -33,3 +33,9 @@ Optional `roaming` enables autonomous movement between `Idle` and `Roaming` stat
 - `scripts/content.mts --check` verifies the source files and detects stale generated outputs without rewriting them.
 
 The content layer imports no gameplay, UI, browser storage or rendering modules. Add a schema field before adding it to JSON; unknown fields are rejected. Implement new effect behavior explicitly in the domain layer before describing it as functional.
+
+## Movement settings
+
+`content/settings/movement.json` defines `playerMaxSpeed` (tiles per second), `relativeSpeedExponent`, `minSpeedRatio`, `maxSpeedRatio` and the future pursuit behavior's `pursuitMultiplier`. All non-player speed resolves as `playerMaxSpeed * clamp((actorSpeedStat / playerSpeedStat) ** relativeSpeedExponent, minSpeedRatio, maxSpeedRatio) * behaviorMultiplier`. Stick strength changes only the player's actual movement, never NPC speed. The player maximum stays independent of species stats.
+
+Roaming records now use dimensionless `behaviorMultiplier` instead of the former absolute `speed` field. Existing profiles deliberately retain their rest/radius differences, while species stats now affect travel speed. New records must not include the old field. Travel timeouts use the resolved speed so slow actors can reach their destinations. Regenerate content schemas/manifests after edits; the editor schema covers movement settings too.
