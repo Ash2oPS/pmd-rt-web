@@ -19,10 +19,11 @@ const EPSILON = 1e-9;
 
 /** Pure encounter simulation shared by the live field and authoring previews. */
 export class Encounter {
+  static readonly playerMaxHp = 80;
   actors: CombatActor[] = [];
   time = 0;
   private state: GameState;
-  private hp = 80;
+  private hp = Encounter.playerMaxHp;
   private grace = 1;
   private casts: Cast[] = [];
   private projectiles: Projectile[] = [];
@@ -50,7 +51,7 @@ export class Encounter {
     const cast = this.casts.find(entry => entry.casterId === 'player');
     return { id: 'player', speciesId: this.options.field.playerSpeciesId, team: 'player',
       x: this.state.player.x, y: this.state.player.y, facing: this.state.facing,
-      hp: this.hp, maxHp: 80, defeated: this.hp <= 0,
+      hp: this.hp, maxHp: Encounter.playerMaxHp, defeated: this.hp <= 0,
       animation: this.hp <= 0 ? 'Idle' : (this.hurtUntil.get('player') ?? 0) > this.time ? 'Hurt'
         : cast && cast.phase !== 'recovery' ? 'Attack' : 'Idle' };
   }
@@ -63,7 +64,7 @@ export class Encounter {
   reset(state: GameState, graceSeconds = 1): void {
     this.state = state;
     this.time = 0;
-    this.hp = 80;
+    this.hp = Encounter.playerMaxHp;
     this.grace = Math.max(0, graceSeconds);
     this.casts = []; this.projectiles = []; this.zones.clear(); this.statuses.clear(); this.events = []; this.sequence = 0;
     this.castSequence = 0; this.lastFailure = null;

@@ -34,8 +34,8 @@ const pokemon = setupPokemon(field, () => runtime.velocity, () => combat?.snapsh
 combat = setupCombat(field, runtime, () => pokemon.isReady, {
   canAct: () => !menu.paused,
   clear: () => clear(), toast,
-  bindingLabel: slot => bindingLabel(pad.mapping[(['attack1', 'attack2', 'attack3', 'attack4'] as const)[slot]!]),
-  controlLabel: action => bindingLabel(pad.mapping[action]),
+  bindingLabel: slot => pad.current ? bindingLabel(pad.mapping[(['attack1', 'attack2', 'attack3', 'attack4'] as const)[slot]!]) : ['J', 'K', 'L', 'I'][slot]!,
+  controlLabel: action => pad.current ? bindingLabel(pad.mapping[action]) : action === 'aim' ? 'Maj' : 'Espace',
 });
 const renderer = createRenderer(
   element<HTMLCanvasElement>("game"),
@@ -207,6 +207,7 @@ let ambientTime = 0;
 function update(dt: number) {
   const actions = pad.poll(menu.paused || combat.finished ? 'menu' : 'play');
   diagnosticsView.update(pad.current);
+  document.documentElement.dataset.controller = String(!!pad.current);
   if (document.hidden) {
     clear();
     runtime.previous = new Set(actions);

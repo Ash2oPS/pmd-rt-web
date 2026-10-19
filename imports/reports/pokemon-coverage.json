@@ -216,9 +216,9 @@
       "credits": [
         "CHUNSOFT (https://www.spike-chunsoft.com/)",
         "JFain",
-        "Mojo",
-        "Emboarger"
+        "baronessfaron"
       ],
+      "portraitSource": "portrait/0039/0001/Normal.png",
       "anchorAudit": {
         "Idle": {
           "frames": 40,

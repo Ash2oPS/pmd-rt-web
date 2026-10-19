@@ -1,28 +1,24 @@
 import type { EncounterSnapshot } from '../domain/combat/types.ts';
 import type { Move } from '../content/schemas.ts';
 import { element } from './dom.ts';
+import { createAttackSlots, hudBinding } from './attack-slots.ts';
 
-export function createCombatHUD(playerLabel: string, attack: (slot: number) => void, retry: () => void, leave: () => void) {
+export function createCombatHUD(playerLabel: string, attack: (slot: number) => void, retry: () => void, leave: () => void, maxHp: number) {
   const panel = document.createElement('section');
-  panel.id = 'combat-hud';
-  panel.className = 'combat-hud';
-  panel.hidden = true;
-  panel.setAttribute('aria-label', 'Combat d’entraînement');
-  panel.innerHTML = `<div class="combat-vitals"><span>RONDOUDOU</span><meter min="0" max="100" value="100" aria-label="Points de vie"></meter><strong></strong></div>
-    <div class="combat-slots"><button data-slot="0"></button><button data-slot="1"></button><button data-slot="2"></button><button data-slot="3"></button>
-      <div class="combat-shoulders"><button data-action="aim" aria-label="Maintenir pour viser sans avancer">L / Maj · Viser</button><button data-action="wait" aria-label="Maintenir pour attendre">R / Espace · Attendre</button></div></div>
+  panel.id = 'combat-hud'; panel.className = 'combat-hud';
+  panel.setAttribute('aria-label', 'Capacités');
+  panel.innerHTML = `<div class="combat-vitals"><div id="field-portrait" class="field-portrait"></div><div class="vitals-info"><span class="vitals-name"></span><div class="vitals-line"><small>PV</small><meter min="0" aria-label="Points de vie"></meter><strong></strong></div><span class="vitals-status"></span></div></div>
+    <div class="combat-slots"></div>
     <div class="combat-result" hidden role="status"><strong></strong><button data-retry>Recommencer</button><button data-leave>Retour à l’exploration</button></div>`;
   document.querySelector('.game-frame')!.append(panel);
-  const shoulders = panel.querySelector<HTMLElement>('.combat-shoulders')!;
-  shoulders.classList.add('field-shoulders');
-  document.querySelector('.touch-controls')!.append(shoulders);
-  const slots = [...panel.querySelectorAll<HTMLButtonElement>('[data-slot]')];
-  slots.forEach((button, index) => button.addEventListener('click', () => attack(index)));
+  const shoulders = document.createElement('div'); shoulders.className = 'combat-shoulders field-shoulders';
+  shoulders.innerHTML = '<button data-action="aim" aria-label="Maintenir pour viser sans avancer"><kbd></kbd> Viser</button><button data-action="wait" aria-label="Maintenir pour attendre"><kbd></kbd> Attendre</button>';
+  document.querySelector('.game-frame')!.append(shoulders);
+  const updateSlots = createAttackSlots(panel.querySelector('.combat-slots')!, attack);
   panel.querySelector('[data-retry]')!.addEventListener('click', () => retry());
   panel.querySelector('[data-leave]')!.addEventListener('click', leave);
-  const meter = panel.querySelector('meter')!;
-  panel.querySelector('.combat-vitals span')!.textContent = playerLabel.toLocaleUpperCase('fr');
-  const health = panel.querySelector('.combat-vitals strong')!;
+  const meter = panel.querySelector('meter')!, health = panel.querySelector('.vitals-line strong')!;
+  panel.querySelector('.vitals-name')!.textContent = playerLabel;
   const result = panel.querySelector<HTMLElement>('.combat-result')!;
   const resultButtons = [...result.querySelectorAll<HTMLButtonElement>('button')];
   let resultIndex = 0, lastResult = 'playing';
@@ -35,30 +31,19 @@ export function createCombatHUD(playerLabel: string, attack: (slot: number) => v
   return {
     navigateResult(delta: number) { selectResult(resultIndex + delta); },
     confirmResult() { resultButtons[resultIndex]!.click(); },
-    update(snapshot: EncounterSnapshot | null, moves: readonly (Move | null)[], bindings: readonly string[], shoulders: readonly string[] = ['L', 'R']) {
-      panel.hidden = !snapshot;
-      document.querySelector('[data-action="aim"]')!.textContent = `${shoulders[0]} · Viser`;
-      document.querySelector('[data-action="wait"]')!.textContent = `${shoulders[1]} · Attendre`;
-      if (!snapshot) return;
-      const sleep = snapshot.statuses.find(status => status.entityId === 'player');
-      panel.querySelector('.combat-vitals span')!.textContent = `${playerLabel.toLocaleUpperCase('fr')}${sleep ? ` · SOMMEIL ${sleep.remainingSeconds.toFixed(1)} s` : ''}`;
-      meter.max = snapshot.player.maxHp;
-      meter.value = snapshot.player.hp;
-      health.textContent = `${Math.ceil(snapshot.player.hp)} / ${snapshot.player.maxHp}`;
-      slots.forEach((button, index) => {
-        const move = moves[index];
-        button.hidden = false;
-        if (!move) { button.disabled = true; button.textContent = `${['J', 'K', 'L', 'I'][index]} · Vide`; return; }
-        const cooldown = snapshot.cooldowns[`player:${move.id}`] ?? 0;
-        const casting = snapshot.casts.find(cast => cast.casterId === 'player');
-        button.disabled = snapshot.result !== 'playing' || cooldown > 0 || !!casting || !!sleep;
-        button.textContent = `${['J', 'K', 'L', 'I'][index]} · ${bindings[index]}  ${move.label}${casting?.moveId === move.id ? casting.phase === 'recovery' ? ' · Récupération' : ' · Préparation' : cooldown > 0 ? ` · ${cooldown.toFixed(1)} s` : ''}`;
-      });
-      result.hidden = snapshot.result === 'playing';
-      if (snapshot.result !== 'playing' && lastResult === 'playing') selectResult(0);
-      lastResult = snapshot.result;
-      result.querySelector('strong')!.textContent = snapshot.result === 'won' ? 'Entraînement réussi !' : 'Rondoudou est K.O.';
-      element('scene-status').textContent = snapshot.result === 'playing' ? 'Combat d’entraînement' : 'Entraînement terminé';
+    update(snapshot: EncounterSnapshot | null, moves: readonly (Move | null)[], bindings: readonly string[], labels: readonly string[] = ['L', 'R']) {
+      shoulders.querySelector('[data-action="aim"] kbd')!.textContent = hudBinding(labels[0]!);
+      shoulders.querySelector('[data-action="wait"] kbd')!.textContent = hudBinding(labels[1]!);
+      const sleep = snapshot?.statuses.find(status => status.entityId === 'player' && status.kind === 'sleep');
+      panel.querySelector('.vitals-status')!.textContent = sleep ? `Sommeil · ${sleep.remainingSeconds.toFixed(1)} s` : '';
+      meter.max = snapshot?.player.maxHp ?? maxHp; meter.value = snapshot?.player.hp ?? maxHp;
+      health.textContent = `${Math.ceil(meter.value)} / ${meter.max}`;
+      updateSlots(snapshot, moves, bindings);
+      result.hidden = !snapshot || snapshot.result === 'playing';
+      if (snapshot && snapshot.result !== 'playing' && lastResult === 'playing') selectResult(0);
+      lastResult = snapshot?.result ?? 'playing';
+      result.querySelector('strong')!.textContent = snapshot?.result === 'won' ? 'Entraînement réussi !' : 'Rondoudou est K.O.';
+      element('scene-status').textContent = !snapshot ? 'Exploration' : snapshot.result === 'playing' ? 'Combat d’entraînement' : 'Entraînement terminé';
     },
   };
 }

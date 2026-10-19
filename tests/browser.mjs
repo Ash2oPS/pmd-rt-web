@@ -600,7 +600,7 @@ try {
       path: `${output}/mobile-game.png`,
       fullPage: true,
     });
-    await portrait.locator('[data-action="menu"]').tap();
+    await portrait.locator('#menu-toggle').tap();
     await settled(portrait);
     assert.equal((await state(portrait)).mode, "menu");
     await portrait.screenshot({
@@ -635,7 +635,7 @@ try {
         "Playfield is entirely in viewport",
       );
       await compact.screenshot({ path: `${output}/compact-game.png` });
-      await compact.locator('[data-action="menu"]').tap();
+      await compact.locator('#menu-toggle').tap();
       await settled(compact);
       assert.equal((await state(compact)).mode, "menu");
       await compact.screenshot({ path: `${output}/compact-menu.png` });

@@ -1,23 +1,98 @@
-.combat-hud { position: absolute; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 2; width: min(390px, 52vw); display: grid; gap: 8px; pointer-events: none; }
-.combat-hud[hidden], .combat-result[hidden] { display: none; }
-.combat-vitals { display: flex; align-items: center; gap: 9px; background: #102824ed; border: 1px solid #c7d79b55; padding: 8px 12px; border-radius: 5px; font-size: 10px; }
-.combat-vitals meter { min-width: 45px; flex: 1; height: 12px; accent-color: #add980; }
-.combat-vitals strong { white-space: nowrap; }
-.combat-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(40px, auto)); gap: 4px; align-items: stretch; }
-.combat-slots [data-slot="0"] { grid-area: 2 / 1; }
-.combat-slots [data-slot="1"] { grid-area: 1 / 2; }
-.combat-slots [data-slot="2"] { grid-area: 2 / 3; }
-.combat-slots [data-slot="3"] { grid-area: 3 / 2; }
-.combat-shoulders { grid-area: 2 / 2; display: flex; flex-direction: column; gap: 3px; }
-.field-shoulders { position: absolute; left: 0; bottom: 90px; }
-.touch-controls .field-shoulders button { width: auto; min-width: 95px; height: 30px; padding: 4px 7px; font-size: 10px; }
-.combat-hud .combat-shoulders button { min-height: 22px; padding: 3px; font-size: 9px; }
-.combat-slots [data-slot] { overflow-wrap: anywhere; font-size: 10px; }
-.combat-hud button { pointer-events: auto; color: #fff3d4; background: #203a30f2; border: 1px solid #e3bd7288; border-radius: 5px; min-height: 42px; padding: 9px 12px; font-size: 11px; touch-action: manipulation; }
-.combat-hud button:disabled { opacity: .65; }
-.combat-result { display: grid; gap: 9px; padding: 16px; text-align: center; background: #102824f5; border: 1px solid #e3bd72; border-radius: 6px; pointer-events: auto; }
+.combat-hud { --slot: clamp(78px, 8vw, 100px); position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.combat-vitals, .scene-label, #menu-toggle, .field-shoulders button { color: #f3edd8; background: #102923f2; border: 1px solid #d7b76c; box-shadow: inset 0 0 0 3px #0b2019, 0 2px 0 #071b1955; border-radius: 9px 3px; }
+.combat-vitals { position: absolute; left: max(16px, env(safe-area-inset-left)); top: max(16px, env(safe-area-inset-top)); width: clamp(235px, 25vw, 310px); padding: 7px; display: flex; gap: 12px; align-items: center; }
+.field-portrait { display: grid; place-items: center; width: 54px; height: 54px; flex: none; border: 1px solid #bca365; background: #19382d; border-radius: 6px 2px; }
+.field-portrait img { width: 48px; height: 48px; image-rendering: pixelated; }
+.vitals-info { min-width: 0; flex: 1; }
+.vitals-name { display: block; font-weight: 700; font-size: 16px; margin-bottom: 7px; }
+.vitals-line { display: flex; align-items: center; gap: 7px; font-size: 11px; }
+.vitals-line small { color: #a9d583; font-weight: 700; }
+.vitals-line strong { font-size: 10px; white-space: nowrap; }
+.vitals-line meter { min-width: 35px; flex: 1; width: 100%; height: 10px; border: 1px solid #e0dfb7; background: #243f30; border-radius: 3px; overflow: hidden; }
+.vitals-line meter::-webkit-meter-bar { border: 0; background: #243f30; border-radius: 0; }
+.vitals-line meter::-webkit-meter-optimum-value { background: #9bcd7e; }
+.vitals-line meter::-moz-meter-bar { background: #9bcd7e; }
+.vitals-status { display: block; color: #dac2f6; font-size: 9px; }
+.vitals-status:empty { display: none; }
+.combat-slots { position: absolute; right: max(20px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); display: grid; grid-template: repeat(3, var(--slot)) / repeat(3, var(--slot)); gap: 1px; }
+.combat-slots button { position: relative; padding: 0; border: 0; background: none; color: #f8eed5; pointer-events: auto; font-size: 10px; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.combat-slots button::before { content: ''; position: absolute; inset: 5px; background: #cbae66; clip-path: polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%); filter: drop-shadow(0 2px 1px #071b19); }
+.slot-face { position: absolute; inset: 7px; background: #102923f2; clip-path: polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.slot-face img { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; }
+.slot-symbol { font-size: 24px; height: 28px; color: #d2e8bd; }
+.slot-symbol:empty { display: none; }
+.slot-key { position: absolute; z-index: 1; top: -2px; left: 50%; transform: translateX(-50%); min-width: 24px; height: 23px; padding: 3px 4px; display: grid; place-items: center; background: #102923; border: 1px solid #ddc786; border-radius: 50%; font-size: 12px; font-weight: 700; }
+.slot-name { font-size: clamp(10px, .85vw, 12px); font-weight: 600; max-width: 100%; white-space: nowrap; }
+.slot-state { color: #e7d19a; font-size: clamp(7px, .7vw, 9px); }
+.slot-state:empty { display: none; }
+.combat-slots [data-slot='0'] { grid-area: 2 / 1; }
+.combat-slots [data-slot='1'] { grid-area: 1 / 2; }
+.combat-slots [data-slot='2'] { grid-area: 2 / 3; }
+.combat-slots [data-slot='3'] { grid-area: 3 / 2; }
+.combat-slots .slot-empty .slot-face { color: #91a299; font-size: 18px; background: #102923cc; }
+.combat-slots .slot-empty::before { background: #927e50; }
+.combat-slots button:disabled:not(.slot-empty) { cursor: default; }
+.combat-slots .slot-busy::before { background: conic-gradient(#f2d383 var(--progress), #554e35 0); }
+.combat-slots button:focus-visible::before, .combat-slots button:active::before { background: #fff2b2; }
+.combat-slots button:focus-visible { outline-offset: 0; border-radius: 18px; }
+.field-shoulders { position: absolute; z-index: 2; left: max(16px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom)); display: flex; gap: 8px; }
+.field-shoulders button { padding: 9px 12px; font-size: 12px; touch-action: none; }
+.field-shoulders button:active { background: #4e603b; }
+.field-shoulders kbd { display: inline-block; font: 700 11px Arial, sans-serif; border: 1px solid #d4c38e; border-radius: 3px; padding: 2px 4px; margin-right: 5px; min-width: 21px; }
+.combat-result { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(300px, calc(100vw - 36px)); display: grid; gap: 9px; padding: 20px; text-align: center; background: #102824f5; border: 1px solid #e3bd72; border-radius: 8px; pointer-events: auto; box-shadow: 0 8px 25px #071b1977; }
 .combat-result strong { color: #f1d18c; }
+.combat-result button { background: #203a30; border: 1px solid #a79360; border-radius: 4px; padding: 10px; }
 .combat-result button.selected { outline: 2px solid #f1d18c; outline-offset: 2px; }
-.game-frame:has(.combat-hud:not([hidden])) .toast { bottom: 125px; }
-@media (max-width: 700px) { .combat-hud { width: min(330px, 51vw); bottom: max(15px, env(safe-area-inset-bottom)); } .combat-vitals { flex-wrap: wrap; gap: 4px; padding: 6px 8px; } .combat-vitals > span { width: 100%; } .combat-hud button { padding: 7px; min-height: 40px; font-size: 10px; } }
-@media (orientation: portrait) and (max-width: 700px) { .combat-hud { width: calc(100% - 32px); bottom: 116px; } }
+.scene-label { top: max(16px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); max-width: 230px; font-size: 11px; letter-spacing: 0; padding: 9px 14px; gap: 8px; }
+.scene-label > span { color: #94bd77; }
+#menu-toggle { font-size: 12px; padding: 10px 14px; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); }
+.touch-menu { display: none; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.toast { bottom: 22px; max-width: min(440px, calc(100% - 36px)); font-size: 11px; padding: 8px 12px; z-index: 3; }
+[data-controller='true'] .touch-controls { display: none; }
+@media (pointer: coarse), (max-width: 700px) {
+  :root:not([data-controller='true']) .field-shoulders { bottom: max(113px, calc(env(safe-area-inset-bottom) + 98px)); }
+  .toast { bottom: 225px; }
+}
+@media (max-width: 800px) {
+  .scene-label { top: max(96px, calc(env(safe-area-inset-top) + 80px)); left: max(16px, env(safe-area-inset-left)); transform: none; font-size: 9px; padding: 6px 10px; }
+  .combat-hud { --slot: 70px; }
+  .combat-slots { right: max(10px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); }
+  .slot-face img { width: 24px; height: 24px; }
+  .slot-name { font-size: 9px; }
+  .slot-key { height: 20px; min-width: 21px; font-size: 10px; }
+  .field-shoulders button { font-size: 10px; padding: 8px; }
+  .field-shoulders kbd { font-size: 9px; }
+  .small-button span { display: inline; }
+}
+@media (max-width: 420px) {
+  .combat-vitals { left: 10px; top: max(10px, env(safe-area-inset-top)); width: 245px; gap: 8px; }
+  .field-portrait { width: 46px; height: 46px; }
+  .field-portrait img { width: 40px; height: 40px; }
+  .vitals-name { font-size: 14px; }
+  #menu-toggle { top: max(10px, env(safe-area-inset-top)); right: 10px; padding: 10px; }
+  .scene-label { top: max(84px, calc(env(safe-area-inset-top) + 74px)); left: 10px; }
+  .combat-slots { bottom: max(12px, env(safe-area-inset-bottom)); }
+  .touch-controls { left: 10px; bottom: max(12px, env(safe-area-inset-bottom)); }
+  .field-shoulders { left: 10px; gap: 4px; flex-direction: column; }
+}
+@media (max-height: 450px) and (orientation: landscape) {
+  .combat-hud { --slot: 57px; }
+  .combat-vitals { top: 9px; padding: 5px; width: 225px; }
+  .field-portrait { width: 40px; height: 40px; }
+  .field-portrait img { width: 36px; height: 36px; }
+  .scene-label { top: 9px; left: 50%; transform: translateX(-50%); }
+  .slot-face img { width: 20px; height: 20px; }
+  .slot-name { font-size: 7px; }
+  .slot-state { font-size: 7px; }
+}
+
+@media (max-width: 360px) {
+  .combat-vitals { width: 230px; }
+  #menu-toggle span { display: none; }
+  .combat-hud { --slot: 60px; }
+  .slot-name { font-size: 8px; }
+  .slot-face img { width: 22px; height: 22px; }
+  .dpad { grid-template-columns: repeat(3, 36px); }
+  .dpad button { width: 36px; height: 36px; }
+}

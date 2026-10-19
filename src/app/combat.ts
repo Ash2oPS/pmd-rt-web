@@ -30,7 +30,7 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     const choices = [...knownMoves.filter(move => !moves.some((equipped, index) => index !== slot && equipped?.id === move.id)), null];
     const current = choices.findIndex(move => move?.id === moves[slot]?.id);
     moves[slot] = choices[(current + 1) % choices.length] ?? null;
-    equipment.update(moves);
+    equipment.update(moves); refresh();
     callbacks.toast(`Capacité ${slot + 1} : ${moves[slot]?.label ?? 'vide'} · équipement de cette session`);
   }
   const partners = field.actors.filter(actor => content.species.find(species => species.id === actor.speciesId)!
@@ -52,7 +52,7 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     effects.reset();
     refresh();
     element<HTMLCanvasElement>('game').focus({ preventScroll: true });
-    callbacks.toast('Entraînement : esquive les zones. J / K / L / I : capacités · Maj : viser · Espace : attendre.');
+    callbacks.toast('Entraînement : anticipe les zones, puis attaque.');
     return true;
   }
   function leave() {
@@ -67,7 +67,7 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     const move = moves[slot];
     if (move && encounter) { encounter.requestAttack(move.id); refresh(); }
   }
-  const hud = createCombatHUD(playerSpecies.label, attack, start, leave);
+  const hud = createCombatHUD(playerSpecies.label, attack, start, leave, Encounter.playerMaxHp);
   return {
     start, leave, attack, snapshot,
     equippedMoves() { return [...moves]; },
@@ -93,7 +93,7 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     },
     get movementMultiplier() { return encounter?.playerMovementMultiplier ?? 1; },
     update(dt: number, resultUiDt = dt) {
-      if (!encounter) return;
+      if (!encounter) { refresh(); return; }
       presentationTime += encounter.result === 'playing' ? dt : resultUiDt;
       encounter.update(dt);
       const next = encounter.takeEvents();

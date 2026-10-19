@@ -86,3 +86,8 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Runtime animation selects eight-direction Idle/Walk from actual movement; terrain and creature pixel roots stay unchanged. Rendering sorts Pokemon and player by vertical position within each terrain row.
 - Production build passes strict types, architecture, source/content checks and 60 unit tests, including long NPC simulations. The skill Playwright client was rerun with two input bursts; final gameplay screenshots inspected under output/realtime-final.
 - All 28 browser checks pass against production preview: 18 existing flows, five Pokemon/offline checks and five real-time movement/AI checks. Repeated menu checks with deliberate input holds also pass. Publication is authorized; verify the GitHub Actions result and live build after pushing. Physical Thor stick feel remains a device check, not established by desktop automation.
+
+## 2026-10-19 unified HUD
+- Implement the approved generated HUD as responsive native DOM/CSS: persistent portrait/HP, quiet location/menu, four face-button slots, compact aim/wait hints and real cast/cooldown status. Preserve existing mechanics and all input/save/offline behavior.
+- User specifically selected SpriteCollab Jigglypuff Alternate portrait; import pin, exact pixels and named attribution preserved.
+- Validation: isolated staged-source build passed 140 tests and every production-browser suite, including five HUD viewports, touch targeting, controller/remap labels, cast/recovery/cooldown, portrait and first-visit offline icons. Concurrent camera changes excluded from this release.

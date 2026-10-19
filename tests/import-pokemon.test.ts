@@ -81,3 +81,19 @@ test('shadow size chooses authored RGB mask and preserves its original alpha', (
   assert.deepEqual([...shadowMaskPixels(pixels, 2)], [0, 0, 0, 60, 0, 0, 0, 32]);
   assert.throws(() => shadowMaskPixels(pixels, 3), /Unsupported/);
 });
+
+test('Jigglypuff uses the exact Alternate portrait and its artist while keeping base sprites', async () => {
+  const config = JSON.parse(await readFile('imports/pokemon/config.json', 'utf8'));
+  const selected = config.species.find((entry: { id: string }) => entry.id === 'jigglypuff');
+  assert.equal(selected.portraitFolder, '0039/0001');
+  const sourceRoot = `imports/raw/spritecollab/${config.spriteCollabCommit}`;
+  assert.deepEqual(await readFile('public/pokemon/jigglypuff/Normal.png'),
+    await readFile(`${sourceRoot}/portrait/0039/0001/Normal.png`));
+  assert.deepEqual(await readFile('public/pokemon/jigglypuff/portrait-credits.txt'),
+    await readFile(`${sourceRoot}/portrait/0039/0001/credits.txt`));
+  assert.deepEqual(await readFile('public/pokemon/jigglypuff/Walk-Anim.png'),
+    await readFile(`${sourceRoot}/sprite/0039/Walk-Anim.png`));
+  const manifest = JSON.parse(await readFile('public/pokemon/manifest.json', 'utf8'));
+  const pokemon = manifest.species.find((entry: { id: string }) => entry.id === 'jigglypuff');
+  assert.ok(pokemon.credits.includes('baronessfaron'));
+});

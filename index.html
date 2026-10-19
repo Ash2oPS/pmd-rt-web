@@ -30,13 +30,8 @@
             tabindex="0"
             aria-label="Forêt explorable. Déplacez-vous avec la croix, le stick ou les flèches du clavier."
           ></canvas>
-          <div class="scene-label">
-            <span class="live-dot"></span>
-            <span
-              >Bois de l’Éveil ·
-              <span id="scene-status">Exploration</span></span
-            >
-          </div>
+          <div class="scene-label"><span aria-hidden="true">♠</span> Bois de l’Éveil</div>
+          <span id="scene-status" class="visually-hidden">Exploration</span>
           <div id="toast" class="toast" role="status" aria-live="polite"></div>
           <div class="touch-controls" aria-label="Commandes tactiles">
             <div class="dpad">
@@ -45,13 +40,7 @@
               ><button data-action="down" aria-label="Bas">↓</button
               ><button data-action="right" aria-label="Droite">→</button>
             </div>
-            <button
-              class="touch-menu"
-              data-action="menu"
-              aria-label="Menu tactile"
-            >
-              ☰
-            </button>
+
           </div>
         </div>
       </section>

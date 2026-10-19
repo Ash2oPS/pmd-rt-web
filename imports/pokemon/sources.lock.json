@@ -718,5 +718,13 @@
   "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0015/Normal.png": {
     "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0015/Normal.png",
     "sha256": "c7b8a8bbc62ac0e6cf5eebb18b1ce87f5b054c0d4f9afbdcd790fbb62ee6771e"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/0001/credits.txt": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/0001/credits.txt",
+    "sha256": "942dd692c03efe6c764894eeac7e1ce7bb24e1f19d82f18ae8fc0a30cd213fb5"
+  },
+  "imports/raw/spritecollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/0001/Normal.png": {
+    "url": "https://raw.githubusercontent.com/PMDCollab/SpriteCollab/6d3a03df44f4e9724884fda6ef53b611cc746adc/portrait/0039/0001/Normal.png",
+    "sha256": "ddf5288ac11702bb0e442338e099e892b9740d12371a0540c5b93393379c21de"
   }
 }

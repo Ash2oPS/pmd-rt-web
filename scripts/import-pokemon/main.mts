@@ -9,7 +9,8 @@ import { emit, fetchSource, json } from './source.mts';
 import type { SourceLock } from './source.mts';
 
 const configSchema = z.object({ version: z.literal(1), spriteCollabCommit: z.string().regex(/^[a-f0-9]{40}$/),
-  animations: z.array(z.string()), species: z.array(z.object({ id: z.string().regex(/^[a-z0-9-]+$/), dexNumber: z.number().int().positive() })) });
+  animations: z.array(z.string()), species: z.array(z.object({ id: z.string().regex(/^[a-z0-9-]+$/), dexNumber: z.number().int().positive(),
+    portraitFolder: z.string().regex(/^\d{4}(\/\d{4})*$/).optional() })) });
 const config = configSchema.parse(JSON.parse(await readFile('imports/pokemon/config.json', 'utf8')));
 const check = process.argv.includes('--check');
 let lock: SourceLock = {};
@@ -33,6 +34,7 @@ for (const item of config.species) {
   if (data.id !== item.id) throw new Error(`Species ID mismatch: ${item.id}`);
   normalized.push(data);
   const folder = String(item.dexNumber).padStart(4, '0'), prefix = `pokemon/${item.id}`;
+  const portraitFolder = item.portraitFolder ?? folder;
   const xml = await spriteSource(`sprite/${folder}/AnimData.xml`);
   const parsed = parseAnimationData(xml.toString());
   await emit(`public/${prefix}/AnimData.xml`, xml, check);
@@ -54,15 +56,16 @@ for (const item of config.species) {
       sheet: `${prefix}/${source.Name}-Anim.png`, offsetsSheet: `${prefix}/${source.Name}-Offsets.png`, shadowSheet: `${prefix}/${source.Name}-Shadow.png`, shadowMask: `${prefix}/${source.Name}-ShadowMask.png`,
       ...(source.Name === requested ? {} : { copyOf: source.Name }) };
   }
-  const rawCredits = await Promise.all(['sprite', 'portrait'].map((kind) => spriteSource(`${kind}/${folder}/credits.txt`)));
+  const rawCredits = await Promise.all([spriteSource(`sprite/${folder}/credits.txt`), spriteSource(`portrait/${portraitFolder}/credits.txt`)]);
   const credits = [...new Set(rawCredits.flatMap((value) => value.toString().trim().split(/\r?\n/).map((line) => line.split('\t')[1])))].filter(Boolean).map((id) => {
     const author = names.get(id); return author ? `${author.name}${author.contact ? ` (${author.contact})` : ''}` : id;
   });
   for (const [i, kind] of ['sprite', 'portrait'].entries()) await emit(`public/${prefix}/${kind}-credits.txt`, rawCredits[i], check);
-  await emit(`public/${prefix}/Normal.png`, await spriteSource(`portrait/${folder}/Normal.png`), check);
+  await emit(`public/${prefix}/Normal.png`, await spriteSource(`portrait/${portraitFolder}/Normal.png`), check);
   manifestSpecies.push({ id: item.id, dexNumber: item.dexNumber, label: data.label, animations,
     shadowSize: parsed.shadowSize, sourceAnimData: `${prefix}/AnimData.xml`, portrait: `${prefix}/Normal.png`, credits });
   report.push({ id: item.id, animations: Object.keys(animations), missing: [], portrait: 'Normal', credits,
+    ...(item.portraitFolder ? { portraitSource: `portrait/${portraitFolder}/Normal.png` } : {}),
     anchorAudit: Object.fromEntries(Object.entries(animations).map(([name, entry]) => {
       const value = entry as { directions: number; durations: number[] };
       return [name, { frames: value.directions * value.durations.length, missing: 0, duplicate: 0, fallback: 0 }];

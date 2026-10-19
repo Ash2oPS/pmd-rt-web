@@ -8,7 +8,7 @@
     { "id": "squirtle", "dexNumber": 7 },
     { "id": "pikachu", "dexNumber": 25 },
     { "id": "eevee", "dexNumber": 133 },
-    { "id": "jigglypuff", "dexNumber": 39 },
+    { "id": "jigglypuff", "dexNumber": 39, "portraitFolder": "0039/0001" },
     { "id": "clefairy", "dexNumber": 35 },
     { "id": "nidoran-m", "dexNumber": 32 },
     { "id": "nidoran-f", "dexNumber": 29 },

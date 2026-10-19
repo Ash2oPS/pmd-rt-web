@@ -38,6 +38,7 @@ export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () =
       if (portrait) {
         portrait.alt = 'Rondoudou';
         element('player-portrait').replaceChildren(portrait);
+        element('field-portrait').replaceChildren(portrait.cloneNode(true));
       }
       state = 'ready';
       status.textContent = `${field.actors.length + 1} Pokémon · animations prêtes`;
