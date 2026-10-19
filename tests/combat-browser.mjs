@@ -169,7 +169,12 @@ try {
     try {
       const before = await state(page);
       await advance(page, 2000);
-      assert.deepEqual((await state(page)).pokemon.actors, before.pokemon.actors);
+      const idle = await state(page);
+      assert.deepEqual(idle.pokemon.actors.map(actor => [actor.id, actor.x, actor.y]), before.pokemon.actors.map(actor => [actor.id, actor.x, actor.y]));
+      assert.ok(idle.pokemon.elapsed > before.pokemon.elapsed, 'Ambient animation continues while gameplay is idle');
+      const frames = new Set([idle.pokemon.player.frame.frame]);
+      for (const ms of [97, 211, 367, 733]) { await advance(page, ms); frames.add((await state(page)).pokemon.player.frame.frame); }
+      assert.ok(frames.size > 1, 'Stationary player keeps a living Idle animation');
       await page.keyboard.down('Shift'); await page.keyboard.down('ArrowRight'); await advance(page, 500);
       let view = await state(page);
       assert.deepEqual(view.player, before.player);

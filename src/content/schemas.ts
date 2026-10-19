@@ -25,6 +25,7 @@ export const speciesSchema = z.strictObject({
 });
 export const moveSchema = z.strictObject({
   id, label, type: elementalTypeSchema,
+  sourceMoveId: id.optional(),
   category: z.enum(['physical', 'special', 'status']),
   power: z.number().int().min(0).max(999),
   accuracy: z.number().int().min(1).max(100),

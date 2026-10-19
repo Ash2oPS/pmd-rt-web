@@ -2,6 +2,7 @@ import { content, field, movementSettings } from '../content/catalog.ts';
 import type { Move } from '../content/schemas.ts';
 import { createState } from '../domain/state.ts';
 import type { Facing } from '../domain/movement.ts';
+import { facingFromVector, movePoint } from '../domain/movement.ts';
 import { Encounter } from '../domain/combat/encounter.ts';
 import type { CombatEvent, EncounterSnapshot } from '../domain/combat/types.ts';
 import { createPokemonAssets } from '../platform/pokemon-assets.ts';
@@ -12,7 +13,7 @@ import { combatPose } from '../rendering/combat-pose.ts';
 import { setupAttackPresentation } from './attack-presentation.ts';
 import type { PresentationOptions } from './attack-presentation.ts';
 
-export interface LabOptions { seed: number; casterId: string; distance: number; facing: Facing; overlays: boolean }
+export interface LabOptions { seed: number; casterId: string; distance: number; facing: Facing; overlays: boolean; targetSpeciesId?: string; targetMoving?: boolean }
 
 /** Authoring transport supplies time to the exact same domain and render functions as live play. */
 export async function createLabSession(canvas: HTMLCanvasElement) {
@@ -30,9 +31,10 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
   function reset() {
     state = createState(world); state.facing = options.facing;
     world.playerSpeciesId = options.casterId;
+    world.actors[0]!.speciesId = options.targetSpeciesId ?? 'bulbasaur';
     world.actors[0]!.x = world.spawn.x + options.distance;
     const species = content.species.map(entry => ({ ...entry, stats: { ...entry.stats,
-      hp: entry.id === 'bulbasaur' ? 999 : entry.stats.hp },
+      hp: entry.id === world.actors[0]!.speciesId ? 999 : entry.stats.hp },
       learnset: entry.id === options.casterId ? [...entry.learnset.filter(learn => learn.moveId !== move.id), { level: 1, moveId: move.id }] : entry.learnset }));
     const moves = [...content.moves.filter(entry => entry.id !== move.id), move];
     encounter = new Encounter({ field: world, state, species, moves, movementSettings,
@@ -57,7 +59,17 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
     if (!encounter || seconds <= 0) { draw(); return; }
     const steps = Math.max(1, Math.ceil(seconds * 60));
     for (let i = 0; i < steps; i++) {
+      const target = encounter.actors[0], dt = seconds / steps;
+      let motion = { x: 0, y: 0 };
+      if (options.targetMoving && target && !target.defeated && target.behavior !== 'sleeping') {
+        const desired = { x: world.spawn.x + options.distance, y: world.spawn.y + Math.sin((encounter.time + dt) * 1.5) * .75 };
+        const next = movePoint(world, target, { x: desired.x - target.x, y: desired.y - target.y });
+        motion = { x: next.x - target.x, y: next.y - target.y }; target.x = next.x; target.y = next.y;
+      }
       encounter.update(seconds / steps);
+      if (target && Math.hypot(motion.x, motion.y) > .0001 && target.behavior !== 'sleeping') {
+        target.animation = 'Walk'; target.facing = facingFromVector(motion);
+      }
       events.push(...encounter.takeEvents());
       events = events.filter(event => encounter.time - event.time < 20).slice(-256);
     }
@@ -67,7 +79,7 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
     async configure(definition: Move, settings: LabOptions, presentationOptions: Omit<PresentationOptions, 'moves' | 'audio'> = {}) {
       const revision = ++configuration;
       const nextPresentation = setupAttackPresentation({ ...presentationOptions, moves: [definition], audio: false });
-      await assets.loadSpecies([settings.casterId, 'bulbasaur'], ['Idle', 'Walk', 'Attack', 'Hurt']);
+      await assets.loadSpecies([settings.casterId, settings.targetSpeciesId ?? 'bulbasaur'], ['Idle', 'Walk', 'Attack', 'Hurt']);
       await nextPresentation.loaded;
       if (revision !== configuration) return;
       if (assets.status === 'error') throw new Error(assets.errors.join('; '));
@@ -78,7 +90,7 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
     },
     restart() { reset(); const accepted = encounter.requestAttack(move.id); view = encounter.snapshot(); draw(); return accepted; },
     advance,
-    seek(seconds: number) { reset(); encounter.requestAttack(move.id); view = encounter.snapshot(); advance(Math.max(0, Math.min(15, seconds))); },
+    seek(seconds: number) { reset(); encounter.requestAttack(move.id); view = encounter.snapshot(); advance(Math.max(0, Math.min(120, seconds))); },
     snapshot() { return view; },
     presentation() { return presentation?.snapshot() ?? null; },
     events() { return [...events]; },

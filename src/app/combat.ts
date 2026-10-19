@@ -51,6 +51,7 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     presentationTime = 0;
     effects.reset();
     refresh();
+    element<HTMLCanvasElement>('game').focus({ preventScroll: true });
     callbacks.toast('Entraînement : esquive les zones. J / K / L / I : capacités · Maj : viser · Espace : attendre.');
     return true;
   }
@@ -58,6 +59,7 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     encounter?.cancelAll(); encounter = null; events = [];
     effects.reset();
     callbacks.clear(); refresh();
+    element<HTMLCanvasElement>('game').focus({ preventScroll: true });
     element('scene-status').textContent = 'Exploration';
   }
   function attack(slot: number) {

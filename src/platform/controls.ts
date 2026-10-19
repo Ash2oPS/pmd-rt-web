@@ -44,12 +44,12 @@ export function bindControls(callbacks: {
       callbacks.fullscreen();
       return;
     }
-    const resultButton = event.target instanceof Element && !!event.target.closest('.combat-result');
+    const resultButton = event.target instanceof Element && !!event.target.closest('.combat-result')?.getClientRects().length;
     const action = event.code === 'Space' ? callbacks.paused() || resultButton ? 'confirm' : 'wait' : keyActions[event.code];
     if (!action) return;
     if (event.repeat && (action.startsWith('attack') || action === 'confirm')) { event.preventDefault(); return; }
     if (
-      (callbacks.paused() || (event.target instanceof Element && !!event.target.closest('.combat-result'))) &&
+      (callbacks.paused() || resultButton) &&
       action === "confirm" &&
       event.target instanceof Element &&
       event.target.matches("button,summary") &&

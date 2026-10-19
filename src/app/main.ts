@@ -30,7 +30,7 @@ const toast = createToast(),
   runtime = new Runtime(field, storage.state, movementSettings.playerMaxSpeed);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let combat: ReturnType<typeof setupCombat>;
-const pokemon = setupPokemon(field, () => runtime.velocity, () => combat?.snapshot() ?? null);
+const pokemon = setupPokemon(field, () => runtime.velocity, () => combat?.snapshot() ?? null, () => worldAdvancing);
 combat = setupCombat(field, runtime, () => pokemon.isReady, {
   canAct: () => !menu.paused,
   clear: () => clear(), toast,
@@ -203,6 +203,7 @@ function act(action: Action) {
 }
 let saveElapsed = 0, hudElapsed = 0, wasMoving = false;
 let worldAdvancing = false;
+let ambientTime = 0;
 function update(dt: number) {
   const actions = pad.poll(menu.paused || combat.finished ? 'menu' : 'play');
   diagnosticsView.update(pad.current);
@@ -214,6 +215,7 @@ function update(dt: number) {
   const local = controls.actions();
   runtime.updateInput(new Set([...local, ...actions]), dt, act, menu.paused || combat.finished);
   if (menu.paused) return;
+  ambientTime += dt;
   const movement = selectMovement(local, pad.movementSelection());
   const held = new Set([...local, ...actions]);
   const clock = resolveActionClock({ movement: movement.vector, aimOnly: held.has('aim'), wait: held.has('wait'),
@@ -239,7 +241,7 @@ function update(dt: number) {
   wasMoving = result.moved;
 }
 function draw() {
-  renderer.draw(runtime.state, runtime.visual, runtime.time);
+  renderer.draw(runtime.state, runtime.visual, ambientTime);
 }
 function frame(now: number) {
   const dt = Math.min(0.05, Math.max(0, (now - lastFrame) / 1000));
@@ -263,7 +265,7 @@ window.render_game_to_text = () =>
     submenu: menu.submenu,
     journalOpen: menu.screen === "journal",
     camera: renderer.camera,
-    pokemon: pokemon.snapshot(runtime.time, runtime.state, runtime.visual),
+    pokemon: pokemon.snapshot(ambientTime, runtime.state, runtime.visual),
     combat: combat.snapshot(),
     combatPresentation: combat.presentation(),
     equippedMoves: combat.equippedMoves().map(move => move?.id ?? null),

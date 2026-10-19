@@ -13,7 +13,8 @@ function fixture(playerSpeciesId = 'jigglypuff', enemySpeciesId = 'bulbasaur', e
   const dungeon = structuredClone(field); dungeon.playerSpeciesId = playerSpeciesId;
   dungeon.actors = [{ ...field.actors.find(actor => actor.speciesId === enemySpeciesId)!, x: enemyX, y: 5, facing: 'left' }];
   const state = createState(dungeon); state.facing = 'right';
-  const moves = structuredClone(content.moves);
+  // Keep behavior fixtures independent of additional designer-authored moves/learnset entries.
+  const moves = structuredClone(content.moves.filter(move => ['pound', 'sing', 'vine-whip', 'water-gun', 'thunder'].includes(move.id)));
   const encounter = new Encounter({ field: dungeon, state, species: content.species, moves, movementSettings,
     hostileIds: [dungeon.actors[0]!.id] });
   return { encounter, state, dungeon, moves };
@@ -21,6 +22,7 @@ function fixture(playerSpeciesId = 'jigglypuff', enemySpeciesId = 'bulbasaur', e
 
 test('multi-move enemies select a reachable move instead of an unavailable first move', () => {
   const ranged = fixture('jigglypuff', 'bulbasaur', 4.6);
+  Object.assign(ranged.moves.find(move => move.id === 'pound')!.combat!, { pattern: { kind: 'sector', range: 1.15, angleDegrees: 95 } });
   ranged.dungeon.actors[0]!.speciesId = 'jigglypuff';
   ranged.encounter.reset(ranged.state, 0);
   ranged.encounter.update(.01);
@@ -32,7 +34,8 @@ test('multi-move enemies select a reachable move instead of an unavailable first
   cooling.encounter.reset(cooling.state, 0);
   cooling.encounter.update(.01);
   assert.equal(cooling.encounter.snapshot().casts[0]?.moveId, 'pound');
-  cooling.encounter.update(.75);
+  const firstRule = cooling.moves.find(move => move.id === 'pound')!.combat!;
+  cooling.encounter.update(firstRule.preparationSeconds + firstRule.activeSeconds + firstRule.recoverySeconds + .02);
   assert.equal(cooling.encounter.snapshot().casts[0]?.moveId, 'sing', 'A ready second move replaces cooling Pound');
   assert.deepEqual(cooling.encounter.takeEvents().filter(event => event.type === 'cast-start')
     .map(event => event.moveId), ['pound', 'sing']);

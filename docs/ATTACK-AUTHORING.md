@@ -31,3 +31,22 @@ Tracks bind to preparation, lock, activation, hit, projectile, zone or cancellat
 `content/effect-assets/<id>.json` defines a local sprite/sheet, frame dimensions/count/timing and provenance. The initial six SVG sprites under `public/effects/` are project-authored pixel assets, separate from pinned SpriteCollab imports. Sheet dimensions and loading errors are checked before combat is ready. Existing Pokemon roots and authored frame durations are preserved; an Attack animation holds before its source contact frame until the simulation activates, then finishes without looping.
 
 Sound is optional and unlocked by a browser-recognized user gesture. The pause menu offers a separately persisted mute setting. The laboratory never plays sounds while scrubbing. Final cosmetic impacts finish on the result UI clock while gameplay stays frozen.
+
+## Edit, export and integrate
+
+Search/select a move, duplicate it, then use Combat, Rendu and Assets to edit its behavior and presentation. Invalid fields show their path and retain the last valid preview. Undo/redo and revert operate on the selected draft. The timeline provides preparation, aim-lock, impact and recovery markers; caster, target species, moving target, distance, direction and seed use the actual game simulation.
+
+Visual edits default to move-specific overrides. Shared preset editing is explicit and shows the affected moves. Create a private presentation or duplicate an asset before replacing a shared sprite. PNG, WebP and passive SVG imports include dimensions, frame timing and provenance; active/external SVG content is rejected.
+
+Browser drafts use separate versioned storage. They never replace the exploration save or project files. Export downloads a JSON bundle containing the move, changed presentation dependencies and optional embedded assets. Unchanged shared records are omitted so integrating a bundle preserves concurrent source edits. Variants retain `sourceMoveId`; technical demonstrations keep their `lab-` identity and cannot be assigned as official moves.
+
+Integrate the downloaded bundle from the repository root:
+
+```sh
+npm run attack:apply -- path/to/attack-bundle.json
+npm run attack:apply -- path/to/attack-bundle.json --apply
+npm run content:generate
+npm run build
+```
+
+The first command is a dry run. The explicit apply command validates references, image dimensions and confined paths, backs up replaced files under `output/authoring-backups/`, and writes only changed records/assets. Reload the rebuilt laboratory to verify the result. An automated browser export has been applied to an isolated project copy and rebuilt: edited preparation/range and a private replacement sprite survived, while an unrelated concurrent preset edit was preserved.

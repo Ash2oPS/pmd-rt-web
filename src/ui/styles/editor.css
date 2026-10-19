@@ -1,0 +1,32 @@
+.attack-editor { min-width: 0; font-size: 12px; }
+.editor-heading h2 { font-size: 17px; margin: 0 0 6px; }
+.editor-source { color: #b5c0a6; margin: 0 0 7px; overflow-wrap: anywhere; }
+.editor-dirty { display: block; color: #dfc986; font-size: 11px; margin-bottom: 16px; }
+.editor-toolbar { display: flex; flex-wrap: wrap; gap: 5px; padding-bottom: 15px; border-bottom: 1px solid #354536; }
+.editor-toolbar button { padding: 6px 8px; font-size: 10px; }
+.editor-tabs { display: flex; gap: 2px; margin: 14px 0; border-bottom: 1px solid #425444; }
+.editor-tabs button { background: transparent; border: 0; border-radius: 0; flex: 1; font-size: 12px; }
+.editor-tabs button[aria-pressed=true] { border-bottom: 2px solid #d7bd78; color: #f8df9a; }
+.editor-body { display: grid; gap: 13px; }
+.attack-editor fieldset { min-width: 0; border: 0; border-top: 1px solid #354536; padding: 13px 0 0; margin: 0; }
+.attack-editor fieldset fieldset { margin-top: 13px; }
+.attack-editor legend { padding: 0 8px 0 0; color: #e6ddbe; font-weight: 600; font-size: 12px; }
+.attack-editor .editor-field { font-size: 11px; gap: 5px; margin-bottom: 12px; }
+.editor-field input,.editor-field select { font-size: 12px; min-height: 33px; padding: 7px; }
+.editor-field input[type=color] { height: 30px; padding: 3px; width: 100%; }
+.editor-field input[type=checkbox] { justify-self: start; }
+.attack-editor .editor-check { display: flex; align-items: center; gap: 8px; margin: 12px 0; font-size: 11px; }
+.editor-check input { flex: 0 0 auto; }
+.editor-hint { color: #a6b49b; line-height: 1.55; font-size: 10px; margin: 9px 0; }
+.editor-warning { color: #f0cb88; background: #41351d; border-left: 2px solid #e3b463; padding: 9px; line-height: 1.5; }
+.editor-errors { padding: 10px; margin-top: 12px; background: #412b23; color: #ffc1a8; font-size: 11px; line-height: 1.5; }
+.editor-errors ul { margin: 8px 0 0; padding-left: 17px; overflow-wrap: anywhere; }
+.editor-field-error { color: #ffc1a8; line-height: 1.4; }
+.editor-field [aria-invalid=true] { border-color: #ed9270; }
+.editor-source-view { margin: 17px 0 10px; color: #b8c4a8; font-size: 10px; }
+.editor-source-view summary { cursor: pointer; padding: 6px 0; }
+.editor-source-view pre { max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 9px; }
+.lab-inspector:has(.attack-editor) { display: block; }
+@media(min-width:1200px) { .lab-workspace:has(.attack-editor) { grid-template-columns: 190px minmax(320px,1fr) 330px; } }
+@media(max-width:1000px) { .editor-body { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; } .editor-body > select { grid-column: 1/-1; } }
+@media(max-width:600px) { .editor-body { grid-template-columns: minmax(0,1fr); } .editor-toolbar button { min-height: 36px; } }
