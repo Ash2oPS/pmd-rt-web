@@ -26,7 +26,7 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
   const world = structuredClone(field);
   world.spawn = { x: 7, y: 5 };
   world.collectibles = [];
-  world.actors = [{ id: 'lab-target', speciesId: 'bulbasaur', x: 8, y: 5, facing: 'left', animation: 'Idle' }];
+  world.actors = [{ id: 'lab-target', speciesId: 'bulbasaur', team: 'hostile', x: 8, y: 5, facing: 'left', animation: 'Idle' }];
   let state = createState(world);
   function reset() {
     state = createState(world); state.facing = options.facing;
@@ -38,7 +38,7 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
       learnset: entry.id === options.casterId ? [...entry.learnset.filter(learn => learn.moveId !== move.id), { level: 1, moveId: move.id }] : entry.learnset }));
     const moves = [...content.moves.filter(entry => entry.id !== move.id), move];
     encounter = new Encounter({ field: world, state, species, moves, movementSettings,
-      hostileIds: ['lab-target'], seed: options.seed, aiEnabled: false });
+      seed: options.seed, aiEnabled: false });
     events = []; view = encounter.snapshot();
   }
   function draw() {

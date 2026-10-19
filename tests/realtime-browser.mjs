@@ -145,8 +145,11 @@ try {
         assert.equal(actor.animation, Math.hypot(actor.velocity.x, actor.velocity.y) > 0.00001 ? 'Walk' : 'Idle', 'Animation follows actual movement, including state-transition boundaries');
       }
     }
-    assert.equal(moved.size, 9, 'All nine Pokemon roam');
-    assert.ok([...seen.values()].every((behaviors) => behaviors.has('Idle') && behaviors.has('Roaming')), 'Every Pokemon enters both states');
+    const neutralIds = field.actors.filter(entry => entry.team !== 'hostile').map(entry => entry.id);
+    assert.equal(moved.size, neutralIds.length, 'All neutral visitors roam');
+    assert.ok(neutralIds.every(id => seen.get(id).has('idle') && seen.get(id).has('roaming')), 'Neutral visitors enter both states');
+    const hostile = first.pokemon.actors.find(actor => actor.id === 'bulbasaur-visitor');
+    assert.equal(hostile.behavior, 'idle', 'The declared hostile waits for the field encounter rules');
     await page.keyboard.down('Escape'); await advance(page, 17); await page.keyboard.up('Escape');
     const paused = await state(page);
     assert.equal(paused.mode, 'menu');

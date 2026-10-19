@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { content, field } from '../src/content/catalog.ts';
+import { dungeonSchema } from '../src/content/schemas.ts';
 import { validateContent } from '../src/content/validate.ts';
 
 test('loads the playable field with collectible item definitions', () => {
@@ -22,6 +23,14 @@ test('places all ten imported species in the current field', () => {
     assert.equal(species.source?.provider, 'pokeapi');
     assert.equal(species.source?.pokemonId, species.dexNumber);
   }
+});
+
+test('actor teams default to neutral unless a field instance declares hostility', () => {
+  const parsed = dungeonSchema.parse({ id: 'team-default', label: 'Team default', tileSize: 32,
+    map: ['#####', '#...#', '#####'], spawn: { x: 1, y: 1 }, collectibles: [],
+    actors: [{ id: 'visitor', speciesId: 'bulbasaur', x: 3, y: 1, facing: 'left', animation: 'Idle' }] });
+  assert.equal(parsed.actors[0]!.team, 'neutral');
+  assert.equal(field.actors.find(actor => actor.speciesId === 'bulbasaur')!.team, 'hostile');
 });
 
 test('rejects unknown actors, duplicate IDs and invalid actor placements', () => {

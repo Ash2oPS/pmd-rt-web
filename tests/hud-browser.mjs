@@ -18,7 +18,7 @@ try{
  assert.equal(await page.locator('#field-portrait img').evaluate(img=>img.naturalWidth),40);
  assert.equal(await page.locator('.combat-vitals').isVisible(),true);
  assert.deepEqual(await page.locator('.slot-key').allTextContents(),['J','K','L','I']);
- assert.equal(await page.locator('[data-slot]:disabled').count(),4);
+ assert.equal(await page.locator('[data-slot]:disabled').count(),2);
  for(const [width,height]of[[1440,900],[960,540],[640,360],[390,844],[320,568]]){
   await page.setViewportSize({width,height});
   await page.waitForFunction(()=>{const c=document.querySelector('#game');return c.width===Math.round(c.clientWidth*Math.min(devicePixelRatio,2))&&c.height===Math.round(c.clientHeight*Math.min(devicePixelRatio,2));},undefined,{polling:50});
@@ -32,7 +32,7 @@ try{
  await page.evaluate(()=>{window.__hudPad.connected=true});await advance(0);
  assert.deepEqual(await page.locator('.slot-key').allTextContents(),['Y','X','A','B']);
  assert.equal(await page.locator('[data-action="aim"] kbd').textContent(),'L');
- await page.keyboard.press('Escape');await advance(0);await page.locator('[data-menu="combat"]').click();await advance(0);
+ await advance(0);
  assert.equal(await page.locator('[data-slot="0"]').isEnabled(),true);
  await page.locator('[data-slot="0"]').click();await advance(100);
  assert.match(await page.locator('[data-slot="0"]').getAttribute('aria-label'),/Préparation/);

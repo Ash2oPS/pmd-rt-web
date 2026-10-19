@@ -35,15 +35,14 @@ export class Encounter {
   private readonly zones: Zones;
   private cooldowns = new Map<string, number>();
   private hurtUntil = new Map<string, number>();
-  private readonly hostileIds: Set<string>;
   constructor(private readonly options: EncounterOptions) {
     this.state = options.state;
     this.zones = new Zones(options.field);
-    this.hostileIds = new Set(options.hostileIds ?? ['bulbasaur-visitor']);
     this.reset(options.state);
   }
   get result(): 'playing' | 'won' | 'lost' {
     if (this.hp <= 0) return 'lost';
+    if (this.options.continueAfterVictory) return 'playing';
     const hostile = this.actors.filter(actor => actor.team === 'hostile');
     return hostile.length && hostile.every(actor => actor.defeated) ? 'won' : 'playing';
   }
@@ -69,7 +68,7 @@ export class Encounter {
     this.casts = []; this.projectiles = []; this.zones.clear(); this.statuses.clear(); this.events = []; this.sequence = 0;
     this.castSequence = 0; this.lastFailure = null;
     this.cooldowns.clear(); this.hurtUntil.clear();
-    this.actors = createEncounterActors(this.options, this.hostileIds);
+    this.actors = createEncounterActors(this.options);
   }
   cancelAll(): void {
     for (const cast of this.casts) this.emit('cast-cancel', cast.casterId, cast.moveId);
@@ -80,7 +79,7 @@ export class Encounter {
   takeEvents(): CombatEvent[] { const events = this.events; this.events = []; return events; }
   snapshot(): EncounterSnapshot {
     return { time: this.time, result: this.result, player: { ...this.player },
-      actors: this.actors.map(({ roaming: _roaming, ...actor }) => ({ ...actor })),
+      actors: this.actors.map(({ roaming, ...actor }) => ({ ...actor, velocity: { ...roaming.velocity } })),
       casts: this.casts.map(({ move: _move, hits: _hits, locked: _locked, activated: _activated, ...cast }) => structuredClone(cast)),
       projectiles: this.projectiles.map(({ team: _team, angleRadians: _angle, speed: _speed, ...projectile }) => structuredClone(projectile)),
       zones: this.zones.snapshot(), lastFailure: this.lastFailure,

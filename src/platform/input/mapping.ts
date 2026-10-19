@@ -81,6 +81,9 @@ export function decodePad(pad: PadLike | null, mapping: Mapping, context: 'menu'
   return ACTIONS.filter(action => {
     if (context === 'play' ? action === 'confirm' || action === 'back' : action.startsWith('attack') || action === 'aim' || action === 'wait') return false;
     const binding = mapping[action];
+    if (context === 'play' && action.startsWith('attack') && (['up', 'down', 'left', 'right'] as const)
+      .some(direction => mapping[direction].type === binding.type && mapping[direction].index === binding.index
+        && (binding.type === 'button' || mapping[direction].type !== 'axis' || mapping[direction].sign === binding.sign))) return false;
     if (binding.type === 'axis') return (pad.axes[binding.index] ?? 0) * binding.sign > 0.5;
     const button = pad.buttons[binding.index];
     if (button?.pressed || (button?.value ?? 0) > 0.5) return true;

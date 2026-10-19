@@ -9,7 +9,7 @@ export interface EncounterOptions {
   moves: readonly Move[];
   movementSettings: MovementSettings;
   state: GameState;
-  hostileIds?: readonly string[];
+  continueAfterVictory?: boolean;
   seed?: number;
   aiEnabled?: boolean;
 }
@@ -82,7 +82,7 @@ export interface EncounterSnapshot {
   time: number;
   result: 'playing' | 'won' | 'lost';
   player: CombatEntity;
-  actors: Omit<CombatActor, 'roaming'>[];
+  actors: (Omit<CombatActor, 'roaming'> & { velocity: Point })[];
   casts: CastSnapshot[];
   projectiles: ProjectileSnapshot[];
   statuses: StatusSnapshot[];

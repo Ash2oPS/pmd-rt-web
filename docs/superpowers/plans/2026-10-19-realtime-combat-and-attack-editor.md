@@ -255,3 +255,15 @@ Publish milestones after their automated, desktop browser and deployment checks 
 - [x] Every milestone has a verified patch release, including final 0.4.9 deployment and the existing-session PWA update. Physical Thor tests are not a completion requirement.
 
 Recruitment, progression, procedural dungeons, a full type/ability system and a complete Pokemon roster are outside this plan unless separately requested.
+
+## Integrated exploration combat (follow-up objective, 2026-10-19)
+
+This later user request replaces the separate player-facing training encounter with one persistent field encounter. The workshop and its lab fixtures remain separate authoring tools. Starting checkpoint: `2b7d067` (`main` = `origin/main`, package 0.4.10); the already published camera/HUD commits are part of the baseline. The user authorized scoped commits and Pages publication after each stable step, with no forced push and no hardware-test gate.
+
+| Step | Target | Scope | Delivery status |
+| --- | --- | --- | --- |
+| 1 | 0.4.11 | Declare hostile/neutral actor teams in content; make one persistent encounter own field actor positions; move attacks into exploration; remove the training launch path; prove neutral defaults, position identity and action-clock freeze. | Implemented; build (146 unit tests) and all production browser suites pass locally. Pages publication pending. |
+| 2 | 0.4.12 | Add action-triggered, proximity- and line-of-sight-aware hostile aggro, pursuit, authored move warnings/attacks, per-enemy victory and same-map K.O. recovery. | Not started. |
+| 3 | 0.4.13 | Verify save-before-recovery, transient resets, pause/suspension/blur/reload, offline update behavior; finish README, combat status and tracking notes; publish only after production browser and live PWA checks. | Not started. |
+
+Preserve action-driven world time, separate ambient Idle animation, continuous collision, input remaps, save keys/formats and `/pmd-rt-web/` paths. The existing camera changes at `7b239b4` stay in the baseline. See the current [combat status](../../COMBAT-TODO.md); update this table and `progress.md` with observed results after each release.

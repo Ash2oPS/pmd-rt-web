@@ -97,3 +97,10 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Implement the approved generated HUD as responsive native DOM/CSS: persistent portrait/HP, quiet location/menu, four face-button slots, compact aim/wait hints and real cast/cooldown status. Preserve existing mechanics and all input/save/offline behavior.
 - User specifically selected SpriteCollab Jigglypuff Alternate portrait; import pin, exact pixels and named attribution preserved.
 - Validation: isolated staged-source build passed 140 tests and every production-browser suite, including five HUD viewports, touch targeting, controller/remap labels, cast/recovery/cooldown, portrait and first-visit offline icons. Concurrent camera changes excluded from this release.
+
+## Persistent field encounter — 0.4.11 release candidate
+- Declared actor teams in dungeon content: Bulbizarre is explicitly hostile and omitted teams default to neutral. Generated editor schema and content manifest are regenerated through the content pipeline.
+- Replaced the separate field-roamer list with the persistent Encounter as the single NPC position owner. Equipped attacks now operate on the exploration map, victory leaves exploration active, and the pause menu keeps only the separate ability workshop.
+- Preserved neutral roaming, action-driven world time, ambient Idle animations and remapped controls. A remapped direction wins over an attack using the same physical button.
+- Local validation: `npm run build` passed 146 unit tests; the full production browser suite passed on `npm run preview` (19 browser, 5 Pokemon, 6 realtime, 5 field combat, 7 lab, 5 effects, 7 editor, PWA update and HUD flows). Inspected field hit, post-victory and controller telegraph captures; no console errors.
+- Release version is 0.4.11. Commit and Pages publication checks are pending.

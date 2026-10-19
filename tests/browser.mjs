@@ -517,7 +517,8 @@ try {
       };
     });
     await settled(padPage);
-    assert.ok((await state(padPage)).player.x > before.player.x, "Remapped button moves right");
+    const afterRemap = await state(padPage);
+    assert.ok(afterRemap.player.x > before.player.x, "Remapped button moves right");
     await padPage.reload();
     await padPage.waitForFunction(
       () => typeof window.render_game_to_text === "function",

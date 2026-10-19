@@ -1,22 +1,15 @@
-import { content, movementSettings } from '../content/catalog.ts';
-import { relativeMovementSpeed } from '../domain/speed.ts';
+import { content } from '../content/catalog.ts';
 import type { Dungeon } from '../content/schemas.ts';
+import type { EncounterSnapshot } from '../domain/combat/types.ts';
 import type { GameState, Point } from '../domain/state.ts';
 import { createPokemonAssets } from '../platform/pokemon-assets.ts';
 import { createPokemonRenderer } from '../rendering/pokemon.ts';
 import { element } from '../ui/dom.ts';
-import { createRoamers, updateRoamers } from '../domain/roaming.ts';
-import type { EncounterSnapshot } from '../domain/combat/types.ts';
 import { combatPose } from '../rendering/combat-pose.ts';
 
-/** Connects authored field actors to locally imported art without species branches. */
+/** Draws the field encounter's actors without creating a second position store. */
 export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () => EncounterSnapshot | null = () => null,
   worldAdvancing: () => boolean = () => true) {
-  const playerStat = content.species.find(species => species.id === field.playerSpeciesId)!.stats.speed;
-  const actors = createRoamers(field.actors, definition => relativeMovementSpeed(
-    content.species.find(species => species.id === definition.speciesId)!.stats.speed,
-    playerStat, movementSettings, definition.roaming?.behaviorMultiplier ?? 0,
-  ));
   let assets: Awaited<ReturnType<typeof createPokemonAssets>> | null = null;
   let painter: ReturnType<typeof createPokemonRenderer> | null = null;
   let state: 'loading' | 'ready' | 'error' = 'loading';
@@ -54,26 +47,22 @@ export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () =
       const pose = combatPose(fight.player, fight, assets?.manifest, content.moves, time);
       return { ...pose, ...visual, animation: pose.animation === 'Idle' && Math.hypot(velocity().x, velocity().y) > .01 ? 'Walk' : pose.animation };
     }
-    const moving = Math.hypot(velocity().x, velocity().y) > .01;
-    return {
-      id: 'player', speciesId: field.playerSpeciesId,
-      x: visual.x, y: visual.y, facing: game.facing,
-      animation: moving ? 'Walk' : 'Idle',
-    };
+    return { id: 'player', speciesId: field.playerSpeciesId, x: visual.x, y: visual.y, facing: game.facing, animation: 'Idle' as const };
+  }
+  function actorPose(actor: EncounterSnapshot['actors'][number], fight: EncounterSnapshot, time: number) {
+    const animation = !worldAdvancing() && actor.animation === 'Walk' ? 'Idle' : actor.animation;
+    return combatPose({ ...actor, animation }, fight, assets?.manifest, content.moves, time);
   }
   return {
     ready,
     get isReady() { return state === 'ready'; },
-    update(dt: number) { if (!combat()) updateRoamers(actors, field, dt); },
     draw(context: CanvasRenderingContext2D, row: number, time: number, game: GameState, visual: Point) {
       if (!painter) return false;
+      const fight = combat();
       const player = playerActor(game, visual, time);
       let playerDrawn = false;
-      const fight = combat();
-      const visible = [...(fight ? fight.actors.filter(actor => !actor.defeated).map(actor => combatPose({ ...actor,
-        animation: !worldAdvancing() && actor.animation === 'Walk' ? 'Idle' : actor.animation }, fight, assets?.manifest, content.moves, time))
-        : actors.map(actor => ({ ...actor, animation: !worldAdvancing() ? 'Idle' : actor.animation }))), player]
-        .filter(actor => Math.floor(actor.y) === row).sort((a, b) => a.y - b.y);
+      const actors = fight?.actors.filter(actor => !actor.defeated).map(actor => actorPose(actor, fight, time)) ?? [];
+      const visible = [...actors, player].filter(actor => Math.floor(actor.y) === row).sort((a, b) => a.y - b.y);
       for (const actor of visible) {
         if (actor.id === 'player') playerDrawn = true;
         painter.draw(context, { ...actor, x: actor.x * 32 + 16, y: actor.y * 32 + 16 }, time * 1000);
@@ -86,15 +75,15 @@ export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () =
       return painter.draw(context, { ...actor, x: actor.x * 32 + 16, y: actor.y * 32 + 16 }, time * 1000);
     },
     snapshot(time: number, game: GameState, visual: Point) {
+      const fight = combat();
       const player = playerActor(game, visual, time);
       return {
         status: state, error,
         player: { ...player, frame: painter?.snapshot(player, time * 1000) },
-        actors: combat()?.actors.map(actor => { const pose = combatPose({ ...actor, animation: !worldAdvancing() && actor.animation === 'Walk' ? 'Idle' : actor.animation }, combat()!, assets?.manifest, content.moves, time); return { ...pose, frame: painter?.snapshot(pose, time * 1000) }; }) ?? actors.map(actor => {
-          const pose = { ...actor, animation: !worldAdvancing() ? 'Idle' : actor.animation };
-          return { id: actor.id, speciesId: actor.speciesId, x: actor.x, y: actor.y, facing: actor.facing, animation: pose.animation,
-            behavior: actor.behavior, velocity: actor.velocity, resolvedSpeed: actor.resolvedSpeed, frame: painter?.snapshot(pose, time * 1000) };
-        }),
+        actors: fight?.actors.map(actor => {
+          const pose = actorPose(actor, fight, time);
+          return { ...pose, frame: painter?.snapshot(pose, time * 1000) };
+        }) ?? [],
         loaded: assets?.status, elapsed: time,
       };
     },

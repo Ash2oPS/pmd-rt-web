@@ -46,10 +46,8 @@ try {
       !!JSON.parse(window.render_game_to_text()).combatPresentation.error, undefined, { timeout: 25000 });
     const failed = await game.evaluate(() => JSON.parse(window.render_game_to_text()));
     assert.equal(failed.combatPresentation.assetsReady, false, 'Missing visuals never report combat ready');
-    await game.locator('#menu-toggle').click();
-    await game.locator('[data-menu="combat"]').click();
-    assert.equal(await game.evaluate(() => JSON.parse(window.render_game_to_text()).combat), null);
-    assert.equal(await game.evaluate(() => JSON.parse(window.render_game_to_text()).mode), 'menu');
+    assert.ok(await game.evaluate(() => JSON.parse(window.render_game_to_text()).combat), 'The field encounter exists before art readiness');
+    assert.equal(await game.evaluate(() => JSON.parse(window.render_game_to_text()).mode), 'play');
   } finally { await blocked.close(); }
   await writeFile(`${output}/results.json`, JSON.stringify({ passed: 5, errors }, null, 2));
   console.log('PASS five local effect presentations, budgets and offline reload');

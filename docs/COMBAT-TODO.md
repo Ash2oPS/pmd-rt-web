@@ -1,19 +1,20 @@
 # Combat implementation status
 
-The approved combat and authoring scope is implemented. Release evidence is tracked in the [implementation ledger](superpowers/plans/2026-10-19-realtime-combat-and-attack-editor.md); integration instructions are in [attack authoring](ATTACK-AUTHORING.md).
+Combat is moving into the persistent exploration field in three patch releases. Evidence and commits are tracked in the [implementation ledger](superpowers/plans/2026-10-19-realtime-combat-and-attack-editor.md); attack editing remains in the separate [authoring workshop](ATTACK-AUTHORING.md).
 
-- [x] Proportional analog movement and species-relative NPC speed.
-- [x] Action-driven mechanics: movement intent, Wait or the player's committed attack advances time; aim-only rotates in place.
-- [x] Stationary Pokemon keep their Idle animation on an independent ambient clock. Menu/suspension pauses freeze all clocks.
-- [x] Four contextual attack slots, editable equipment, aim/Wait shoulders and keyboard/touch equivalents with remapping preserved.
-- [x] Five real moves: Pound, Sing, Vine Whip, Water Gun and Thunder, with distinct preparation, range, effect and recovery.
-- [x] Enemy warnings share resolved hit geometry; aim locks before contact, including seeded random zones.
-- [x] Composable sectors, disks, lines, rings/arcs, waves, random impacts and orbiting objects; bounded repeated contacts and terrain checks.
-- [x] Editable sprite, particle, trail, impact and optional sound presentations; imported Pokemon roots/timing preserved.
-- [x] Actual simulation laboratory and inspector with deterministic replay/scrubbing, invalid-field protection, undo/redo, private/shared presentation controls and sprite replacement.
-- [x] Versioned browser drafts, dependency-aware JSON export/import and validated CLI integration with backup; actual export/rebuild equivalence checked.
-- [x] Save protection/migrations, native Gamepad getter regression, offline assets and lifecycle/input regression coverage.
+## Delivered in 0.4.11
 
-Balance values remain editable prototype choices. PP, accuracy rolls, type effectiveness, abilities, recruitment, progression and procedural dungeons are outside this implementation. Training equipment and combat HP/status are session-only; reload returns to peaceful exploration.
+- [x] Field actor teams come from content: Bulbizarre is explicitly hostile and other actors default to neutral.
+- [x] One persistent `Encounter` owns field actor positions for rendering and combat; actors do not respawn when entering a separate player mode.
+- [x] The exploration HUD's four slots launch equipped attacks; defeating Bulbizarre does not end field play.
+- [x] The pause menu no longer offers a training start button. The ability workshop remains separate.
+- [x] Action-driven time, neutral roaming and ambient Idle animation retain their existing clocks.
 
-Physical Thor testing is independently user-owned. Do not request it or block publication on it. Desktop evidence does not establish physical-device behavior.
+## Next releases
+
+- [ ] 0.4.12: hostile awareness after player action and clear line of sight, approach, real-move telegraphs, field counterplay, and same-map recovery after K.O.
+- [ ] 0.4.13: verify save-before-recovery, pause/suspension/blur/reload, transient combat reset, offline behavior, and final documentation against the production build.
+
+The five authored moves, collision geometry, projectile/effect system, attack editor, and rendering remain shared with the workshop. PP, accuracy rolls, type effectiveness, abilities, recruitment, progression and procedural dungeons remain outside scope. HP, statuses and pending attacks are not part of the field save.
+
+Physical Thor testing is independently user-owned. Desktop evidence does not establish hardware behavior; it is not a release gate.

@@ -116,12 +116,13 @@ test('grace prevents enemy casting; cancellation removes telegraphs and future d
   assert.deepEqual(encounter.takeEvents(), []);
 });
 
-test('only selected Bulbasaur is hostile; visitors keep roaming and terrain collision', () => {
+test('only content-marked Bulbasaur is hostile; visitors keep roaming and terrain collision', () => {
   const state = createState(field);
   const encounter = new Encounter({ field, species, moves, movementSettings, state });
   const first = encounter.snapshot();
   for (let i = 0; i < 100; i++) encounter.update(.1);
   assert.equal(encounter.actors.filter(actor => actor.team === 'hostile').length, 1);
+  assert.equal(encounter.actors.find(actor => actor.team === 'hostile')?.speciesId, 'bulbasaur');
   const neutrals = encounter.actors.filter(actor => actor.team === 'neutral');
   assert.equal(neutrals.length, 8);
   for (const actor of encounter.actors) assert.equal(canOccupy(field, actor), true);

@@ -30,6 +30,11 @@ test('four face buttons are contextual and shoulders remain held field actions',
   assert.deepEqual(decodePad(pad([], [0]), mapping, 'play'), ['attack4']);
 });
 
+test('a custom direction binding takes priority over a colliding field attack button', () => {
+  const mapping = { ...defaultMapping(), right: { type: 'button' as const, index: 3 } };
+  assert.deepEqual(decodePad(pad([], [3]), mapping, 'play'), ['right']);
+});
+
 test('new controls avoid conflicts with legacy field remaps while preserving existing choices', () => {
   const old = { up: { type: 'button', index: 4 }, down: { type: 'button', index: 13 },
     left: { type: 'button', index: 14 }, right: { type: 'button', index: 15 },

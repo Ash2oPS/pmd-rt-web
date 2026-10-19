@@ -113,8 +113,6 @@ const menu = new Menu({
     diagnostic: () => {
       void diagnosticsView.copy();
     },
-    combat: () => { if (combat.startDefault()) menu.resume(); },
-    ...combat.partnerCommands(() => menu.resume()),
     ...combat.equipCommands(),
     lab: () => { location.href = new URL('lab.html', location.href).href; },
     sound: () => combat.toggleSound(),
@@ -139,6 +137,7 @@ const pad = new GamepadController(VERSION, storage.mapping, {
   },
 });
 setupInputPreferences(pad);
+combat.update(0);
 const diagnosticsView = createDiagnosticsView(
   pad.diagnostics,
   () => pad.mapping,
@@ -171,7 +170,7 @@ element("reset-mapping").addEventListener("click", () => {
   menu.highlight();
   toast("Commandes réinitialisées.");
 });
-bindSaveImport(field, runtime, { save: () => save(false, true), imported: () => combat.leave(), hud, toast });
+bindSaveImport(field, runtime, { save: () => save(false, true), imported: () => combat.reset(), hud, toast });
 bindLifecycle({
   clear,
   save,
@@ -228,7 +227,6 @@ function update(dt: number) {
   const result = runtime.advance({ x: clock.movement.x * multiplier, y: clock.movement.y * multiplier }, clock.worldDt);
   pad.diagnostics.snapshot.movement = { ...movement, maxSpeed: runtime.maxSpeed,
     resolvedSpeed: Math.hypot(runtime.velocity.x, runtime.velocity.y) };
-  pokemon.update(clock.worldDt);
   const wasFinished = combat.finished;
   combat.update(clock.worldDt, dt);
   // Presentation time lets the camera return smoothly even when the world is idle.

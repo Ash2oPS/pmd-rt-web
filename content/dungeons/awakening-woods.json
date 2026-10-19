@@ -46,6 +46,7 @@
       "animation": "Idle",
       "speciesId": "bulbasaur",
       "id": "bulbasaur-visitor",
+      "team": "hostile",
       "y": 3,
       "roaming": {
         "radius": 1.4,

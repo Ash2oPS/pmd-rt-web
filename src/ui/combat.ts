@@ -3,20 +3,19 @@ import type { Move } from '../content/schemas.ts';
 import { element } from './dom.ts';
 import { createAttackSlots, hudBinding } from './attack-slots.ts';
 
-export function createCombatHUD(playerLabel: string, attack: (slot: number) => void, retry: () => void, leave: () => void, maxHp: number) {
+export function createCombatHUD(playerLabel: string, attack: (slot: number) => void, recover: () => void, maxHp: number) {
   const panel = document.createElement('section');
   panel.id = 'combat-hud'; panel.className = 'combat-hud';
   panel.setAttribute('aria-label', 'Capacités');
   panel.innerHTML = `<div class="combat-vitals"><div id="field-portrait" class="field-portrait"></div><div class="vitals-info"><span class="vitals-name"></span><div class="vitals-line"><small>PV</small><meter min="0" aria-label="Points de vie"></meter><strong></strong></div><span class="vitals-status"></span></div></div>
     <div class="combat-slots"></div>
-    <div class="combat-result" hidden role="status"><strong></strong><button data-retry>Recommencer</button><button data-leave>Retour à l’exploration</button></div>`;
+    <div class="combat-result" hidden role="status"><strong></strong><button data-recover>Se relever</button></div>`;
   document.querySelector('.game-frame')!.append(panel);
   const shoulders = document.createElement('div'); shoulders.className = 'combat-shoulders field-shoulders';
   shoulders.innerHTML = '<button data-action="aim" aria-label="Maintenir pour viser sans avancer"><kbd></kbd> Viser</button><button data-action="wait" aria-label="Maintenir pour attendre"><kbd></kbd> Attendre</button>';
   document.querySelector('.game-frame')!.append(shoulders);
   const updateSlots = createAttackSlots(panel.querySelector('.combat-slots')!, attack);
-  panel.querySelector('[data-retry]')!.addEventListener('click', () => retry());
-  panel.querySelector('[data-leave]')!.addEventListener('click', leave);
+  panel.querySelector('[data-recover]')!.addEventListener('click', recover);
   const meter = panel.querySelector('meter')!, health = panel.querySelector('.vitals-line strong')!;
   panel.querySelector('.vitals-name')!.textContent = playerLabel;
   const result = panel.querySelector<HTMLElement>('.combat-result')!;
@@ -42,12 +41,11 @@ export function createCombatHUD(playerLabel: string, attack: (slot: number) => v
       result.hidden = !snapshot || snapshot.result === 'playing';
       if (snapshot && snapshot.result !== 'playing' && lastResult === 'playing') selectResult(0);
       lastResult = snapshot?.result ?? 'playing';
-      result.querySelector('strong')!.textContent = snapshot?.result === 'won' ? 'Entraînement réussi !' : 'Rondoudou est K.O.';
-      element('scene-status').textContent = !snapshot ? 'Exploration' : snapshot.result === 'playing' ? 'Combat d’entraînement' : 'Entraînement terminé';
+      result.querySelector('strong')!.textContent = 'Rondoudou est K.O.';
+      element('scene-status').textContent = snapshot?.result === 'lost' ? 'Rondoudou est K.O.' : 'Exploration';
     },
   };
 }
-
 /** Menu buttons reuse the pause menu's keyboard/gamepad navigation and confirmation. */
 export function addEquipmentSlots() {
   const buttons = Array.from({ length: 4 }, (_, index) => {
@@ -63,15 +61,4 @@ export function addEquipmentSlots() {
       });
     },
   };
-}
-
-export function addTrainingPartners(partners: readonly { id: string; label: string }[]) {
-  const first = document.querySelector<HTMLButtonElement>('[data-menu="combat"]');
-  if (first && partners[0]) first.textContent = `Entraînement · ${partners[0].label}`;
-  for (const partner of partners.slice(1)) {
-    const button = document.createElement('button');
-    button.dataset.menu = `combat-${partner.id}`;
-    button.textContent = `Entraînement · ${partner.label}`;
-    element('menu-main').append(button);
-  }
 }
