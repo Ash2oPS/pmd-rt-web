@@ -19,6 +19,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Verify project skill helpers
+        run: node --test .agents/skills/pmd-verify-change/scripts/checks.test.mjs
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - name: Verify production browser flows

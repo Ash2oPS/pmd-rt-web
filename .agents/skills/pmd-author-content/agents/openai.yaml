@@ -1,0 +1,3 @@
+interface:
+  display_name: "PMD Content Authoring"
+  short_description: "Create valid moves and species from authored records"

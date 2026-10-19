@@ -1,0 +1,3 @@
+interface:
+  display_name: "PMD Release"
+  short_description: "Verify and publish a scoped GitHub Pages release"

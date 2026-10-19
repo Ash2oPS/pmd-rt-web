@@ -1,0 +1,4 @@
+interface:
+  display_name: "PMD Verify Change"
+  short_description: "Select checks and return compact verification reports"
+  default_prompt: "Use $pmd-verify-change to verify this scoped game change."

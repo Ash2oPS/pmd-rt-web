@@ -1,0 +1,4 @@
+interface:
+  display_name: "PMD Playtest"
+  short_description: "Run reproducible production-browser game scenarios"
+  default_prompt: "Use $pmd-playtest to reproduce and inspect this gameplay behavior."

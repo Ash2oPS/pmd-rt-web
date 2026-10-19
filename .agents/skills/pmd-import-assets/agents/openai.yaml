@@ -1,0 +1,3 @@
+interface:
+  display_name: "PMD Asset Import"
+  short_description: "Import pinned sprites and portraits with attribution"
