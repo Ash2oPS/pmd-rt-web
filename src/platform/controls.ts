@@ -14,6 +14,8 @@ const keyActions: Record<string, Action> = {
   Space: "confirm",
   Escape: "menu",
   KeyX: "back",
+  KeyJ: "attack1",
+  KeyK: "attack2",
 };
 export function bindControls(callbacks: {
   paused(): boolean;
@@ -42,8 +44,9 @@ export function bindControls(callbacks: {
     }
     const action = keyActions[event.code];
     if (!action) return;
+    if (event.repeat && (action === 'attack1' || action === 'attack2')) return;
     if (
-      callbacks.paused() &&
+      (callbacks.paused() || (event.target instanceof Element && !!event.target.closest('.combat-result'))) &&
       action === "confirm" &&
       event.target instanceof Element &&
       event.target.matches("button,summary") &&

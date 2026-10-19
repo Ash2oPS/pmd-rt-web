@@ -1,4 +1,4 @@
-export const ACTIONS = ['up', 'down', 'left', 'right', 'confirm', 'back', 'menu'] as const;
+export const ACTIONS = ['up', 'down', 'left', 'right', 'confirm', 'back', 'menu', 'attack1', 'attack2'] as const;
 export type Action = (typeof ACTIONS)[number];
 export type Binding = { type: 'button'; index: number } | { type: 'axis'; index: number; sign: 1 | -1 };
 export type Mapping = Record<Action, Binding>;
@@ -19,6 +19,7 @@ export function defaultMapping(): Mapping {
     // Thor uses Nintendo labels: east A confirms, south B returns.
     confirm: { type: 'button', index: 1 }, back: { type: 'button', index: 0 },
     menu: { type: 'button', index: 9 },
+    attack1: { type: 'button', index: 2 }, attack2: { type: 'button', index: 3 },
   };
 }
 
@@ -35,6 +36,21 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 export function validateMapping(value: unknown): value is Mapping {
   if (!isRecord(value)) return false;
   return ACTIONS.every(action => isBinding(value[action]));
+}
+
+/** Preserve all legacy remaps and fill only newly introduced combat actions. */
+export function restoreMapping(value: unknown): Mapping | null {
+  if (!isRecord(value)) return null;
+  const original = ['up', 'down', 'left', 'right', 'confirm', 'back', 'menu'] as const;
+  if (!original.every(action => isBinding(value[action]))) return null;
+  const result = defaultMapping();
+  for (const action of ACTIONS) {
+    if (value[action] === undefined && !original.includes(action as typeof original[number])) continue;
+    const binding = value[action];
+    if (!isBinding(binding)) return null;
+    result[action] = { ...binding };
+  }
+  return result;
 }
 
 const stickDirections: Partial<Record<Action, { index: number; sign: 1 | -1 }>> = {

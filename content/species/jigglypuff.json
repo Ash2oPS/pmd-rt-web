@@ -17,7 +17,12 @@
   "abilityIds": [
     "cute-charm"
   ],
-  "learnset": [],
+  "learnset": [
+    {
+      "level": 1,
+      "moveId": "pound"
+    }
+  ],
   "spriteId": "jigglypuff",
   "source": {
     "provider": "pokeapi",

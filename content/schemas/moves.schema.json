@@ -63,6 +63,68 @@
         "damage",
         "lower-attack"
       ]
+    },
+    "combat": {
+      "type": "object",
+      "properties": {
+        "preparationSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10
+        },
+        "trackingSeconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "activeSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 5
+        },
+        "recoverySeconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "cooldownSeconds": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "movementDuringPreparation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "range": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 12
+        },
+        "angleDegrees": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 360
+        },
+        "damage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        }
+      },
+      "required": [
+        "preparationSeconds",
+        "trackingSeconds",
+        "activeSeconds",
+        "recoverySeconds",
+        "cooldownSeconds",
+        "movementDuringPreparation",
+        "range",
+        "angleDegrees",
+        "damage"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

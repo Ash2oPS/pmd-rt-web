@@ -1,6 +1,6 @@
 {
   "name": "pmd-rt-web",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "architecture:check": "node --import tsx scripts/architecture.mts",
     "test": "node --import tsx --test tests/*.test.ts",
-    "test:browser": "node tests/browser.mjs && node tests/pokemon-browser.mjs && node tests/realtime-browser.mjs",
+    "test:browser": "node tests/browser.mjs && node tests/pokemon-browser.mjs && node tests/realtime-browser.mjs && node tests/combat-browser.mjs",
     "check": "npm run version:check && npm run pokemon:check && npm run content:check && npm run typecheck && npm run architecture:check && npm test",
     "version:check": "node --import tsx scripts/version.mts",
     "pokemon:import": "node --import tsx scripts/import-pokemon/main.mts",

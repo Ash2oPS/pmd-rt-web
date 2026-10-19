@@ -1,5 +1,4 @@
 import { field, movementSettings } from "../content/catalog.ts";
-import { restore } from "../domain/state.ts";
 import { createStorage } from "../platform/storage.ts";
 import { downloadSave, toggleFullscreen } from "../platform/files.ts";
 import { bindControls } from "../platform/controls.ts";
@@ -22,12 +21,20 @@ import { VERSION } from "./config.ts";
 import { setupPokemon } from "./pokemon.ts";
 import { setupInputPreferences } from "./input-preferences.ts";
 import { selectMovement } from "../platform/input/movement.ts";
+import { setupCombat } from './combat.ts';
+import { bindSaveImport } from './save-import.ts';
 
 const toast = createToast(),
   storage = createStorage(field),
   runtime = new Runtime(field, storage.state, movementSettings.playerMaxSpeed);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const pokemon = setupPokemon(field, () => runtime.velocity);
+let combat: ReturnType<typeof setupCombat>;
+const pokemon = setupPokemon(field, () => runtime.velocity, () => combat?.snapshot() ?? null);
+combat = setupCombat(field, runtime, () => pokemon.isReady, {
+  canAct: () => !menu.paused,
+  clear: () => clear(), toast,
+  bindingLabel: slot => bindingLabel(pad.mapping[slot ? 'attack2' : 'attack1']),
+});
 const renderer = createRenderer(
   element<HTMLCanvasElement>("game"),
   {
@@ -38,6 +45,7 @@ const renderer = createRenderer(
   reducedMotion,
   pokemon.draw,
   pokemon.drawPlayer,
+  combat,
 );
 let lastFrame = performance.now();
 function clear() {
@@ -75,7 +83,7 @@ const menu = new Menu({
   resume() {
     pad.cancel();
     clear();
-    runtime.previous = new Set(["confirm", "menu", "back"]);
+    runtime.previous = new Set(["confirm", "menu", "back", "attack1", "attack2"]);
     lastFrame = performance.now();
   },
   capture(action) {
@@ -101,6 +109,7 @@ const menu = new Menu({
     diagnostic: () => {
       void diagnosticsView.copy();
     },
+    combat: () => { if (combat.start()) menu.resume(); },
   },
 });
 const pad = new GamepadController(VERSION, storage.mapping, {
@@ -154,30 +163,7 @@ element("reset-mapping").addEventListener("click", () => {
   menu.highlight();
   toast("Commandes réinitialisées.");
 });
-element<HTMLInputElement>("import-file").addEventListener(
-  "change",
-  async (event) => {
-    const input = event.currentTarget as HTMLInputElement,
-      file = input.files?.[0];
-    if (!file) return;
-    try {
-      if (file.size > 65536) throw new Error("size");
-      const state = restore(await file.text(), field);
-      if (!state) throw new Error("format");
-      runtime.replace(state);
-      const saved = save(false, true);
-      hud();
-      toast(
-        saved
-          ? "Sauvegarde importée."
-          : "Importée pour cette session. Stockage indisponible.",
-      );
-    } catch {
-      toast("Fichier invalide. Ta progression est conservée.");
-    }
-    input.value = "";
-  },
-);
+bindSaveImport(field, runtime, { save: () => save(false, true), imported: () => combat.leave(), hud, toast });
 bindLifecycle({
   clear,
   save,
@@ -191,6 +177,7 @@ bindLifecycle({
 });
 function act(action: Action) {
   if (pad.capture) return;
+  if (!menu.paused && combat.resultAction(action)) return;
   if (action === "menu" || action === "back") {
     if (!menu.paused) menu.open();
     else if (menu.submenu) menu.open();
@@ -203,6 +190,7 @@ function act(action: Action) {
     else if (action === "confirm") menu.confirm();
     return;
   }
+  if (action === 'attack1' || action === 'attack2') combat.attack(action === 'attack1' ? 0 : 1);
 }
 let saveElapsed = 0, hudElapsed = 0, wasMoving = false;
 function update(dt: number) {
@@ -214,13 +202,15 @@ function update(dt: number) {
     return;
   }
   const local = controls.actions();
-  runtime.updateInput(new Set([...local, ...actions]), dt, act, menu.paused);
+  runtime.updateInput(new Set([...local, ...actions]), dt, act, menu.paused || combat.finished);
   if (menu.paused) return;
   const movement = selectMovement(local, pad.movementSelection());
-  const result = runtime.advance(movement.vector, dt);
+  const multiplier = combat.movementMultiplier;
+  const result = runtime.advance({ x: movement.vector.x * multiplier, y: movement.vector.y * multiplier }, dt);
   pad.diagnostics.snapshot.movement = { ...movement, maxSpeed: runtime.maxSpeed,
     resolvedSpeed: Math.hypot(runtime.velocity.x, runtime.velocity.y) };
   pokemon.update(dt);
+  combat.update(dt);
   saveElapsed += dt;
   hudElapsed += dt;
   if (result.collected.length) toast(runtime.state.collected.length === field.collectibles.length
@@ -257,6 +247,8 @@ window.render_game_to_text = () =>
     journalOpen: menu.screen === "journal",
     camera: renderer.camera,
     pokemon: pokemon.snapshot(runtime.time, runtime.state, runtime.visual),
+    combat: combat.snapshot(),
+    combatPresentation: combat.presentation(),
     capture: pad.capture,
     mapping: pad.mapping,
     gamepad: pad.current

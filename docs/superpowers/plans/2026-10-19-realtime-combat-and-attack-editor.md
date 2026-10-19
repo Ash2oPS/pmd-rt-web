@@ -14,8 +14,10 @@ Dependency chain: baseline -> M1 -> M2 -> M3 -> M4 -> M5 -> M6 -> M7. Within a m
 | --- | --- | --- | --- |
 | B0 | Root: baseline and release documentation | None | Starting commit `0fd8a73`; main matches origin; build passes 63 tests; all 29 production browser checks pass; compact baseline screenshot inspected |
 | M1 | Speed worker: movement/input/schema/content integration and focused tests | B0 | Implemented; 69 unit tests and all 30 browser checks pass (final input change rechecked with 6 real-time browser flows) |
-| R1 | Root/reviewer: scoped review, version, production tests and deployment | M1 | Custom-remap review finding fixed and regression tested; 0.4.1 build green; publication in progress |
-| M2-M7 | Ownership assigned at the preceding green checkpoint | Previous release | Pending |
+| R1 | Root/reviewer: scoped review, version, production tests and deployment | M1 | Published 0.4.1 commit `648502a`; Actions run `39228435070` succeeded; live sprite readiness and movement verified |
+| M2 | Domain worker: combat/schema/tests; renderer worker: cues; root: app/input/HUD | M1 local validation | Implemented; 80 unit tests and 2 combat browser flows pass; full regression running |
+| R2 | Root/reviewer: result parity, impact expiry, version and deployment | M2 | Both review findings fixed with browser regressions; 0.4.2 build green |
+| M3-M7 | Ownership assigned at the preceding green checkpoint | Previous local checkpoint; release order preserved | Pending |
 
 Existing dirty files before execution belong to the preceding authorized save-protection/CRLF fixes and this combat planning discussion. Preserve and include those reviewed changes in the first release checkpoint; do not stage unrelated later edits automatically.
 

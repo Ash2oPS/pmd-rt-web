@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { defaultMapping, validateMapping, decodePad, rawSignals, bindingLabel, type PadLike } from '../src/platform/input/mapping.ts';
+import { defaultMapping, validateMapping, restoreMapping, decodePad, rawSignals, bindingLabel, type PadLike } from '../src/platform/input/mapping.ts';
 import { createInputDiagnostics } from '../src/platform/input/diagnostics.ts';
 import { createGamepadReader } from '../src/platform/input/devices.ts';
 
@@ -8,6 +8,19 @@ function pad(axes: number[] = [], active: number[] = []): PadLike {
   return { id: 'Thor', index: 0, connected: true, mapping: 'standard', timestamp: 10,
     axes, buttons: Array.from({ length: 17 }, (_, index) => ({ pressed: active.includes(index), value: active.includes(index) ? 1 : 0 })) };
 }
+
+test('combat bindings upgrade legacy mappings without replacing any customized action', () => {
+  const current = defaultMapping();
+  const { attack1, attack2, ...legacy } = current;
+  legacy.confirm = { type: 'button', index: 5 };
+  const upgraded = restoreMapping(legacy)!;
+  assert.deepEqual(upgraded.confirm, legacy.confirm);
+  assert.deepEqual(upgraded.attack1, attack1);
+  assert.deepEqual(upgraded.attack2, attack2);
+  assert.deepEqual(restoreMapping(upgraded), upgraded);
+  assert.equal(restoreMapping({ ...legacy, attack1: { type: 'button', index: -1 } }), null);
+  assert.deepEqual(decodePad(pad([], [2, 3]), upgraded), ['attack1', 'attack2']);
+});
 
 test('Thor face buttons confirm east and return south; custom directions disable stick fallback', () => {
   const mapping = defaultMapping();

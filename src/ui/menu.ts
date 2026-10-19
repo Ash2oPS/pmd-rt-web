@@ -9,6 +9,8 @@ export const actionLabels: Record<Action, string> = {
   confirm: "Valider",
   back: "Retour",
   menu: "Menu",
+  attack1: "Capacité 1",
+  attack2: "Capacité 2",
 };
 export interface MenuCallbacks {
   pause(): void;

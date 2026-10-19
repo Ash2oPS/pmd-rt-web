@@ -23,7 +23,7 @@ No circular imports, including type-only cycles. Do not route forbidden dependen
 
 First add a focused pure domain function and a behavioral test. Connect it to input/menus through app composition. Render the resulting state. A creature using existing mechanics should need JSON changes, not a renderer branch for its species ID.
 
-Starter effect IDs describe planned behavior. No combat/effect engine exists yet. When adding one, create a typed registry of implemented handlers, validate references and test behavior before marking an effect playable. Avoid arbitrary script strings, `eval` or speculative plugin systems.
+Only moves with a validated `combat` definition are playable. `domain/combat/` owns transient training entities, shared terrain-clipped sector geometry, preparation/tracking/lock, active contact, recovery/cooldown and damage. Other move/effect and ability IDs remain reference-only. Avoid arbitrary script strings, `eval` or speculative plugin systems.
 
 ## Saves
 
@@ -31,7 +31,9 @@ Starter effect IDs describe planned behavior. No combat/effect engine exists yet
 
 ## Real-time field
 
-`domain/movement.ts` owns continuous tile-center coordinates, circular collision, swept movement, wall sliding, eight-way facing and pickup proximity. `platform/input/movement.ts` preserves analog magnitude with a radial deadzone and normalizes digital diagonals. The app advances movement and independent `domain/roaming.ts` actors only while play is active. Rendering sorts actors and the player by vertical position. NPCs collide with terrain and remain non-solid to other creatures; no combat or creature-pushing mechanic exists. Deadzone preferences are separate from remaps. Blur clears movement and requires stick release without pausing the world.
+`domain/movement.ts` owns continuous tile-center coordinates, circular collision, swept movement, wall sliding, eight-way facing and pickup proximity. `platform/input/movement.ts` preserves analog magnitude with a radial deadzone and normalizes digital diagonals. The app advances movement and independent `domain/roaming.ts` actors only while play is active. During training, Encounter owns the authoritative NPCs; the Pokemon adapter only samples/draws these actors. Rendering sorts actors and the player by vertical position. NPCs collide with terrain and remain non-solid to other creatures. Deadzone preferences are separate from remaps. Blur clears movement and requires stick release without pausing the world.
+
+Training is explicitly started from the pause menu. Combat HP, casts and enemies are transient; reload/import returns to peaceful exploration and never resumes a pending attack. Starting/retrying creates a fresh encounter with a one-second enemy grace interval. The original exploration save format remains unchanged. Combat result navigation supports keyboard, touch and gamepad. Cosmetic time continues after a result to expire final impacts, but freezes with normal pause/suspension.
 
 `content/settings/movement.json` defines the player's species-independent maximum speed and the bounded relative Speed-stat curve. `domain/speed.ts` resolves NPC speed relative to the player's stat and maximum, with a separate authored roaming behavior multiplier. Stick deflection changes only actual player movement. Active analog axes take precedence over duplicated default digital signals; explicit custom mappings remain active. Diagnostics expose the movement source, raw magnitude and actual resolved player speed.
 

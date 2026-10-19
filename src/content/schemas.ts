@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { combatMoveSchema } from './combat-schema.ts';
+export { combatMoveSchema } from './combat-schema.ts';
+export type { CombatMoveDefinition } from './combat-schema.ts';
 
 const id = z.string().regex(/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/);
 const label = z.string().trim().min(1).max(120);
@@ -25,6 +28,7 @@ export const moveSchema = z.strictObject({
   accuracy: z.number().int().min(1).max(100),
   pp: z.number().int().min(1).max(99),
   effectId: z.enum(['damage', 'lower-attack']),
+  combat: combatMoveSchema.optional(),
 });
 export const abilitySchema = z.strictObject({
   id, label, description: z.string().min(1),

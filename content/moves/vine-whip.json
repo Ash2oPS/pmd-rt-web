@@ -6,5 +6,16 @@
   "category": "physical",
   "effectId": "damage",
   "accuracy": 100,
-  "pp": 20
+  "pp": 20,
+  "combat": {
+    "preparationSeconds": 0.95,
+    "trackingSeconds": 0.3,
+    "activeSeconds": 0.15,
+    "recoverySeconds": 0.45,
+    "cooldownSeconds": 1.5,
+    "movementDuringPreparation": 0,
+    "range": 1.8,
+    "angleDegrees": 80,
+    "damage": 16
+  }
 }

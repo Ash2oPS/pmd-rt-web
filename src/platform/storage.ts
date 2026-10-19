@@ -1,6 +1,6 @@
 import type { GameState, World } from "../domain/state.ts";
 import { createState, restore } from "../domain/state.ts";
-import { defaultMapping, validateMapping } from "./input/mapping.ts";
+import { defaultMapping, restoreMapping } from "./input/mapping.ts";
 import type { Mapping } from "./input/mapping.ts";
 const SAVE = "pmd-field-save-v1",
   BINDINGS = "pmd-field-bindings-v1";
@@ -23,7 +23,7 @@ export function createStorage(
       else { invalidSave = true; saveProtected = true; }
     }
     const saved: unknown = JSON.parse(storage.getItem(BINDINGS) || "null");
-    if (validateMapping(saved)) mapping = saved;
+    mapping = restoreMapping(saved) ?? mapping;
   } catch {
     available = false;
   }

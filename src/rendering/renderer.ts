@@ -33,6 +33,7 @@ export function createRenderer(
   reducedMotion: boolean,
   drawActors?: (context:CanvasRenderingContext2D,row:number,time:number,state:GameState,visual:Point)=>boolean,
   drawPlayer?: (context:CanvasRenderingContext2D,state:GameState,visual:Point,time:number)=>boolean,
+  layers?: { ground(context: CanvasRenderingContext2D): void; overlay(context: CanvasRenderingContext2D): void },
 ) {
   const columns = Math.max(0, ...world.map.map((row) => row.length));
   if (!columns || !world.map.length || !Number.isFinite(world.tileSize) || world.tileSize <= 0)
@@ -77,6 +78,7 @@ export function createRenderer(
     drawTerrain(rect, world.map, reducedMotion, time);
     drawScenery(rect, world.map);
     drawCollectibles(context, rect, world.collectibles, state, reducedMotion, time);
+    layers?.ground(context);
     // Row ordering lets nearby tree canopies overlap the explorer naturally.
     for (let y = 0; y < world.map.length; y++) {
       const playerDrawn = drawActors?.(context,y,time,state,visual);
@@ -87,6 +89,7 @@ export function createRenderer(
         if (row[x] === "#") drawTree(rect, x * 32, y * 32, hash(x, y));
     }
     drawForeground(context, rect, reducedMotion, time, columns * 32, world.map.length * 32);
+    layers?.overlay(context);
     // Scale the completed pixel scene once to avoid seams between tiles.
     screen.imageSmoothingEnabled = false;
     screen.drawImage(scene, camera.x, camera.y, camera.width, camera.height,

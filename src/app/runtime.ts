@@ -25,7 +25,7 @@ export class Runtime {
     this.clear();
   }
   updateInput(actions: Set<Action>, dt: number, act: (action: Action) => void, paused: boolean) {
-    for (const action of ['menu', 'back', 'confirm'] as const)
+    for (const action of ['menu', 'back', 'confirm', 'attack1', 'attack2'] as const)
       if (actions.has(action) && !this.previous.has(action)) act(action);
     const direction = (['up', 'down', 'left', 'right'] as const).find(action => actions.has(action));
     if (paused && direction) {

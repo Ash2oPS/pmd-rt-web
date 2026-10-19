@@ -2,7 +2,9 @@
 
 Every record lives in its own JSON file under `content/`. VS Code provides completion and field validation using the generated schemas in `content/schemas/` and `.vscode/settings.json`.
 
-The ten species use imported PokéAPI names, types and base stats as their initial values. Their authored records remain editable game balance, with a curated subset of moves and abilities. Full imported source data stays separate under `imports/`; reimporting must never overwrite `content/`. Combat, abilities, learning moves and usable items are not implemented. Effect IDs describe future behavior; `unimplemented` explicitly marks catalog-only abilities.
+The ten species use imported PokéAPI names, types and base stats as their initial values. Their authored records remain editable game balance, with a curated subset of moves and abilities. Full imported source data stays separate under `imports/`; reimporting must never overwrite `content/`. Moves with a validated `combat` record can be used in training; other moves, abilities, progression-based learning and usable items remain catalog-only. `unimplemented` explicitly marks catalog-only abilities.
+
+Initial playable moves are Écras’Face (`pound`) for Rondoudou and Fouet Lianes (`vine-whip`) for Bulbizarre. Their species compatibility is present in pinned `imports/raw/pokeapi/pokemon-39.json` and `pokemon-1.json` (Scarlet/Violet level-up records). Preparation/tracking, active duration, recovery, cooldown, frontal range/angle, movement allowance and provisional flat damage are authored real-time balance. These do not imply main-series accuracy/PP or abilities are applied.
 
 Species `source` records their PokéAPI identity. `spriteId` selects the matching imported sprite pack without adding species-specific renderer code. The current scene selects Jigglypuff as `playerSpeciesId` and places the other nine species through dungeon `actors`.
 

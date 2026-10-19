@@ -8,6 +8,7 @@ export interface PokemonActor {
   y: number;
   facing: string;
   animation: string;
+  animationTimeMs?: number;
 }
 
 /** Positions are world pixel ground anchors; time is milliseconds. */
@@ -15,7 +16,8 @@ export function createPokemonRenderer(manifest: SpriteManifest, getSheet: (path:
   const catalog = new Map(manifest.species.map(species => [species.id, species]));
   function snapshot(actor: PokemonActor, timeMs: number) {
     const species = catalog.get(actor.speciesId);
-    return species ? sampleAnimation(species, actor.animation, actor.facing, timeMs + animationPhase(actor.id)) : null;
+    return species ? sampleAnimation(species, actor.animation, actor.facing,
+      actor.animationTimeMs ?? timeMs + animationPhase(actor.id)) : null;
   }
   function draw(context: CanvasRenderingContext2D, actor: PokemonActor, timeMs: number): boolean {
     const frame = snapshot(actor, timeMs);

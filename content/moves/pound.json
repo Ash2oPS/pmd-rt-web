@@ -1,0 +1,21 @@
+{
+  "id": "pound",
+  "label": "\u00c9cras\u2019Face",
+  "type": "normal",
+  "category": "physical",
+  "power": 40,
+  "accuracy": 100,
+  "pp": 35,
+  "effectId": "damage",
+  "combat": {
+    "preparationSeconds": 0.38,
+    "trackingSeconds": 0.08,
+    "activeSeconds": 0.12,
+    "recoverySeconds": 0.23,
+    "cooldownSeconds": 0.65,
+    "movementDuringPreparation": 0,
+    "range": 1.15,
+    "angleDegrees": 95,
+    "damage": 18
+  }
+}

@@ -1,0 +1,14 @@
+.combat-hud { position: absolute; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 2; width: min(390px, 52vw); display: grid; gap: 8px; pointer-events: none; }
+.combat-hud[hidden], .combat-result[hidden] { display: none; }
+.combat-vitals { display: flex; align-items: center; gap: 9px; background: #102824ed; border: 1px solid #c7d79b55; padding: 8px 12px; border-radius: 5px; font-size: 10px; }
+.combat-vitals meter { min-width: 45px; flex: 1; height: 12px; accent-color: #add980; }
+.combat-vitals strong { white-space: nowrap; }
+.combat-slots { display: flex; gap: 7px; justify-content: center; }
+.combat-hud button { pointer-events: auto; color: #fff3d4; background: #203a30f2; border: 1px solid #e3bd7288; border-radius: 5px; min-height: 42px; padding: 9px 12px; font-size: 11px; touch-action: manipulation; }
+.combat-hud button:disabled { opacity: .65; }
+.combat-result { display: grid; gap: 9px; padding: 16px; text-align: center; background: #102824f5; border: 1px solid #e3bd72; border-radius: 6px; pointer-events: auto; }
+.combat-result strong { color: #f1d18c; }
+.combat-result button.selected { outline: 2px solid #f1d18c; outline-offset: 2px; }
+.game-frame:has(.combat-hud:not([hidden])) .toast { bottom: 125px; }
+@media (max-width: 700px) { .combat-hud { width: min(330px, 51vw); bottom: max(15px, env(safe-area-inset-bottom)); } .combat-vitals { flex-wrap: wrap; gap: 4px; padding: 6px 8px; } .combat-vitals > span { width: 100%; } .combat-hud button { padding: 7px; min-height: 40px; font-size: 10px; } }
+@media (orientation: portrait) and (max-width: 700px) { .combat-hud { width: calc(100% - 32px); bottom: 116px; } }
