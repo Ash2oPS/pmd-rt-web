@@ -18,6 +18,19 @@ function outline(geometry: AttackGeometry, world?: CollisionWorld): readonly Poi
     return points;
   }
   const origin = geometry.origin;
+  if (geometry.kind === 'ring') {
+    const half = geometry.angleDegrees * Math.PI / 360;
+    const samples = Math.max(4, Math.ceil(geometry.angleDegrees / 3));
+    const points: Point[] = [];
+    for (const [radius, reverse] of [[geometry.outerRadius, false], [geometry.innerRadius, true]] as const) {
+      for (let index = 0; index <= samples; index++) {
+        const fraction = reverse ? 1 - index / samples : index / samples;
+        const angle = geometry.angleRadians - half + fraction * half * 2;
+        points.push({ x: origin.x + Math.cos(angle) * radius, y: origin.y + Math.sin(angle) * radius });
+      }
+    }
+    return points;
+  }
   if (geometry.kind === 'line') {
     const dx = Math.cos(geometry.angleRadians), dy = Math.sin(geometry.angleRadians);
     return [[0, -1], [geometry.range, -1], [geometry.range, 1], [0, 1]].map(([distance = 0, side = 0]) => ({
@@ -54,7 +67,7 @@ export function attackPath(context: CanvasRenderingContext2D, geometry: AttackGe
 export function attackLockPoint(geometry: AttackGeometry, world?: CollisionWorld): Point {
   const points = outline(geometry, world);
   if (geometry.kind === 'sector') return points[Math.floor(points.length / 2)] ?? geometry.origin;
-  if (geometry.kind === 'disk') return points.reduce((top, point) => point.y < top.y ? point : top, geometry.origin);
+  if (geometry.kind === 'disk' || geometry.kind === 'ring') return points.reduce((top, point) => point.y < top.y ? point : top, geometry.origin);
   const dx = Math.cos(geometry.angleRadians), dy = Math.sin(geometry.angleRadians);
   const distance = points.reduce((maximum, point) => Math.max(maximum,
     (point.x - geometry.origin.x) * dx + (point.y - geometry.origin.y) * dy), 0);

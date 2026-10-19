@@ -1,12 +1,14 @@
 import type { Move } from '../../content/schemas.ts';
 import { canOccupy, facingFromVector, movePoint } from '../movement.ts';
 import type { Point } from '../movement.ts';
-import { createRoamers, updateRoamers } from '../roaming.ts';
+import { updateRoamers } from '../roaming.ts';
 import { relativeMovementSpeed } from '../speed.ts';
 import type { GameState } from '../state.ts';
 import { clearAttackPath, facingAngle, touchesGeometry } from './geometry.ts';
 import { effectFor, engagementRange, patternFor, resolveGeometry } from './patterns.ts';
 import { moveDamage } from './damage.ts';
+import { createEncounterActors, syncActorAnimations } from './actors.ts';
+import { Zones } from './zones.ts';
 import { Statuses } from './statuses.ts';
 import { advanceProjectile } from './projectiles.ts';
 import type { Projectile } from './projectiles.ts';
@@ -27,11 +29,15 @@ export class Encounter {
   private readonly statuses = new Statuses();
   private events: CombatEvent[] = [];
   private sequence = 0;
+  private castSequence = 0;
+  private lastFailure: string | null = null;
+  private readonly zones: Zones;
   private cooldowns = new Map<string, number>();
   private hurtUntil = new Map<string, number>();
   private readonly hostileIds: Set<string>;
   constructor(private readonly options: EncounterOptions) {
     this.state = options.state;
+    this.zones = new Zones(options.field);
     this.hostileIds = new Set(options.hostileIds ?? ['bulbasaur-visitor']);
     this.reset(options.state);
   }
@@ -59,26 +65,14 @@ export class Encounter {
     this.time = 0;
     this.hp = 80;
     this.grace = Math.max(0, graceSeconds);
-    this.casts = []; this.projectiles = []; this.statuses.clear(); this.events = []; this.sequence = 0;
+    this.casts = []; this.projectiles = []; this.zones.clear(); this.statuses.clear(); this.events = []; this.sequence = 0;
+    this.castSequence = 0; this.lastFailure = null;
     this.cooldowns.clear(); this.hurtUntil.clear();
-    const playerStat = this.species(this.options.field.playerSpeciesId).stats.speed;
-    this.actors = createRoamers(this.options.field.actors, definition => relativeMovementSpeed(
-      this.species(definition.speciesId).stats.speed, playerStat, this.options.movementSettings,
-      definition.roaming?.behaviorMultiplier ?? 0,
-    )).map(roaming => {
-      const maxHp = this.species(roaming.speciesId).stats.hp;
-      return { id: roaming.id, speciesId: roaming.speciesId, roaming,
-        team: this.hostileIds.has(roaming.id) ? 'hostile' as const : 'neutral' as const,
-        get x() { return roaming.x; }, set x(value: number) { roaming.x = value; },
-        get y() { return roaming.y; }, set y(value: number) { roaming.y = value; },
-        get facing() { return roaming.facing; }, set facing(value) { roaming.facing = value; },
-        hp: maxHp, maxHp, defeated: false, animation: roaming.animation,
-        behavior: 'idle' as const, resolvedSpeed: roaming.resolvedSpeed };
-    });
+    this.actors = createEncounterActors(this.options, this.hostileIds);
   }
   cancelAll(): void {
     for (const cast of this.casts) this.emit('cast-cancel', cast.casterId, cast.moveId);
-    this.casts = []; this.projectiles = [];
+    this.casts = []; this.projectiles = []; this.zones.clear();
     for (const actor of this.actors) actor.roaming.velocity = { x: 0, y: 0 };
   }
   requestAttack(moveId: string): boolean { return this.beginCast(this.player, moveId); }
@@ -88,6 +82,7 @@ export class Encounter {
       actors: this.actors.map(({ roaming: _roaming, ...actor }) => ({ ...actor })),
       casts: this.casts.map(({ move: _move, hits: _hits, locked: _locked, activated: _activated, ...cast }) => structuredClone(cast)),
       projectiles: this.projectiles.map(({ team: _team, angleRadians: _angle, speed: _speed, ...projectile }) => structuredClone(projectile)),
+      zones: this.zones.snapshot(), lastFailure: this.lastFailure,
       statuses: this.statuses.snapshot(), graceSeconds: this.grace,
       cooldowns: Object.fromEntries([...this.cooldowns].map(([key, until]) => [key, Math.max(0, until - this.time)])) };
   }
@@ -101,7 +96,16 @@ export class Encounter {
       this.updateActors(dt);
       for (const cast of [...this.casts]) this.updateCast(cast, dt);
       this.updateProjectiles(dt);
-      this.syncAnimations();
+      this.zones.update(this.time - dt, this.time, {
+        entity: id => this.entity(id),
+        targets: team => this.targetsFor(team).filter(target => !(target.id === 'player' && this.grace > EPSILON)),
+        hit: (caster, target, moveId) => {
+          const move = this.options.moves.find(move => move.id === moveId);
+          if (move) this.applyEffect(caster, target, move);
+        },
+        event: (type, zone) => this.emit(type, zone.casterId, zone.moveId, undefined, undefined, zone.geometry.origin),
+      });
+      syncActorAnimations(this.actors, this.casts, this.hurtUntil, id => this.statuses.isSleeping(id), this.time);
       if (this.result !== 'playing') this.cancelAll();
     }
   }
@@ -111,10 +115,10 @@ export class Encounter {
     return species;
   }
   private entity(id: string): CombatEntity | undefined { return id === 'player' ? this.player : this.actors.find(actor => actor.id === id); }
-  private emit(type: CombatEvent['type'], casterId: string, moveId?: string, targetId?: string, amount?: number, position?: Point): void {
+  private emit(type: CombatEvent['type'], casterId: string, moveId?: string, targetId?: string, amount?: number, position?: Point, reason?: string): void {
     const origin = this.entity(targetId ?? casterId) ?? this.player;
     this.events.push({ id: ++this.sequence, time: this.time, type, casterId, moveId, targetId,
-      position: position ? { ...position } : { x: origin.x, y: origin.y }, amount });
+      position: position ? { ...position } : { x: origin.x, y: origin.y }, amount, reason });
     if (this.events.length > 256) this.events.shift();
   }
   private beginCast(caster: CombatEntity, moveId: string): boolean {
@@ -129,6 +133,21 @@ export class Encounter {
       phase: move.combat.trackingSeconds ? 'tracking' : 'locked', elapsedSeconds: 0,
       aim, geometry: resolveGeometry(move.combat, caster, aim, this.options.field),
       hits: new Set(), locked: !move.combat.trackingSeconds, activated: false };
+    const pattern = patternFor(move.combat);
+    if (pattern.kind === 'zones') {
+      try {
+        cast.zoneIds = this.zones.plan({ pattern, caster, aim, castId: cast.id, moveId,
+          time: this.time, preparationSeconds: move.combat.preparationSeconds,
+          seed: ((this.options.seed ?? 1) ^ Math.imul(this.castSequence + 1, 2654435761)) >>> 0,
+          nextId: () => ++this.sequence });
+        cast.geometry = this.zones.firstGeometry(cast.id)!;
+      } catch (error) {
+        this.lastFailure = error instanceof Error ? error.message : String(error);
+        this.emit('cast-rejected', caster.id, moveId, undefined, undefined, undefined, this.lastFailure);
+        return false;
+      }
+    }
+    this.castSequence++; this.lastFailure = null;
     this.casts.push(cast);
     this.cooldowns.set(`${caster.id}:${moveId}`, this.time + move.combat.cooldownSeconds);
     this.emit('cast-start', caster.id, moveId);
@@ -140,6 +159,7 @@ export class Encounter {
     updateRoamers(neutrals.map(actor => actor.roaming), this.options.field, dt);
     for (const actor of this.actors) {
       if (actor.team !== 'hostile' || actor.defeated) continue;
+      if (this.options.aiEnabled === false) { actor.behavior = 'idle'; actor.roaming.velocity = { x: 0, y: 0 }; continue; }
       if (this.statuses.isSleeping(actor.id)) { actor.behavior = 'sleeping'; actor.roaming.velocity = { x: 0, y: 0 }; continue; }
       actor.roaming.velocity = { x: 0, y: 0 };
       const cast = this.casts.find(entry => entry.casterId === actor.id);
@@ -183,7 +203,10 @@ export class Encounter {
       if (validAim) {
         cast.aim = { x: aim.x, y: aim.y };
         if (caster.team === 'hostile') caster.facing = facingFromVector({ x: aim.x - caster.x, y: aim.y - caster.y });
-        cast.geometry = resolveGeometry(rule, caster, aim, this.options.field);
+        if (pattern.kind === 'zones') {
+          this.zones.retarget(cast.id, caster, aim);
+          cast.geometry = this.zones.firstGeometry(cast.id) ?? cast.geometry;
+        } else cast.geometry = resolveGeometry(rule, caster, aim, this.options.field);
       }
       if (cast.elapsedSeconds + EPSILON >= rule.trackingSeconds) {
         cast.locked = true; cast.phase = 'locked'; this.emit('aim-lock', caster.id, cast.moveId);
@@ -202,7 +225,8 @@ export class Encounter {
     }
     if (previousElapsed < rule.preparationSeconds + rule.activeSeconds - EPSILON) {
       cast.phase = cast.elapsedSeconds < rule.preparationSeconds + rule.activeSeconds - EPSILON ? 'active' : 'recovery';
-      const targets = patternFor(rule).kind === 'projectile' ? [] : this.targetsFor(caster.team);
+      const kind = patternFor(rule).kind;
+      const targets = kind === 'projectile' || kind === 'zones' ? [] : this.targetsFor(caster.team);
       for (const target of targets) {
         if (target.defeated || cast.hits.has(target.id) || (target.id === 'player' && this.grace > EPSILON)
           || !touchesGeometry(cast.geometry, target) || !clearAttackPath(this.options.field, cast.geometry.origin, target)) continue;
@@ -215,9 +239,10 @@ export class Encounter {
   private aimFor(caster: CombatEntity, rule: NonNullable<Move['combat']>): Point {
     if (caster.team === 'hostile') return { x: this.player.x, y: this.player.y };
     const pattern = patternFor(rule);
-    if (pattern.kind === 'target-disk') {
+    if (pattern.kind === 'target-disk' || (pattern.kind === 'zones' && pattern.placement.kind === 'target')) {
+      const targetingRange = pattern.kind === 'target-disk' ? pattern.targetingRange : engagementRange(rule);
       const target = this.actors.filter(actor => actor.team === 'hostile' && !actor.defeated
-        && Math.hypot(actor.x - caster.x, actor.y - caster.y) <= pattern.targetingRange)
+        && Math.hypot(actor.x - caster.x, actor.y - caster.y) <= targetingRange)
         .sort((a, b) => Math.hypot(a.x - caster.x, a.y - caster.y) - Math.hypot(b.x - caster.x, b.y - caster.y))[0];
       if (target) return { x: target.x, y: target.y };
     }
@@ -245,6 +270,7 @@ export class Encounter {
       target.defeated = true; this.emit('defeat', caster.id, move.id, target.id);
       for (const pending of [...this.casts]) if (pending.casterId === target.id) this.removeCast(pending, true);
       this.projectiles = this.projectiles.filter(projectile => projectile.casterId !== target.id);
+      this.zones.cancelCaster(target.id);
     }
   }
   private updateProjectiles(dt: number): void {
@@ -264,17 +290,6 @@ export class Encounter {
   }
   private removeCast(cast: Cast, cancelled: boolean): void {
     this.casts = this.casts.filter(entry => entry !== cast);
-    if (cancelled) this.emit('cast-cancel', cast.casterId, cast.moveId);
-  }
-  private syncAnimations(): void {
-    for (const actor of this.actors) {
-      const cast = this.casts.find(entry => entry.casterId === actor.id);
-      if (actor.defeated) { actor.behavior = 'defeated'; actor.animation = 'Idle'; actor.roaming.velocity = { x: 0, y: 0 }; continue; }
-      if (this.statuses.isSleeping(actor.id)) { actor.behavior = 'sleeping'; actor.animation = 'Idle'; continue; }
-      if (cast) actor.behavior = cast.phase === 'recovery' ? 'recovering' : cast.phase === 'active' ? 'active' : 'preparing';
-      if (actor.team === 'neutral') actor.behavior = actor.roaming.behavior === 'Roaming' ? 'roaming' : 'idle';
-      actor.animation = (this.hurtUntil.get(actor.id) ?? 0) > this.time ? 'Hurt'
-        : cast && cast.phase !== 'recovery' ? 'Attack' : Math.hypot(actor.roaming.velocity.x, actor.roaming.velocity.y) > .001 ? 'Walk' : 'Idle';
-    }
+    if (cancelled) { this.zones.cancelCast(cast.id); this.emit('cast-cancel', cast.casterId, cast.moveId); }
   }
 }

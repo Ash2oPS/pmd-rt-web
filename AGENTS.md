@@ -16,6 +16,7 @@
 - Offline caches are generated from emitted file hashes by `scripts/build-offline.mts`; do not edit a generated worker/cache manifest manually.
 - Keep `window.render_game_to_text()` and `window.advanceTime(ms)` available for automated checks.
 - Device input mapping and real Android sleep/install behavior require a physical AYN Thor test; never claim these were verified by desktop simulation.
+- Physical Thor testing is owned independently by the user. Do not request device tests/diagnostics or gate completion and publication on them.
 - Default face controls follow Thor labels: east A (button 1) confirms; south B (button 0) returns. Preserve custom remaps.
 - Use the copied input diagnostic for hardware issues. Native Android joystick scrolling may occur without DOM wheel events; a zero wheel count does not exclude it.
 - The canvas fills the viewport with a uniform camera following the explorer. Keep expedition details in the pause menu's journal panel.
@@ -37,3 +38,4 @@
 - Run `npm run pokemon:check` after asset changes. Only load scene assets at runtime; preserve first-visit offline caching before declaring sprites ready.
 - Player and roaming actors move in continuous tile-center coordinates through shared swept circle collision. Preserve analog magnitude, radial deadzones, custom remaps and normalized digital diagonals; do not reintroduce tile-step input or interpolation lag.
 - Saves use embedded version 2 under the original storage key, with an explicit tested version-1 migration. Pause/suspension freeze movement, AI and animation clocks. Blur clears held movement and requires stick release without pausing.
+- The action-driven world clock runs only for player movement intent, held Wait or the player's own preparation/active/recovery. Idle and aim-only freeze all world systems; enemy activity alone never advances time. Four face buttons launch equipped moves in play; menus retain east A confirm/south B back. L aims in place and R waits by default, with keyboard/touch equivalents and remaps.

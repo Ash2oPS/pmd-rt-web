@@ -18,8 +18,9 @@ Dependency chain: baseline -> M1 -> M2 -> M3 -> M4 -> M5 -> M6 -> M7. Within a m
 | M2 | Domain worker: combat/schema/tests; renderer worker: cues; root: app/input/HUD | M1 local validation | Implemented; 80 unit tests and all 32 production browser flows pass |
 | R2 | Root/reviewer: result parity, impact expiry, version and deployment | M2 | Published 0.4.2 commit `f8bbcc3`; Actions run `39229943931` succeeded; live training and Pound preparation verified |
 | H1 | Root: native Gamepad fix isolated from unfinished M3 | M2 | Published 0.4.3 commit `10590ff`; 81 tests, 32 browser flows and native-prototype browser reproduction pass; Actions `39232658638` succeeded and live movement/animation verified |
-| M3 | Domain workers: patterns/status/projectiles/damage/action clock; UI worker: contextual slots; root: integration | M2 local validation | Implemented; 98 unit tests and 36 production browser flows pass, including idle/aim/wait clock and held-face result release regression; 0.4.4 ready for publication |
-| M4-M7 | Ownership assigned at the preceding green checkpoint | Previous local checkpoint; release order preserved | Pending |
+| M3 | Domain workers: patterns/status/projectiles/damage/action clock; UI worker: contextual slots; root: integration | M2 local validation | Published 0.4.4 commit `1b1bcb8`; Actions `39233298331` succeeded; live idle freeze and Wait verified; 98 unit tests and 36 browser flows |
+| M4 | Domain worker: zones/schema/hit ledger; renderer: zones; root: actual lab and integration | M3 local validation | 108 unit tests; full browser regression plus all 7 lab patterns, deterministic scrub and offline pass. Orbit terrain review finding fixed and regression tested; 0.4.5 ready |
+| M5-M7 | Ownership assigned at the preceding green checkpoint | Previous local checkpoint; release order preserved | Pending |
 
 Existing dirty files before execution belong to the preceding authorized save-protection/CRLF fixes and this combat planning discussion. Preserve and include those reviewed changes in the first release checkpoint; do not stage unrelated later edits automatically.
 

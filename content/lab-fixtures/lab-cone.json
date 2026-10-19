@@ -1,0 +1,46 @@
+{
+  "id": "lab-cone",
+  "label": "Cône frontal",
+  "type": "normal",
+  "category": "special",
+  "power": 2,
+  "accuracy": 100,
+  "pp": 1,
+  "effectId": "damage",
+  "combat": {
+    "preparationSeconds": 0.8,
+    "trackingSeconds": 0.15,
+    "activeSeconds": 0.2,
+    "recoverySeconds": 0.3,
+    "cooldownSeconds": 1,
+    "movementDuringPreparation": 0,
+    "pattern": {
+      "kind": "zones",
+      "shape": {
+        "kind": "sector",
+        "range": 2.5,
+        "angleDegrees": 65
+      },
+      "placement": {
+        "kind": "caster"
+      },
+      "distribution": {
+        "kind": "single"
+      },
+      "motion": {
+        "kind": "fixed"
+      },
+      "waves": {
+        "count": 1,
+        "intervalSeconds": 0.65,
+        "activeSeconds": 0.3
+      },
+      "hitPolicy": {
+        "kind": "once-per-zone"
+      }
+    },
+    "effect": {
+      "kind": "damage"
+    }
+  }
+}

@@ -10,6 +10,8 @@ export interface EncounterOptions {
   movementSettings: MovementSettings;
   state: GameState;
   hostileIds?: readonly string[];
+  seed?: number;
+  aiEnabled?: boolean;
 }
 export interface CombatEntity extends Point {
   id: string;
@@ -29,7 +31,20 @@ export interface CombatActor extends CombatEntity {
 export interface SectorGeometry { kind: 'sector'; origin: Point; angleRadians: number; range: number; angleDegrees: number }
 export interface DiskGeometry { kind: 'disk'; origin: Point; radius: number }
 export interface LineGeometry { kind: 'line'; origin: Point; angleRadians: number; range: number; width: number }
-export type AttackGeometry = SectorGeometry | DiskGeometry | LineGeometry;
+export interface RingGeometry { kind: 'ring'; origin: Point; innerRadius: number; outerRadius: number; angleRadians: number; angleDegrees: number }
+export type AttackGeometry = SectorGeometry | DiskGeometry | LineGeometry | RingGeometry;
+export interface ZoneSnapshot {
+  id: number;
+  castId: number;
+  casterId: string;
+  moveId: string;
+  geometry: AttackGeometry;
+  phase: 'pending' | 'active';
+  activationTime: number;
+  expirationTime: number;
+  trajectory?: RingGeometry;
+  occluded?: boolean;
+}
 export interface ProjectileSnapshot {
   id: number;
   castId: number;
@@ -46,6 +61,7 @@ export interface CastSnapshot {
   casterId: string;
   moveId: string;
   phase: 'tracking' | 'locked' | 'active' | 'recovery';
+  zoneIds?: number[];
   elapsedSeconds: number;
   aim: Point;
   geometry: AttackGeometry;
@@ -53,12 +69,13 @@ export interface CastSnapshot {
 export interface CombatEvent {
   id: number;
   time: number;
-  type: 'cast-start' | 'aim-lock' | 'activation' | 'hit' | 'defeat' | 'cast-cancel' | 'projectile-launch' | 'projectile-impact' | 'sleep-start' | 'sleep-end';
+  type: 'cast-start' | 'aim-lock' | 'activation' | 'hit' | 'defeat' | 'cast-cancel' | 'projectile-launch' | 'projectile-impact' | 'sleep-start' | 'sleep-end' | 'cast-rejected' | 'zone-activation' | 'zone-expiration';
   casterId: string;
   moveId?: string;
   targetId?: string;
   position: Point;
   amount?: number;
+  reason?: string;
 }
 export interface EncounterSnapshot {
   time: number;
@@ -68,6 +85,8 @@ export interface EncounterSnapshot {
   casts: CastSnapshot[];
   projectiles: ProjectileSnapshot[];
   statuses: StatusSnapshot[];
+  zones: ZoneSnapshot[];
+  lastFailure: string | null;
   graceSeconds: number;
   cooldowns: Record<string, number>;
 }

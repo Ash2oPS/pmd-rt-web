@@ -2,6 +2,7 @@ import type { CombatEvent, EncounterSnapshot } from '../domain/combat/types.ts';
 import type { CollisionWorld } from '../domain/movement.ts';
 import { attackLockPoint, attackPath, combatRoot as root } from './combat-shapes.ts';
 import { drawCombatProjectiles, drawSleepIndicators } from './combat-projectiles.ts';
+import { drawZoneGround, drawZoneOverlay } from './combat-zones.ts';
 
 const TILE = 32;
 
@@ -13,33 +14,35 @@ function hostileCaster(snapshot: EncounterSnapshot, casterId: string): boolean {
 export function drawCombatGround(context: CanvasRenderingContext2D, snapshot: EncounterSnapshot, world?: CollisionWorld): void {
   context.save();
   for (const cast of snapshot.casts) {
-    if (cast.phase === 'recovery') continue;
+    if (cast.phase === 'recovery' || cast.zoneIds?.length) continue;
     const hostile = hostileCaster(snapshot, cast.casterId);
     const locked = cast.phase === 'locked';
     const active = cast.phase === 'active';
     context.fillStyle = active ? '#fff1bf' : hostile ? locked ? '#e35c35' : '#f6be57' : '#78d9d4';
     context.globalAlpha = active ? cast.geometry.kind === 'line' ? .06 : .32 : locked ? .27 : .14;
     attackPath(context, cast.geometry, world);
-    context.fill();
+    context.fill('evenodd');
     // Sparse direction marks distinguish the aiming phase without obscuring terrain.
     if (cast.phase === 'tracking' && cast.geometry.kind !== 'disk') {
       context.save();
-      context.clip();
+      context.clip('evenodd');
       const { geometry } = cast;
       context.globalAlpha = .7;
-      for (let distance = .35; distance < geometry.range; distance += .3) {
+      const range = geometry.kind === 'ring' ? geometry.outerRadius : geometry.range;
+      for (let distance = .35; distance < range; distance += .3) {
         context.fillRect(Math.round(root(geometry.origin.x) + Math.cos(geometry.angleRadians) * distance * TILE) - 1,
           Math.round(root(geometry.origin.y) + Math.sin(geometry.angleRadians) * distance * TILE) - 1, 2, 2);
       }
       context.restore();
     }
   }
+  drawZoneGround(context, snapshot, world);
   context.restore();
 }
 
 function dangerOutline(context: CanvasRenderingContext2D, snapshot: EncounterSnapshot, world?: CollisionWorld): void {
   for (const cast of snapshot.casts) {
-    if (cast.phase === 'recovery') continue;
+    if (cast.phase === 'recovery' || cast.zoneIds?.length) continue;
     const hostile = hostileCaster(snapshot, cast.casterId);
     const tracking = cast.phase === 'tracking';
     const active = cast.phase === 'active';
@@ -113,6 +116,7 @@ export function drawCombatOverlay(context: CanvasRenderingContext2D, snapshot: E
   context.save();
   context.lineJoin = 'round';
   dangerOutline(context, snapshot, world);
+  drawZoneOverlay(context, snapshot, world);
   drawCombatProjectiles(context, snapshot);
   healthBars(context, snapshot);
   drawSleepIndicators(context, snapshot);

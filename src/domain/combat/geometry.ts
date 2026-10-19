@@ -83,6 +83,16 @@ export function clearanceDistance(world: CollisionWorld, origin: Point, angle: n
 export function touchesGeometry(geometry: AttackGeometry, target: Point, radius = PLAYER_RADIUS): boolean {
   if (geometry.kind === 'sector') return touchesSector(geometry, target, radius);
   if (geometry.kind === 'disk') return Math.hypot(target.x - geometry.origin.x, target.y - geometry.origin.y) <= geometry.radius + radius;
+  if (geometry.kind === 'ring') {
+    const dx = target.x - geometry.origin.x, dy = target.y - geometry.origin.y, distance = Math.hypot(dx, dy);
+    if (distance + radius < geometry.innerRadius || distance - radius > geometry.outerRadius) return false;
+    const angle = Math.atan2(Math.sin(Math.atan2(dy, dx) - geometry.angleRadians), Math.cos(Math.atan2(dy, dx) - geometry.angleRadians));
+    const half = geometry.angleDegrees * Math.PI / 360;
+    if (Math.abs(angle) <= half || half >= Math.PI) return true;
+    const boundary = geometry.angleRadians + Math.sign(angle) * half;
+    const projection = Math.max(geometry.innerRadius, Math.min(geometry.outerRadius, dx * Math.cos(boundary) + dy * Math.sin(boundary)));
+    return Math.hypot(dx - Math.cos(boundary) * projection, dy - Math.sin(boundary) * projection) <= radius;
+  }
   const dx = target.x - geometry.origin.x, dy = target.y - geometry.origin.y;
   const projection = Math.max(0, Math.min(geometry.range, dx * Math.cos(geometry.angleRadians) + dy * Math.sin(geometry.angleRadians)));
   return Math.hypot(dx - Math.cos(geometry.angleRadians) * projection, dy - Math.sin(geometry.angleRadians) * projection) <= geometry.width / 2 + radius;
@@ -90,6 +100,15 @@ export function touchesGeometry(geometry: AttackGeometry, target: Point, radius 
 export function geometryOutline(world: CollisionWorld, geometry: AttackGeometry): Point[] {
   if (geometry.kind === 'sector') return sectorOutline(world, geometry);
   if (geometry.kind === 'disk') return sectorOutline(world, sector(geometry.origin, 0, geometry.radius, 360)).slice(1);
+  if (geometry.kind === 'ring') {
+    const outer = sectorOutline(world, sector(geometry.origin, geometry.angleRadians, geometry.outerRadius, geometry.angleDegrees)).slice(1);
+    const inner = outer.map(point => {
+      const dx = point.x - geometry.origin.x, dy = point.y - geometry.origin.y, distance = Math.hypot(dx, dy);
+      const fraction = distance ? Math.min(geometry.innerRadius, distance) / distance : 0;
+      return { x: geometry.origin.x + dx * fraction, y: geometry.origin.y + dy * fraction };
+    }).reverse();
+    return [...outer, ...inner];
+  }
   const { origin, angleRadians: angle, width } = geometry;
   const radius = width / 2;
   const length = clearanceDistance(world, origin, angle, geometry.range, radius);

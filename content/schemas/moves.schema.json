@@ -107,6 +107,412 @@
                   "properties": {
                     "kind": {
                       "type": "string",
+                      "const": "zones"
+                    },
+                    "shape": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "disk"
+                            },
+                            "radius": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 12
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "radius"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "sector"
+                            },
+                            "range": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 12
+                            },
+                            "angleDegrees": {
+                              "type": "number",
+                              "minimum": 1,
+                              "maximum": 360
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "range",
+                            "angleDegrees"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "ring"
+                            },
+                            "innerRadius": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 12
+                            },
+                            "outerRadius": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 12
+                            },
+                            "angleDegrees": {
+                              "default": 360,
+                              "type": "number",
+                              "minimum": 1,
+                              "maximum": 360
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "innerRadius",
+                            "outerRadius",
+                            "angleDegrees"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "line"
+                            },
+                            "length": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 12
+                            },
+                            "width": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 4
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "length",
+                            "width"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "placement": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "caster"
+                            }
+                          },
+                          "required": [
+                            "kind"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "target"
+                            },
+                            "targetingRange": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 12
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "targetingRange"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "forward"
+                            },
+                            "distance": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 12
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "distance"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "distribution": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "single"
+                            }
+                          },
+                          "required": [
+                            "kind"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "offsets"
+                            },
+                            "offsets": {
+                              "minItems": 1,
+                              "maxItems": 16,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "minimum": -12,
+                                    "maximum": 12
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "minimum": -12,
+                                    "maximum": 12
+                                  }
+                                },
+                                "required": [
+                                  "x",
+                                  "y"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "offsets"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "random-disk"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 16
+                            },
+                            "radius": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 12
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "count",
+                            "radius"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "circle"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 16
+                            },
+                            "radius": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 12
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "count",
+                            "radius"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "motion": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "fixed"
+                            }
+                          },
+                          "required": [
+                            "kind"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "orbit"
+                            },
+                            "angularSpeedDegrees": {
+                              "type": "number",
+                              "minimum": -720,
+                              "maximum": 720
+                            },
+                            "followCaster": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "angularSpeedDegrees",
+                            "followCaster"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "waves": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 8
+                        },
+                        "intervalSeconds": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 10
+                        },
+                        "activeSeconds": {
+                          "type": "number",
+                          "minimum": 0.02,
+                          "maximum": 20
+                        }
+                      },
+                      "required": [
+                        "count",
+                        "intervalSeconds",
+                        "activeSeconds"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "hitPolicy": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "once-per-cast"
+                            }
+                          },
+                          "required": [
+                            "kind"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "once-per-zone"
+                            }
+                          },
+                          "required": [
+                            "kind"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "const": "periodic"
+                            },
+                            "intervalSeconds": {
+                              "type": "number",
+                              "minimum": 0.05,
+                              "maximum": 10
+                            },
+                            "maxHitsPerTarget": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 64
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "intervalSeconds",
+                            "maxHitsPerTarget"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "shape",
+                    "placement",
+                    "distribution",
+                    "motion",
+                    "waves",
+                    "hitPolicy"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
                       "const": "sector"
                     },
                     "range": {

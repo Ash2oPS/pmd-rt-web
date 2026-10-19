@@ -1,0 +1,48 @@
+{
+  "id": "lab-line",
+  "label": "Ligne persistante",
+  "type": "normal",
+  "category": "special",
+  "power": 2,
+  "accuracy": 100,
+  "pp": 1,
+  "effectId": "damage",
+  "combat": {
+    "preparationSeconds": 0.8,
+    "trackingSeconds": 0.15,
+    "activeSeconds": 0.2,
+    "recoverySeconds": 0.3,
+    "cooldownSeconds": 1,
+    "movementDuringPreparation": 0,
+    "pattern": {
+      "kind": "zones",
+      "shape": {
+        "kind": "line",
+        "length": 3,
+        "width": 0.5
+      },
+      "placement": {
+        "kind": "caster"
+      },
+      "distribution": {
+        "kind": "single"
+      },
+      "motion": {
+        "kind": "fixed"
+      },
+      "waves": {
+        "count": 1,
+        "intervalSeconds": 0.65,
+        "activeSeconds": 2
+      },
+      "hitPolicy": {
+        "kind": "periodic",
+        "intervalSeconds": 0.5,
+        "maxHitsPerTarget": 4
+      }
+    },
+    "effect": {
+      "kind": "damage"
+    }
+  }
+}

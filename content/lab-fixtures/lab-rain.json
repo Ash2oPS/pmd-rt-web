@@ -1,0 +1,47 @@
+{
+  "id": "lab-rain",
+  "label": "Pluie de zones",
+  "type": "normal",
+  "category": "special",
+  "power": 2,
+  "accuracy": 100,
+  "pp": 1,
+  "effectId": "damage",
+  "combat": {
+    "preparationSeconds": 0.8,
+    "trackingSeconds": 0.15,
+    "activeSeconds": 0.2,
+    "recoverySeconds": 0.3,
+    "cooldownSeconds": 1,
+    "movementDuringPreparation": 0,
+    "pattern": {
+      "kind": "zones",
+      "shape": {
+        "kind": "disk",
+        "radius": 0.4
+      },
+      "placement": {
+        "kind": "caster"
+      },
+      "distribution": {
+        "kind": "random-disk",
+        "count": 6,
+        "radius": 2.5
+      },
+      "motion": {
+        "kind": "fixed"
+      },
+      "waves": {
+        "count": 3,
+        "intervalSeconds": 0.65,
+        "activeSeconds": 0.3
+      },
+      "hitPolicy": {
+        "kind": "once-per-zone"
+      }
+    },
+    "effect": {
+      "kind": "damage"
+    }
+  }
+}

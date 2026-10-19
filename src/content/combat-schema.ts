@@ -1,7 +1,9 @@
 import { z } from 'zod';
+import { zonePatternSchema } from './zone-schema.ts';
 
 const reach = z.number().min(.1).max(12);
 export const attackPatternSchema = z.discriminatedUnion('kind', [
+  zonePatternSchema,
   z.strictObject({ kind: z.literal('sector'), range: reach, angleDegrees: z.number().min(1).max(360) }),
   z.strictObject({ kind: z.literal('self-disk'), radius: reach }),
   z.strictObject({ kind: z.literal('target-disk'), radius: reach, targetingRange: reach }),

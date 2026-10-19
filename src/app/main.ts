@@ -114,6 +114,7 @@ const menu = new Menu({
     combat: () => { if (combat.startDefault()) menu.resume(); },
     ...combat.partnerCommands(() => menu.resume()),
     ...combat.equipCommands(),
+    lab: () => { location.href = new URL('lab.html', location.href).href; },
   },
 });
 const pad = new GamepadController(VERSION, storage.mapping, {

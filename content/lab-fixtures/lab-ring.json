@@ -1,0 +1,49 @@
+{
+  "id": "lab-ring",
+  "label": "Anneau persistant",
+  "type": "normal",
+  "category": "special",
+  "power": 2,
+  "accuracy": 100,
+  "pp": 1,
+  "effectId": "damage",
+  "combat": {
+    "preparationSeconds": 0.8,
+    "trackingSeconds": 0.15,
+    "activeSeconds": 0.2,
+    "recoverySeconds": 0.3,
+    "cooldownSeconds": 1,
+    "movementDuringPreparation": 0,
+    "pattern": {
+      "kind": "zones",
+      "shape": {
+        "kind": "ring",
+        "innerRadius": 1,
+        "outerRadius": 2,
+        "angleDegrees": 360
+      },
+      "placement": {
+        "kind": "caster"
+      },
+      "distribution": {
+        "kind": "single"
+      },
+      "motion": {
+        "kind": "fixed"
+      },
+      "waves": {
+        "count": 1,
+        "intervalSeconds": 0.65,
+        "activeSeconds": 3
+      },
+      "hitPolicy": {
+        "kind": "periodic",
+        "intervalSeconds": 0.5,
+        "maxHitsPerTarget": 4
+      }
+    },
+    "effect": {
+      "kind": "damage"
+    }
+  }
+}
