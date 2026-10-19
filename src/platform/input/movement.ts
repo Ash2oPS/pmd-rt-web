@@ -21,7 +21,7 @@ export function radialStick(x: number, y: number, deadzone = DEFAULT_DEADZONE): 
   const magnitude = Math.min(1, (length - deadzone) / (1 - deadzone));
   return { x: x / length * magnitude, y: y / length * magnitude };
 }
-function mappedMovement(pad: PadLike | null, mapping: Mapping, deadzone = DEFAULT_DEADZONE): MovementVector {
+function mappedMovement(pad: PadLike | null, mapping: Mapping, deadzone = DEFAULT_DEADZONE, ignoreButtons = false): MovementVector {
   if (!pad) return { x: 0, y: 0 };
   const device = pad;
   const { left, right, up, down } = mapping;
@@ -43,7 +43,7 @@ function mappedMovement(pad: PadLike | null, mapping: Mapping, deadzone = DEFAUL
     const analog = binding.index === defaults[action].index
       ? Math.max(0, action === 'up' ? -stick.y : action === 'down' ? stick.y : action === 'left' ? -stick.x : stick.x) : 0;
     if (Math.hypot(stick.x, stick.y) && binding.index === defaults[action].index) return analog;
-    const button = device.buttons[binding.index];
+    const button = ignoreButtons ? undefined : device.buttons[binding.index];
     return button?.pressed || (button?.value ?? 0) > .5 ? 1 : 0;
   }
   return clampMovement({ x: strength('right') - strength('left'), y: strength('down') - strength('up') });
@@ -57,7 +57,8 @@ export interface MovementSelection {
 /** Ignore emulated digital duplicates while an enabled analog binding is active. */
 export function samplePadMovement(pad: PadLike | null, mapping: Mapping, deadzone = DEFAULT_DEADZONE): MovementSelection {
   if (!pad) return { vector: { x: 0, y: 0 }, source: 'none', rawMagnitude: 0 };
-  const analog = mappedMovement({ ...pad, buttons: [] }, mapping, deadzone);
+  // Native Gamepad attributes live on its prototype; spreading it loses axes.
+  const analog = mappedMovement(pad, mapping, deadzone, true);
   const analogActive = Math.hypot(analog.x, analog.y) > 0;
   const vector = mappedMovement(pad, mapping, deadzone);
   const defaults = defaultMapping();

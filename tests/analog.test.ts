@@ -63,3 +63,18 @@ test('active analog input preserves explicitly remapped directional buttons', ()
   assert.ok(Math.abs(selection.vector.x / -selection.vector.y - radialStick(.5, 0).x) < 1e-12);
   assert.ok(Math.abs(Math.hypot(selection.vector.x, selection.vector.y) - 1) < 1e-12);
 });
+
+test('native-style gamepad prototype getters preserve proportional movement without throwing', () => {
+  class NativePad implements PadLike {
+    get id() { return 'Native-style gamepad'; }
+    get index() { return 0; }
+    get axes() { return [.55, .2]; }
+    get buttons() { return Array.from({ length: 17 }, () => ({ pressed: false, value: 0 })); }
+  }
+  const device = new NativePad();
+  assert.equal(Object.hasOwn(device, 'axes'), false);
+  const selection = samplePadMovement(device, defaultMapping());
+  assert.equal(selection.source, 'analog');
+  assert.deepEqual(selection.vector, radialStick(.55, .2));
+  assert.ok(Math.hypot(selection.vector.x, selection.vector.y) < 1);
+});
