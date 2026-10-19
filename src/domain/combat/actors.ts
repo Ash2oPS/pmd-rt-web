@@ -19,6 +19,7 @@ export function createEncounterActors(options: EncounterOptions): CombatActor[] 
     const maxHp = speciesFor(roaming.speciesId).stats.hp;
     return { id: roaming.id, speciesId: roaming.speciesId, roaming,
       team: definition.team,
+      noticeRange: definition.noticeRange ?? 0,
       get x() { return roaming.x; }, set x(value: number) { roaming.x = value; },
       get y() { return roaming.y; }, set y(value) { roaming.y = value; },
       get facing() { return roaming.facing; }, set facing(value) { roaming.facing = value; },

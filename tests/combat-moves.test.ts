@@ -11,7 +11,7 @@ import { clearanceDistance, geometryOutline } from '../src/domain/combat/geometr
 
 function fixture(playerSpeciesId = 'jigglypuff', enemySpeciesId = 'bulbasaur', enemyX = 4) {
   const dungeon = structuredClone(field); dungeon.playerSpeciesId = playerSpeciesId;
-  dungeon.actors = [{ ...field.actors.find(actor => actor.speciesId === enemySpeciesId)!, team: 'hostile', x: enemyX, y: 5, facing: 'left' }];
+  dungeon.actors = [{ ...field.actors.find(actor => actor.speciesId === enemySpeciesId)!, team: 'hostile', noticeRange: 8, x: enemyX, y: 5, facing: 'left' }];
   const state = createState(dungeon); state.facing = 'right';
   // Keep behavior fixtures independent of additional designer-authored moves/learnset entries.
   const moves = structuredClone(content.moves.filter(move => ['pound', 'sing', 'vine-whip', 'water-gun', 'thunder'].includes(move.id)));

@@ -31,6 +31,13 @@ test('actor teams default to neutral unless a field instance declares hostility'
     actors: [{ id: 'visitor', speciesId: 'bulbasaur', x: 3, y: 1, facing: 'left', animation: 'Idle' }] });
   assert.equal(parsed.actors[0]!.team, 'neutral');
   assert.equal(field.actors.find(actor => actor.speciesId === 'bulbasaur')!.team, 'hostile');
+  assert.equal(field.actors.find(actor => actor.speciesId === 'bulbasaur')!.noticeRange, 5);
+});
+
+test('hostile field actors require an authored notice range', () => {
+  const candidate = structuredClone(content);
+  delete candidate.dungeons[0]!.actors.find(actor => actor.team === 'hostile')!.noticeRange;
+  assert.throws(() => validateContent(candidate), /requires a notice range/);
 });
 
 test('rejects unknown actors, duplicate IDs and invalid actor placements', () => {

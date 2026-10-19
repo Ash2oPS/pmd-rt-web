@@ -15,14 +15,15 @@ async function key(page, code, duration = 17) {
 async function waitWorld(page, ms) {
   await page.keyboard.down('Space'); await advance(page, ms); await page.keyboard.up('Space'); await advance(page, 0);
 }
-async function scene(viewport = { width: 1280, height: 720 }) {
+async function scene(viewport = { width: 1280, height: 720 }, initialSave = null) {
   const context = await browser.newContext({ viewport });
-  await context.addInitScript(() => {
+  const defaultSave = JSON.stringify({ version: 1, player: { x: 2, y: 4 }, steps: 0, collected: [], facing: 'up' });
+  await context.addInitScript(`(() => {
     window.requestAnimationFrame = () => 0;
-    if (!localStorage.getItem('pmd-field-save-v1')) localStorage.setItem('pmd-field-save-v1', JSON.stringify({
-      version: 1, player: { x: 2, y: 4 }, steps: 0, collected: [], facing: 'up',
-    }));
-  });
+    const initialSave = ${JSON.stringify(initialSave)};
+    if (initialSave) localStorage.setItem('pmd-field-save-v1', JSON.stringify(initialSave));
+    else if (!localStorage.getItem('pmd-field-save-v1')) localStorage.setItem('pmd-field-save-v1', ${JSON.stringify(defaultSave)});
+  })()`);
   const page = await context.newPage();
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
@@ -118,6 +119,101 @@ try {
       view = await state(page);
       assert.ok(view.player.x > position.x, 'Exploration continues after the enemy is removed');
       await page.screenshot({ path: `${output}/field-after-victory.png` });
+    } finally { await context.close(); }
+  });
+  await check('Bulbasaur waits behind a wall and pursues only after it sees the explorer move', async () => {
+    const saved = { version: 2, player: { x: 7, y: 3 }, distance: 0, steps: 0, collected: [], facing: 'left' };
+    const { page, context } = await scene({ width: 1280, height: 720 }, saved);
+    try {
+      const initial = await state(page);
+      const enemy = initial.combat.actors.find(actor => actor.team === 'hostile');
+      await advance(page, 1500);
+      assert.equal((await state(page)).combat.actors.find(actor => actor.id === enemy.id).behavior, 'idle', 'Idle behind a wall does not trigger aggro');
+      await waitWorld(page, 250);
+      let view = await state(page);
+      assert.equal(view.combat.actors.find(actor => actor.id === enemy.id).behavior, 'idle', 'Wait alone cannot bypass blocked line of sight');
+      await page.keyboard.down('ArrowLeft'); await page.keyboard.down('ArrowDown');
+      await advance(page, 900);
+      await page.keyboard.up('ArrowLeft'); await page.keyboard.up('ArrowDown'); await advance(page, 0);
+      view = await state(page);
+      const pursuing = view.combat.actors.find(actor => actor.id === enemy.id);
+      assert.notDeepEqual([pursuing.x, pursuing.y], [enemy.x, enemy.y], 'Bulbasaur approaches after seeing the explorer during a movement action');
+    } finally { await context.close(); }
+  });
+  await check('Bulbasaur announces real Vine Whip geometry, the player dodges and ripostes', async () => {
+    const { page, context } = await scene();
+    try {
+      let view = await state(page);
+      const enemy = view.combat.actors.find(actor => actor.team === 'hostile');
+      for (let i = 0; i < 30 && !view.combat.casts.some(cast => cast.casterId === enemy.id); i++) {
+        await waitWorld(page, 100); view = await state(page);
+      }
+      let warning = view.combat.casts.find(cast => cast.casterId === enemy.id);
+      assert.ok(warning);
+      for (let i = 0; i < 20 && warning.phase === 'tracking'; i++) {
+        await waitWorld(page, 50); view = await state(page);
+        warning = view.combat.casts.find(cast => cast.casterId === enemy.id) ?? warning;
+      }
+      assert.equal(warning.phase, 'locked');
+      const geometry = warning.geometry, hp = view.combat.player.hp;
+      assert.equal(warning.moveId, 'vine-whip');
+      assert.match(await page.locator('.combat-warning').textContent(), /Bulbizarre prépare Fouet Lianes/);
+      assert.ok(geometry, 'The renderer and contact rule share the resolved warning geometry');
+      await page.screenshot({ path: `${output}/enemy-vine-whip-telegraph.png` });
+      await page.setViewportSize({ width: 320, height: 568 });
+      await page.waitForTimeout(100);
+      await advance(page, 0);
+      assert.deepEqual(await page.locator('#game').evaluate(canvas => [canvas.width, canvas.height]), [320, 568]);
+      const warningRect = await page.locator('.combat-warning').boundingBox();
+      assert.ok(warningRect && warningRect.x >= 0 && warningRect.y >= 0 && warningRect.x + warningRect.width <= 320
+        && warningRect.y + warningRect.height <= 568, 'The warning remains visible inside a compact viewport');
+      await page.screenshot({ path: `${output}/enemy-vine-whip-compact.png` });
+      await key(page, 'ArrowDown', 450);
+      view = await state(page);
+      assert.deepEqual(view.combat.casts.find(cast => cast.id === warning.id)?.geometry, geometry, 'The locked telegraph does not retarget while dodging');
+      await waitWorld(page, 300);
+      view = await state(page);
+      assert.equal(view.combat.player.hp, hp, 'Moving out of the locked zone dodges its contact');
+      await key(page, 'ArrowUp', 400);
+      const enemyHp = view.combat.actors.find(actor => actor.id === enemy.id).hp;
+      await page.locator('[data-slot="0"]').click(); await advance(page, 0); await waitWorld(page, 800);
+      view = await state(page);
+      assert.ok(view.combat.actors.find(actor => actor.id === enemy.id).hp < enemyHp, 'The equipped Pound can riposte on the same map');
+    } finally { await context.close(); }
+  });
+  await check('K.O. saves the exploration state before same-map revival and reload starts with grace', async () => {
+    const saved = { version: 2, player: { x: 2, y: 4 }, distance: 0, steps: 0, collected: [0], facing: 'up' };
+    const { page, context } = await scene({ width: 1280, height: 720 }, saved);
+    try {
+      for (let i = 0; i < 80 && (await state(page)).combat.result === 'playing'; i++) await waitWorld(page, 250);
+      let view = await state(page);
+      assert.equal(view.combat.result, 'lost', 'Bulbasaur can K.O. Rondoudou in exploration');
+      assert.equal(await page.locator('[data-recover]').isVisible(), true);
+      const persisted = await page.evaluate(() => JSON.parse(localStorage.getItem('pmd-field-save-v1')));
+      assert.deepEqual(persisted.player, view.player);
+      assert.deepEqual(persisted.collected, [0], 'Collected objects are saved before recovery is offered');
+      assert.deepEqual(view.combat.casts, []); assert.deepEqual(view.combat.projectiles, []); assert.deepEqual(view.combat.zones, []);
+      const neutralPositions = new Map(view.combat.actors.filter(actor => actor.team === 'neutral').map(actor => [actor.id, [actor.x, actor.y]]));
+      await page.locator('[data-recover]').click(); await advance(page, 0);
+      view = await state(page);
+      assert.equal(view.combat.result, 'playing');
+      assert.equal(view.combat.player.hp, view.combat.player.maxHp);
+      assert.equal(view.combat.graceSeconds, 1);
+      assert.deepEqual(view.player, persisted.player);
+      assert.deepEqual(view.collected, persisted.collected);
+      assert.ok(view.combat.actors.find(actor => actor.team === 'hostile').x === 2, 'Bulbasaur returns to its authored position');
+      for (const actor of view.combat.actors.filter(actor => actor.team === 'neutral'))
+        assert.deepEqual([actor.x, actor.y], neutralPositions.get(actor.id), 'Neutral visitor positions survive revival');
+      assert.deepEqual(view.combat.casts, []); assert.deepEqual(view.combat.projectiles, []);
+      await page.reload();
+      await page.waitForFunction(() => typeof window.render_game_to_text === 'function' && JSON.parse(window.render_game_to_text()).pokemon.status === 'ready', undefined, { polling: 50 });
+      await advance(page, 2000);
+      view = await state(page);
+      assert.equal(view.combat.result, 'playing');
+      assert.equal(view.combat.graceSeconds, 1, 'Reload creates a safe transient encounter');
+      assert.deepEqual(view.combat.casts, [], 'No attack resumes from the old page');
+      assert.deepEqual(view.collected, [0]);
+      await page.screenshot({ path: `${output}/field-after-revival-reload.png` });
     } finally { await context.close(); }
   });
   await check('pause freezes the shared encounter and resume advances it only on player action', async () => {

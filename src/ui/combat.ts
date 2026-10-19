@@ -3,12 +3,14 @@ import type { Move } from '../content/schemas.ts';
 import { element } from './dom.ts';
 import { createAttackSlots, hudBinding } from './attack-slots.ts';
 
-export function createCombatHUD(playerLabel: string, attack: (slot: number) => void, recover: () => void, maxHp: number) {
+export function createCombatHUD(playerLabel: string, attack: (slot: number) => void, recover: () => void, maxHp: number,
+  nameFor: { speciesLabel(id: string): string; moveLabel(id: string): string }) {
   const panel = document.createElement('section');
   panel.id = 'combat-hud'; panel.className = 'combat-hud';
   panel.setAttribute('aria-label', 'Capacités');
   panel.innerHTML = `<div class="combat-vitals"><div id="field-portrait" class="field-portrait"></div><div class="vitals-info"><span class="vitals-name"></span><div class="vitals-line"><small>PV</small><meter min="0" aria-label="Points de vie"></meter><strong></strong></div><span class="vitals-status"></span></div></div>
     <div class="combat-slots"></div>
+    <div class="combat-warning" role="status" aria-live="polite"></div>
     <div class="combat-result" hidden role="status"><strong></strong><button data-recover>Se relever</button></div>`;
   document.querySelector('.game-frame')!.append(panel);
   const shoulders = document.createElement('div'); shoulders.className = 'combat-shoulders field-shoulders';
@@ -17,6 +19,7 @@ export function createCombatHUD(playerLabel: string, attack: (slot: number) => v
   const updateSlots = createAttackSlots(panel.querySelector('.combat-slots')!, attack);
   panel.querySelector('[data-recover]')!.addEventListener('click', recover);
   const meter = panel.querySelector('meter')!, health = panel.querySelector('.vitals-line strong')!;
+  const warning = panel.querySelector<HTMLElement>('.combat-warning')!;
   panel.querySelector('.vitals-name')!.textContent = playerLabel;
   const result = panel.querySelector<HTMLElement>('.combat-result')!;
   const resultButtons = [...result.querySelectorAll<HTMLButtonElement>('button')];
@@ -34,6 +37,10 @@ export function createCombatHUD(playerLabel: string, attack: (slot: number) => v
       shoulders.querySelector('[data-action="aim"] kbd')!.textContent = hudBinding(labels[0]!);
       shoulders.querySelector('[data-action="wait"] kbd')!.textContent = hudBinding(labels[1]!);
       const sleep = snapshot?.statuses.find(status => status.entityId === 'player' && status.kind === 'sleep');
+      const enemyCast = snapshot?.casts.find(cast => cast.casterId !== 'player');
+      const enemy = enemyCast && snapshot?.actors.find(actor => actor.id === enemyCast.casterId);
+      warning.textContent = enemyCast && enemy
+        ? `${nameFor.speciesLabel(enemy.speciesId)} prépare ${nameFor.moveLabel(enemyCast.moveId)}` : '';
       panel.querySelector('.vitals-status')!.textContent = sleep ? `Sommeil · ${sleep.remainingSeconds.toFixed(1)} s` : '';
       meter.max = snapshot?.player.maxHp ?? maxHp; meter.value = snapshot?.player.hp ?? maxHp;
       health.textContent = `${Math.ceil(meter.value)} / ${meter.max}`;

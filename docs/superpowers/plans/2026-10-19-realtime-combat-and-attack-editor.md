@@ -262,8 +262,8 @@ This later user request replaces the separate player-facing training encounter w
 
 | Step | Target | Scope | Delivery status |
 | --- | --- | --- | --- |
-| 1 | 0.4.11 | Declare hostile/neutral actor teams in content; make one persistent encounter own field actor positions; move attacks into exploration; remove the training launch path; prove neutral defaults, position identity and action-clock freeze. | Implemented; build (146 unit tests) and all production browser suites pass locally. Pages publication pending. |
-| 2 | 0.4.12 | Add action-triggered, proximity- and line-of-sight-aware hostile aggro, pursuit, authored move warnings/attacks, per-enemy victory and same-map K.O. recovery. | Not started. |
+| 1 | 0.4.11 | Declare hostile/neutral actor teams in content; make one persistent encounter own field actor positions; move attacks into exploration; remove the training launch path; prove neutral defaults, position identity and action-clock freeze. | Published commit `1f207a9`; local build (146 tests) and all browser suites pass; Actions run `39253660495` verify/deploy succeeded; live build and offline reload show 0.4.11. |
+| 2 | 0.4.12 | Add action-triggered, proximity- and line-of-sight-aware hostile aggro, pursuit, authored move warnings/attacks, per-enemy victory and same-map K.O. recovery. | Implemented locally; build passes 151 unit tests and every production browser suite passes. Field combat also passes under `/pmd-rt-web/`. Pages publication pending. |
 | 3 | 0.4.13 | Verify save-before-recovery, transient resets, pause/suspension/blur/reload, offline update behavior; finish README, combat status and tracking notes; publish only after production browser and live PWA checks. | Not started. |
 
 Preserve action-driven world time, separate ambient Idle animation, continuous collision, input remaps, save keys/formats and `/pmd-rt-web/` paths. The existing camera changes at `7b239b4` stay in the baseline. See the current [combat status](../../COMBAT-TODO.md); update this table and `progress.md` with observed results after each release.

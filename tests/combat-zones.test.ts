@@ -15,7 +15,7 @@ const basePattern = (): ZonePattern => ({ kind: 'zones', shape: { kind: 'disk', 
 function fixture(pattern = basePattern(), seed = 1, target = { x: 8, y: 6 }) {
   const dungeon = dungeonSchema.parse({ id: 'zone-test', label: 'Technical zones fixture', tileSize: 32, playerSpeciesId: 'jigglypuff',
     map: ['####################', ...Array.from({ length: 12 }, () => '#..................#'), '####################'],
-    spawn: { x: 6, y: 6 }, collectibles: [], actors: [{ id: 'test-target', speciesId: 'bulbasaur', team: 'hostile', ...target, facing: 'left', animation: 'Idle' }] });
+    spawn: { x: 6, y: 6 }, collectibles: [], actors: [{ id: 'test-target', speciesId: 'bulbasaur', team: 'hostile', noticeRange: 8, ...target, facing: 'left', animation: 'Idle' }] });
   const move = moveSchema.parse({ id: 'technical-zones', label: 'Technical fixture only', type: 'normal', category: 'physical', power: 1,
     accuracy: 100, pp: 10, effectId: 'damage', combat: { preparationSeconds: .3, trackingSeconds: .1, activeSeconds: .05,
       recoverySeconds: .05, cooldownSeconds: .4, movementDuringPreparation: 0, pattern, effect: { kind: 'damage' } } });

@@ -33,9 +33,12 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
   let view: EncounterSnapshot;
   let events: CombatEvent[] = [];
   let presentationTime = 0;
-  const hud = createCombatHUD(playerSpecies.label, attack, reset, Encounter.playerMaxHp);
+  const hud = createCombatHUD(playerSpecies.label, attack, recover, Encounter.playerMaxHp, {
+    speciesLabel: id => content.species.find(species => species.id === id)?.label ?? id,
+    moveLabel: id => content.moves.find(move => move.id === id)?.label ?? id,
+  });
   encounter = new Encounter({ field, species: content.species, moves: content.moves, movementSettings, state: runtime.state,
-    continueAfterVictory: true, aiEnabled: false });
+    continueAfterVictory: true });
   view = encounter.snapshot();
 
   function snapshot() { return view; }
@@ -45,14 +48,15 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     hud.update(view, moves, moves.map((_, slot) => callbacks.bindingLabel(slot)),
       [callbacks.controlLabel?.('aim') ?? 'L', callbacks.controlLabel?.('wait') ?? 'R']);
   }
-  function reset() {
-    encounter.reset(runtime.state);
+  function clearSession() {
     events = [];
     presentationTime = 0;
     effects.reset();
     callbacks.clear();
     refresh();
   }
+  function reset() { encounter.reset(runtime.state); clearSession(); }
+  function recover() { encounter.revive(); clearSession(); }
   function attack(slot: number) {
     if (!callbacks.canAct() || !ready()) return;
     const move = moves[slot];

@@ -26,7 +26,7 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
   const world = structuredClone(field);
   world.spawn = { x: 7, y: 5 };
   world.collectibles = [];
-  world.actors = [{ id: 'lab-target', speciesId: 'bulbasaur', team: 'hostile', x: 8, y: 5, facing: 'left', animation: 'Idle' }];
+  world.actors = [{ id: 'lab-target', speciesId: 'bulbasaur', team: 'hostile', noticeRange: 5, x: 8, y: 5, facing: 'left', animation: 'Idle' }];
   let state = createState(world);
   function reset() {
     state = createState(world); state.facing = options.facing;

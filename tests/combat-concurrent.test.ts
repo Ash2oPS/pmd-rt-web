@@ -9,8 +9,8 @@ test('overlapping enemy warnings remain independent and cannot advance or hit at
   const field = dungeonSchema.parse({ id: 'concurrent-fixture', label: 'Concurrent warnings', tileSize: 32,
     playerSpeciesId: 'jigglypuff', map: ['##########', ...Array.from({ length: 8 }, () => '#........#'), '##########'],
     spawn: { x: 5, y: 5 }, collectibles: [], actors: [
-      { id: 'left', speciesId: 'bulbasaur', team: 'hostile', x: 4, y: 5, facing: 'right', animation: 'Idle' },
-      { id: 'right', speciesId: 'bulbasaur', team: 'hostile', x: 6, y: 5, facing: 'left', animation: 'Idle' },
+      { id: 'left', speciesId: 'bulbasaur', team: 'hostile', noticeRange: 10, x: 4, y: 5, facing: 'right', animation: 'Idle' },
+      { id: 'right', speciesId: 'bulbasaur', team: 'hostile', noticeRange: 10, x: 6, y: 5, facing: 'left', animation: 'Idle' },
     ] });
   const state = createState(field);
   const moves = content.moves.filter(move => move.id === 'vine-whip').map(move => ({ ...move, power: 1 }));

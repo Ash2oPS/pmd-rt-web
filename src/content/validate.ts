@@ -78,6 +78,8 @@ export function validateContent(input: unknown): Content {
     });
     dungeon.actors.forEach((entry, offset) => {
       if (!speciesIds.has(entry.speciesId)) issues.push({ code: 'custom', path: ['dungeons', index, 'actors', offset, 'speciesId'], message: `Unknown actor species: ${entry.speciesId}` });
+      if (entry.team === 'hostile' && entry.noticeRange === undefined)
+        issues.push({ code: 'custom', path: ['dungeons', index, 'actors', offset, 'noticeRange'], message: `Hostile actor ${entry.id} requires a notice range` });
     });
   });
   const assets = new Set(data['effect-assets'].map(asset => asset.id));

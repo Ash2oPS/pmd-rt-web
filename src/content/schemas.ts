@@ -60,6 +60,7 @@ export const dungeonSchema = z.strictObject({
   actors: z.array(pointSchema.extend({
     id, speciesId: id,
     team: z.enum(['neutral', 'hostile']).default('neutral'),
+    noticeRange: z.number().min(0.5).max(12).optional(),
     facing: z.enum(['down', 'down-left', 'left', 'up-left', 'up', 'up-right', 'right', 'down-right']),
     animation: z.enum(['Idle', 'Walk']),
     roaming: roamingSchema.optional(),

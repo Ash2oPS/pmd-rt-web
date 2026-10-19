@@ -1,9 +1,8 @@
 import type { Move } from '../../content/schemas.ts';
-import { canOccupy, facingFromVector, movePoint } from '../movement.ts';
+import { canOccupy, facingFromVector } from '../movement.ts';
 import type { Point } from '../movement.ts';
-import { updateRoamers } from '../roaming.ts';
-import { relativeMovementSpeed } from '../speed.ts';
 import type { GameState } from '../state.ts';
+import { updateEncounterActors } from './actor-simulation.ts';
 import { clearAttackPath, facingAngle, touchesGeometry } from './geometry.ts';
 import { effectFor, engagementRange, patternFor, resolveGeometry } from './patterns.ts';
 import { moveDamage } from './damage.ts';
@@ -35,6 +34,7 @@ export class Encounter {
   private readonly zones: Zones;
   private cooldowns = new Map<string, number>();
   private hurtUntil = new Map<string, number>();
+  private readonly awareActors = new Set<string>();
   constructor(private readonly options: EncounterOptions) {
     this.state = options.state;
     this.zones = new Zones(options.field);
@@ -62,13 +62,23 @@ export class Encounter {
   }
   reset(state: GameState, graceSeconds = 1): void {
     this.state = state;
+    this.resetSimulation(graceSeconds);
+    this.actors = createEncounterActors(this.options);
+  }
+  /** Restore only enemies after a field defeat; neutral visitors keep their positions and roaming plans. */
+  revive(graceSeconds = 1): void {
+    const freshHostiles = new Map(createEncounterActors(this.options).filter(actor => actor.team === 'hostile').map(actor => [actor.id, actor]));
+    this.actors = this.actors.map(actor => actor.team === 'hostile' ? freshHostiles.get(actor.id) ?? actor : actor);
+    this.resetSimulation(graceSeconds);
+  }
+  private resetSimulation(graceSeconds: number): void {
     this.time = 0;
     this.hp = Encounter.playerMaxHp;
     this.grace = Math.max(0, graceSeconds);
     this.casts = []; this.projectiles = []; this.zones.clear(); this.statuses.clear(); this.events = []; this.sequence = 0;
     this.castSequence = 0; this.lastFailure = null;
     this.cooldowns.clear(); this.hurtUntil.clear();
-    this.actors = createEncounterActors(this.options);
+    this.awareActors.clear();
   }
   cancelAll(): void {
     for (const cast of this.casts) this.emit('cast-cancel', cast.casterId, cast.moveId);
@@ -93,7 +103,12 @@ export class Encounter {
       this.time += dt;
       this.grace = Math.max(0, this.grace - dt);
       for (const id of this.statuses.update(dt)) this.emit('sleep-end', id);
-      this.updateActors(dt);
+      updateEncounterActors({ actors: this.actors, casts: this.casts, field: this.options.field, graceSeconds: this.grace,
+        awareActors: this.awareActors, player: this.player, species: this.options.species, moves: this.options.moves,
+        movementSettings: this.options.movementSettings, aiEnabled: this.options.aiEnabled,
+        isSleeping: id => this.statuses.isSleeping(id),
+        moveReady: (actorId, moveId) => (this.cooldowns.get(`${actorId}:${moveId}`) ?? 0) <= this.time + EPSILON,
+        beginCast: (actor, moveId) => { this.beginCast(actor, moveId); } }, dt);
       for (const cast of [...this.casts]) this.updateCast(cast, dt);
       this.updateProjectiles(dt);
       this.zones.update(this.time - dt, this.time, {
@@ -153,41 +168,6 @@ export class Encounter {
     this.emit('cast-start', caster.id, moveId);
     if (cast.locked) this.emit('aim-lock', caster.id, moveId);
     return true;
-  }
-  private updateActors(dt: number): void {
-    const neutrals = this.actors.filter(actor => actor.team === 'neutral' && !actor.defeated && !this.statuses.isSleeping(actor.id));
-    updateRoamers(neutrals.map(actor => actor.roaming), this.options.field, dt);
-    for (const actor of this.actors) {
-      if (actor.team !== 'hostile' || actor.defeated) continue;
-      if (this.options.aiEnabled === false) { actor.behavior = 'idle'; actor.roaming.velocity = { x: 0, y: 0 }; continue; }
-      if (this.statuses.isSleeping(actor.id)) { actor.behavior = 'sleeping'; actor.roaming.velocity = { x: 0, y: 0 }; continue; }
-      actor.roaming.velocity = { x: 0, y: 0 };
-      const cast = this.casts.find(entry => entry.casterId === actor.id);
-      if (cast) { actor.behavior = cast.phase === 'recovery' ? 'recovering' : cast.phase === 'active' ? 'active' : 'preparing'; continue; }
-      const dx = this.player.x - actor.x, dy = this.player.y - actor.y, distance = Math.hypot(dx, dy);
-      const learned = this.options.moves.filter(move => move.combat && this.species(actor.speciesId).learnset.some(entry => entry.moveId === move.id));
-      if (!learned.length) { actor.behavior = 'idle'; continue; }
-      if (distance > EPSILON) actor.facing = facingFromVector({ x: dx, y: dy });
-      const move = this.grace <= EPSILON && clearAttackPath(this.options.field, actor, this.player)
-        ? learned.find(candidate => distance <= engagementRange(candidate.combat!) * .85
-          && (this.cooldowns.get(`${actor.id}:${candidate.id}`) ?? 0) <= this.time + EPSILON) : undefined;
-      if (move) {
-        actor.behavior = 'idle';
-        this.beginCast(actor, move.id);
-        continue;
-      }
-      if (distance <= Math.min(...learned.map(candidate => engagementRange(candidate.combat!) * .85))) {
-        actor.behavior = 'idle'; continue;
-      }
-      const speed = relativeMovementSpeed(this.species(actor.speciesId).stats.speed,
-        this.species(this.player.speciesId).stats.speed, this.options.movementSettings, this.options.movementSettings.pursuitMultiplier);
-      actor.resolvedSpeed = speed;
-      if (distance <= EPSILON) continue;
-      const length = Math.min(speed * dt, Math.max(0, distance - .5));
-      const point = movePoint(this.options.field, actor, { x: dx / distance * length, y: dy / distance * length });
-      actor.roaming.velocity = { x: (point.x - actor.x) / dt, y: (point.y - actor.y) / dt };
-      actor.x = point.x; actor.y = point.y; actor.behavior = 'approach';
-    }
   }
   private updateCast(cast: Cast, dt: number): void {
     if (!this.casts.includes(cast)) return;

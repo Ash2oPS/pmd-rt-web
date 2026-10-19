@@ -98,9 +98,15 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - User specifically selected SpriteCollab Jigglypuff Alternate portrait; import pin, exact pixels and named attribution preserved.
 - Validation: isolated staged-source build passed 140 tests and every production-browser suite, including five HUD viewports, touch targeting, controller/remap labels, cast/recovery/cooldown, portrait and first-visit offline icons. Concurrent camera changes excluded from this release.
 
-## Persistent field encounter — 0.4.11 release candidate
+## Persistent field encounter — 0.4.11
 - Declared actor teams in dungeon content: Bulbizarre is explicitly hostile and omitted teams default to neutral. Generated editor schema and content manifest are regenerated through the content pipeline.
 - Replaced the separate field-roamer list with the persistent Encounter as the single NPC position owner. Equipped attacks now operate on the exploration map, victory leaves exploration active, and the pause menu keeps only the separate ability workshop.
 - Preserved neutral roaming, action-driven world time, ambient Idle animations and remapped controls. A remapped direction wins over an attack using the same physical button.
 - Local validation: `npm run build` passed 146 unit tests; the full production browser suite passed on `npm run preview` (19 browser, 5 Pokemon, 6 realtime, 5 field combat, 7 lab, 5 effects, 7 editor, PWA update and HUD flows). Inspected field hit, post-victory and controller telegraph captures; no console errors.
-- Release version is 0.4.11. Commit and Pages publication checks are pending.
+- Published `feat(combat): move attacks into exploration` as commit `1f207a9`. GitHub Actions run `39253660495` passed verify and deploy. The live site shows BUILD 0.4.11, one hostile/eight neutrals, and a successful offline reload; no console errors.
+
+## Hostile encounters and recovery — 0.4.12 release candidate
+- Bulbizarre's `noticeRange` is authored in dungeon content. It notices only during world time, after an action, nearby and with a clear line of sight; then it pursues and selects Fouet Lianes from its learnset.
+- The HUD announces the French move name while the existing locked geometry drives both warning and contact. Production-browser cases cover blocked sight, pursuit, telegraph/contact, dodging and riposte.
+- K.O. saves position and collected items before showing recovery. Revival resets hostiles, HP, statuses and pending attacks, preserves neutral positions, and grants one second of grace.
+- Local validation: `npm run build` passes 151 unit tests and the full production browser suite passes (19 browser, 5 Pokemon, 6 realtime, 8 field combat, 7 lab, 5 effects, 7 editor, PWA update and HUD flows). All eight field-combat scenarios also pass when served under `/pmd-rt-web/`. Inspected the locked Vine Whip/contact and post-revival captures; no browser errors. Pages publication is pending.

@@ -25,6 +25,7 @@ export interface CombatEntity extends Point {
 }
 export interface CombatActor extends CombatEntity {
   roaming: Roamer;
+  noticeRange: number;
   behavior: 'idle' | 'roaming' | 'approach' | 'preparing' | 'active' | 'recovering' | 'defeated' | 'sleeping';
   resolvedSpeed: number;
 }

@@ -110,6 +110,11 @@
               "hostile"
             ]
           },
+          "noticeRange": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 12
+          },
           "facing": {
             "type": "string",
             "enum": [

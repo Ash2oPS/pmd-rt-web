@@ -220,7 +220,7 @@ function update(dt: number) {
   const movement = selectMovement(local, pad.movementSelection());
   const held = new Set([...local, ...actions]);
   const clock = resolveActionClock({ movement: movement.vector, aimOnly: held.has('aim'), wait: held.has('wait'),
-    playerBusy: combat.playerBusy, paused: false }, dt);
+    playerBusy: combat.playerBusy, paused: combat.finished }, dt);
   worldAdvancing = clock.worldDt > 0;
   if (clock.facing && !combat.facingLocked) runtime.state.facing = clock.facing;
   const multiplier = combat.movementMultiplier;
@@ -232,7 +232,7 @@ function update(dt: number) {
   // Presentation time lets the camera return smoothly even when the world is idle.
   renderer.setZoom(!reducedMotion && combat.playerBusy ? CAMERA_ZOOM.action : CAMERA_ZOOM.exploration);
   renderer.updateCamera(dt);
-  if (!wasFinished && combat.finished) { clear(); runtime.previous = new Set(ACTIONS); }
+  if (!wasFinished && combat.finished) { save(); clear(); runtime.previous = new Set(ACTIONS); }
   saveElapsed += dt;
   hudElapsed += dt;
   if (result.collected.length) toast(runtime.state.collected.length === field.collectibles.length

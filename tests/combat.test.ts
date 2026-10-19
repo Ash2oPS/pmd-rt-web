@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { content, field, movementSettings } from '../src/content/catalog.ts';
-import { combatMoveSchema, moveSchema, speciesSchema } from '../src/content/schemas.ts';
+import { combatMoveSchema, dungeonSchema, moveSchema, speciesSchema } from '../src/content/schemas.ts';
 import { Encounter } from '../src/domain/combat/encounter.ts';
 import { createState } from '../src/domain/state.ts';
 import { canOccupy } from '../src/domain/movement.ts';
-import { clearAttackPath, sector, sectorOutline, touchesSector } from '../src/domain/combat/geometry.ts';
+import { clearAttackPath, sector, sectorOutline, touchesGeometry, touchesSector } from '../src/domain/combat/geometry.ts';
 
 const record = (path: string): unknown => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 // M2 legacy records remain regression fixtures; production records now use pattern/effect.
@@ -59,6 +59,7 @@ test('enemy briefly tracks then freezes its announced zone and cannot hit before
   const cast = encounter.snapshot().casts[0]!;
   assert.equal(cast.casterId, 'bulbasaur-visitor');
   assert.equal(cast.phase, 'tracking');
+  assert.equal(touchesGeometry(cast.geometry, encounter.player), true, 'The announced zone includes its target');
   state.player = { x: 3, y: 5.2 };
   encounter.update(.32);
   const locked = encounter.snapshot().casts[0]!;
@@ -72,6 +73,20 @@ test('enemy briefly tracks then freezes its announced zone and cannot hit before
   encounter.update(.2);
   assert.equal(encounter.player.hp, 80, 'Leaving the locked area dodges the hit');
   assert.ok(encounter.takeEvents().some(event => event.type === 'activation'));
+});
+
+test('hostile warning geometry is the geometry that contacts the player', () => {
+  const { encounter, state } = fixture();
+  encounter.reset(state, 0);
+  encounter.update(.01);
+  const warning = encounter.snapshot().casts.find(cast => cast.casterId !== 'player')!;
+  assert.equal(warning.moveId, 'vine-whip');
+  assert.equal(touchesGeometry(warning.geometry, encounter.player), true);
+  const hp = encounter.player.hp;
+  encounter.update(1);
+  assert.equal(encounter.player.hp, hp - 16);
+  assert.ok(encounter.takeEvents().some(event => event.type === 'hit' && event.casterId === warning.casterId
+    && event.targetId === 'player'), 'The announced contact resolves through the same cast');
 });
 
 test('zero/invalid simulation time freezes phases, grace, roaming, HP and event counts', () => {
@@ -131,6 +146,67 @@ test('only content-marked Bulbasaur is hostile; visitors keep roaming and terrai
     return Math.hypot(actor.x - initial.x, actor.y - initial.y) > .1;
   }));
   assert.ok(neutrals.every(actor => actor.hp === actor.maxHp));
+});
+
+test('hostile awareness starts only on simulation time and pursues after a nearby clear view', () => {
+  const state = createState(field);
+  const encounter = new Encounter({ field, species, moves, movementSettings, state });
+  const before = encounter.snapshot();
+  assert.equal(before.actors.find(actor => actor.team === 'hostile')?.behavior, 'idle');
+  encounter.update(0);
+  assert.deepEqual(encounter.snapshot(), before, 'Idle does not let an enemy notice or move');
+  encounter.update(.2);
+  const after = encounter.snapshot();
+  const hostile = after.actors.find(actor => actor.team === 'hostile')!;
+  assert.ok(Math.hypot(hostile.x - before.actors[0]!.x, hostile.y - before.actors[0]!.y) > .01);
+  assert.ok(['idle', 'approach'].includes(hostile.behavior), 'It closes distance or waits at its authored move range');
+  assert.equal(after.casts.some(cast => cast.casterId === hostile.id), false, 'The initial grace still blocks danger');
+});
+
+test('a wall blocks first notice until the explorer reaches a clear view', () => {
+  const dungeon = dungeonSchema.parse({ id: 'line-of-sight', label: 'Line of sight', tileSize: 32,
+    playerSpeciesId: 'jigglypuff', map: ['########', '#......#', '#..#...#', '#..#...#', '#......#', '#......#', '########'],
+    spawn: { x: 1, y: 2 }, collectibles: [], actors: [{ id: 'watcher', speciesId: 'bulbasaur', team: 'hostile', noticeRange: 6,
+      x: 5, y: 2, facing: 'left', animation: 'Idle' }] });
+  const state = createState(dungeon);
+  const encounter = new Encounter({ field: dungeon, species, moves, movementSettings, state });
+  encounter.reset(state, 0);
+  const actor = encounter.actors[0]!;
+  encounter.update(.25);
+  assert.equal(actor.behavior, 'idle');
+  assert.deepEqual({ x: actor.x, y: actor.y }, { x: 5, y: 2 });
+  state.player = { x: 5, y: 5 };
+  encounter.update(.1);
+  assert.equal(actor.behavior, 'approach');
+  assert.ok(actor.y > 2, 'The enemy moves only after its first clear sightline');
+});
+
+test('revival resets enemies and transient attacks while keeping neutral positions and player progress', () => {
+  const dungeon = structuredClone(field);
+  const state = createState(dungeon); state.player = { x: 2, y: 4 }; state.collected = [0];
+  const lethalMoves = structuredClone(moves);
+  lethalMoves.find(move => move.id === 'vine-whip')!.combat!.damage = 999;
+  const encounter = new Encounter({ field: dungeon, species, moves: lethalMoves, movementSettings, state,
+    continueAfterVictory: true });
+  encounter.reset(state, 0);
+  encounter.update(1);
+  assert.equal(encounter.result, 'lost');
+  assert.equal(encounter.snapshot().casts.length, 0);
+  assert.equal(encounter.snapshot().projectiles.length, 0);
+  assert.equal(encounter.snapshot().zones.length, 0);
+  const neutralPositions = new Map(encounter.actors.filter(actor => actor.team === 'neutral')
+    .map(actor => [actor.id, { x: actor.x, y: actor.y }]));
+  encounter.revive();
+  const fresh = encounter.snapshot();
+  assert.equal(fresh.result, 'playing');
+  assert.equal(fresh.player.hp, fresh.player.maxHp);
+  assert.equal(fresh.graceSeconds, 1);
+  assert.deepEqual(state.player, { x: 2, y: 4 });
+  assert.deepEqual(state.collected, [0]);
+  assert.equal(fresh.actors.find(actor => actor.team === 'hostile')?.defeated, false);
+  for (const actor of fresh.actors.filter(actor => actor.team === 'neutral'))
+    assert.deepEqual(neutralPositions.get(actor.id), { x: actor.x, y: actor.y });
+  assert.deepEqual(fresh.casts, []); assert.deepEqual(fresh.projectiles, []); assert.deepEqual(fresh.zones, []);
 });
 
 test('sector geometry includes collision-radius edges in every direction and respects terrain', () => {

@@ -10,9 +10,13 @@ Combat is moving into the persistent exploration field in three patch releases. 
 - [x] The pause menu no longer offers a training start button. The ability workshop remains separate.
 - [x] Action-driven time, neutral roaming and ambient Idle animation retain their existing clocks.
 
-## Next releases
+## Delivered in 0.4.12
 
-- [ ] 0.4.12: hostile awareness after player action and clear line of sight, approach, real-move telegraphs, field counterplay, and same-map recovery after K.O.
+- [x] Bulbizarre notices only during an advancing action, within its authored notice range and with a clear line of sight; it then approaches.
+- [x] Hostiles announce only moves in their learnsets. The warning and contact share locked geometry, allowing the player to dodge and riposte.
+- [x] Defeated enemies stay removed while exploration continues. A K.O. saves position and collected items before offering same-map recovery; hostiles reset and neutral positions persist.
+
+## Next release
 - [ ] 0.4.13: verify save-before-recovery, pause/suspension/blur/reload, transient combat reset, offline behavior, and final documentation against the production build.
 
 The five authored moves, collision geometry, projectile/effect system, attack editor, and rendering remain shared with the workshop. PP, accuracy rolls, type effectiveness, abilities, recruitment, progression and procedural dungeons remain outside scope. HP, statuses and pending attacks are not part of the field save.

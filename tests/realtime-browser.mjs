@@ -13,12 +13,13 @@ const advance = (page, ms) => page.evaluate((ms) => window.advanceTime(ms), ms);
 const axes = (page, x, y) => page.evaluate(([x, y]) => { window.__testPad.axes = [x, y, 0, 0]; }, [x, y]);
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 async function check(name, run) { await run(); results.push(name); console.log(`PASS ${name}`); }
-async function scene() {
+async function scene(player = { x: 3, y: 5 }) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
-  await context.addInitScript(() => {
+  await context.addInitScript(`(() => {
     // Stop only the automatic frame driver; advanceTime exercises the real input/update/render pipeline.
     window.requestAnimationFrame = () => 0;
-    localStorage.setItem('pmd-field-save-v1', JSON.stringify({ version: 1, player: { x: 3, y: 5 }, steps: 0, collected: [], facing: 'down' }));
+    const player = ${JSON.stringify(player)};
+    localStorage.setItem('pmd-field-save-v1', JSON.stringify({ version: 1, player, steps: 0, collected: [], facing: 'down' }));
     window.__testPad = { id: 'Test standard gamepad', index: 0, connected: true, mapping: 'standard', timestamp: 0,
       axes: [0, 0, 0, 0], buttons: Array.from({ length: 17 }, () => ({ pressed: false, touched: false, value: 0 })) };
     const nativePad = Object.create({
@@ -28,7 +29,7 @@ async function scene() {
       get axes() { return window.__testPad.axes; }, get buttons() { return window.__testPad.buttons; },
     });
     Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => [nativePad] });
-  });
+  })()`);
   const page = await context.newPage();
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
@@ -125,10 +126,11 @@ try {
     await context.close();
   });
   await check('Pokemon alternate Idle and Roaming coherently and freeze in pause', async () => {
-    const { page, context } = await scene();
+    const { page, context } = await scene({ x: 7, y: 3 });
     await page.keyboard.down('Space');
     const first = await state(page), seen = new Map(first.pokemon.actors.map((actor) => [actor.id, new Set([actor.behavior])]));
     const moved = new Set(), previous = new Map(first.pokemon.actors.map((actor) => [actor.id, actor]));
+    const neutralIds = field.actors.filter(entry => entry.team !== 'hostile').map(entry => entry.id);
     for (let i = 0; i < 60; i++) {
       await advance(page, 250);
       const view = await state(page);
@@ -136,16 +138,16 @@ try {
         seen.get(actor.id).add(actor.behavior);
         const initial = first.pokemon.actors.find((entry) => entry.id === actor.id);
         const definition = field.actors.find((entry) => entry.id === actor.id);
-        if (distance(initial, actor) > 0.05) moved.add(actor.id);
+        if (neutralIds.includes(actor.id) && distance(initial, actor) > 0.05) moved.add(actor.id);
         assert.ok(distance(definition, actor) <= definition.roaming.radius + 0.02, `${actor.id} stays near its home`);
         assert.ok(distance(previous.get(actor.id), actor) <= actor.resolvedSpeed * 0.25 + 0.01, `${actor.id} respects its authored speed`);
         previous.set(actor.id, actor);
         assert.equal(view.map[Math.round(actor.y)]?.[Math.round(actor.x)], '.', `${actor.id} remains on traversable terrain`);
         assert.ok(Number.isFinite(actor.velocity.x) && Number.isFinite(actor.velocity.y));
-        assert.equal(actor.animation, Math.hypot(actor.velocity.x, actor.velocity.y) > 0.00001 ? 'Walk' : 'Idle', 'Animation follows actual movement, including state-transition boundaries');
+        if (actor.team === 'neutral')
+          assert.equal(actor.animation, Math.hypot(actor.velocity.x, actor.velocity.y) > 0.00001 ? 'Walk' : 'Idle', 'Neutral animation follows actual movement');
       }
     }
-    const neutralIds = field.actors.filter(entry => entry.team !== 'hostile').map(entry => entry.id);
     assert.equal(moved.size, neutralIds.length, 'All neutral visitors roam');
     assert.ok(neutralIds.every(id => seen.get(id).has('idle') && seen.get(id).has('roaming')), 'Neutral visitors enter both states');
     const hostile = first.pokemon.actors.find(actor => actor.id === 'bulbasaur-visitor');
