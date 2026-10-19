@@ -25,7 +25,7 @@ export class Runtime {
     this.clear();
   }
   updateInput(actions: Set<Action>, dt: number, act: (action: Action) => void, paused: boolean) {
-    for (const action of ['menu', 'back', 'confirm', 'attack1', 'attack2'] as const)
+    for (const action of ['menu', 'back', 'confirm', 'attack1', 'attack2', 'attack3', 'attack4'] as const)
       if (actions.has(action) && !this.previous.has(action)) act(action);
     const direction = (['up', 'down', 'left', 'right'] as const).find(action => actions.has(action));
     if (paused && direction) {
@@ -39,6 +39,11 @@ export class Runtime {
     this.previous = actions;
   }
   advance(vector: Point, dt: number) {
+    if (!Number.isFinite(dt) || dt <= 0) {
+      this.visual = { ...this.state.player };
+      this.velocity = { x: 0, y: 0 };
+      return { moved: false, distance: 0, collected: [] };
+    }
     const before = { ...this.state.player };
     const result = moveContinuous(this.state, vector, dt, this.world, this.maxSpeed);
     this.visual = { ...this.state.player };

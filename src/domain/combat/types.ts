@@ -23,16 +23,24 @@ export interface CombatEntity extends Point {
 }
 export interface CombatActor extends CombatEntity {
   roaming: Roamer;
-  behavior: 'idle' | 'roaming' | 'approach' | 'preparing' | 'active' | 'recovering' | 'defeated';
+  behavior: 'idle' | 'roaming' | 'approach' | 'preparing' | 'active' | 'recovering' | 'defeated' | 'sleeping';
   resolvedSpeed: number;
 }
-export interface AttackGeometry {
-  kind: 'sector';
-  origin: Point;
-  angleRadians: number;
-  range: number;
-  angleDegrees: number;
+export interface SectorGeometry { kind: 'sector'; origin: Point; angleRadians: number; range: number; angleDegrees: number }
+export interface DiskGeometry { kind: 'disk'; origin: Point; radius: number }
+export interface LineGeometry { kind: 'line'; origin: Point; angleRadians: number; range: number; width: number }
+export type AttackGeometry = SectorGeometry | DiskGeometry | LineGeometry;
+export interface ProjectileSnapshot {
+  id: number;
+  castId: number;
+  casterId: string;
+  moveId: string;
+  position: Point;
+  previousPosition: Point;
+  radius: number;
+  remainingRange: number;
 }
+export interface StatusSnapshot { entityId: string; kind: 'sleep'; remainingSeconds: number }
 export interface CastSnapshot {
   id: number;
   casterId: string;
@@ -45,7 +53,7 @@ export interface CastSnapshot {
 export interface CombatEvent {
   id: number;
   time: number;
-  type: 'cast-start' | 'aim-lock' | 'activation' | 'hit' | 'defeat' | 'cast-cancel';
+  type: 'cast-start' | 'aim-lock' | 'activation' | 'hit' | 'defeat' | 'cast-cancel' | 'projectile-launch' | 'projectile-impact' | 'sleep-start' | 'sleep-end';
   casterId: string;
   moveId?: string;
   targetId?: string;
@@ -58,6 +66,8 @@ export interface EncounterSnapshot {
   player: CombatEntity;
   actors: Omit<CombatActor, 'roaming'>[];
   casts: CastSnapshot[];
+  projectiles: ProjectileSnapshot[];
+  statuses: StatusSnapshot[];
   graceSeconds: number;
   cooldowns: Record<string, number>;
 }

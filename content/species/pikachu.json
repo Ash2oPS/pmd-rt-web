@@ -18,6 +18,10 @@
   ],
   "learnset": [
     {
+      "level": 44,
+      "moveId": "thunder"
+    },
+    {
       "level": 1,
       "moveId": "thunder-shock"
     },

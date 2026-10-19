@@ -9,7 +9,16 @@ import { canOccupy } from '../src/domain/movement.ts';
 import { clearAttackPath, sector, sectorOutline, touchesSector } from '../src/domain/combat/geometry.ts';
 
 const record = (path: string): unknown => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
-const moves = ['pound', 'vine-whip'].map(id => moveSchema.parse(record(`../content/moves/${id}.json`)));
+// M2 legacy records remain regression fixtures; production records now use pattern/effect.
+const moves = ['pound', 'vine-whip'].map(id => {
+  const move = moveSchema.parse(record(`../content/moves/${id}.json`));
+  const rule = move.combat!;
+  if ('pattern' in rule && rule.pattern.kind === 'sector') {
+    const { pattern, effect: _effect, ...timing } = rule;
+    return { ...move, combat: { ...timing, range: pattern.range, angleDegrees: pattern.angleDegrees, damage: id === 'pound' ? 18 : 16 } };
+  }
+  throw new Error('Expected sector fixture');
+});
 const species = content.species.map(entry => entry.id === 'jigglypuff'
   ? speciesSchema.parse(record('../content/species/jigglypuff.json')) : entry);
 function fixture(damage?: number, enemyDamage?: number) {

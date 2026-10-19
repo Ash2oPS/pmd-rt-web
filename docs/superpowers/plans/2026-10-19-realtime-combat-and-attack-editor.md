@@ -15,9 +15,11 @@ Dependency chain: baseline -> M1 -> M2 -> M3 -> M4 -> M5 -> M6 -> M7. Within a m
 | B0 | Root: baseline and release documentation | None | Starting commit `0fd8a73`; main matches origin; build passes 63 tests; all 29 production browser checks pass; compact baseline screenshot inspected |
 | M1 | Speed worker: movement/input/schema/content integration and focused tests | B0 | Implemented; 69 unit tests and all 30 browser checks pass (final input change rechecked with 6 real-time browser flows) |
 | R1 | Root/reviewer: scoped review, version, production tests and deployment | M1 | Published 0.4.1 commit `648502a`; Actions run `39228435070` succeeded; live sprite readiness and movement verified |
-| M2 | Domain worker: combat/schema/tests; renderer worker: cues; root: app/input/HUD | M1 local validation | Implemented; 80 unit tests and 2 combat browser flows pass; full regression running |
-| R2 | Root/reviewer: result parity, impact expiry, version and deployment | M2 | Both review findings fixed with browser regressions; 0.4.2 build green |
-| M3-M7 | Ownership assigned at the preceding green checkpoint | Previous local checkpoint; release order preserved | Pending |
+| M2 | Domain worker: combat/schema/tests; renderer worker: cues; root: app/input/HUD | M1 local validation | Implemented; 80 unit tests and all 32 production browser flows pass |
+| R2 | Root/reviewer: result parity, impact expiry, version and deployment | M2 | Published 0.4.2 commit `f8bbcc3`; Actions run `39229943931` succeeded; live training and Pound preparation verified |
+| H1 | Root: native Gamepad fix isolated from unfinished M3 | M2 | Published 0.4.3 commit `10590ff`; 81 tests, 32 browser flows and native-prototype browser reproduction pass; Actions `39232658638` succeeded and live movement/animation verified |
+| M3 | Domain workers: patterns/status/projectiles/damage/action clock; UI worker: contextual slots; root: integration | M2 local validation | Implemented; 98 unit tests and 36 production browser flows pass, including idle/aim/wait clock and held-face result release regression; 0.4.4 ready for publication |
+| M4-M7 | Ownership assigned at the preceding green checkpoint | Previous local checkpoint; release order preserved | Pending |
 
 Existing dirty files before execution belong to the preceding authorized save-protection/CRLF fixes and this combat planning discussion. Preserve and include those reviewed changes in the first release checkpoint; do not stage unrelated later edits automatically.
 
@@ -26,6 +28,12 @@ The user owns all physical Thor testing independently. Do not request device tes
 Read `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/CONTRIBUTING.md`, `docs/CONTENT.md` and `docs/ASSETS.md` before execution. Preserve existing uncommitted changes, including the authorized save-protection and CRLF fixes; establish ownership before staging anything. Do not modify either MonsterPlayable repository.
 
 ## 1. Design contract
+
+### Confirmed change after the implementation pause
+
+The user replaced the free-running world with action-driven time. At rest, enemies, roaming, projectiles, attack phases, statuses, cooldowns and world animation all freeze. Time advances at normal speed while the player intends to move, holds Wait, or commits to their own preparation/active/recovery phases. Stick magnitude changes only player travel speed, never the rate of advancing time. Enemy activity alone cannot restart time. Aim-only rotates the player in place without starting time; a locked attack keeps its resolved direction. A player sleep status alone is not a reason to advance time.
+
+Four face buttons launch four equipped moves directly in play. Menus retain east A confirm/south B back; Start opens pause. One shoulder (default L) enables aim-only; the other (default R) waits. Keyboard and touch equivalents and remaps are required. The HUD uses the physical face-button diamond; empty slots stay visibly disabled. Equipment is selected in the pause menu from the species' implemented moves. These decisions supersede older two-slot and free-running-time assumptions below and ship with M3.
 
 ### Confirmed requirements
 
@@ -137,7 +145,7 @@ Every milestone must load/cache its own newly introduced scene dependencies on t
 - [ ] Show HP, equipped move/preparation/availability and clear defeat/retry feedback. Avoid always-visible technical panels.
 - [ ] Acceptance: a short encounter can be started, anticipated, dodged, won, lost and retried with keyboard/touch/gamepad. No damage before preparation completes; preview and actual contact agree.
 
-### M3 — Five official moves and distinct combat roles; proposed release 0.4.3
+### M3 — Five official moves, action-driven time and contextual controls; release 0.4.4
 
 - [ ] Extend geometry/motion as needed for Fouet Lianes (Bulbizarre frontal reach), Pistolet a O (Carapuce narrow projectile), Berceuse (Rondoudou circular sleep) and Fatal-Foudre (Pikachu delayed ground impact).
 - [ ] Verify official French names, move identity and species learnability for a documented reference game/generation before authoring records. Do not invent availability for every species.
@@ -147,7 +155,7 @@ Every milestone must load/cache its own newly introduced scene dependencies on t
 - [ ] Add controlled enemy attack selection based on range and availability, telegraph cleanup and target loss. Keep neutral visitors neutral and existing collection functional.
 - [ ] Acceptance: all five moves can be exercised in the lab, approved moves are usable by their actors, and each creates a visibly different positioning decision.
 
-### M4 — Composable advanced patterns; proposed release 0.4.4
+### M4 — Composable advanced patterns; proposed release 0.4.5
 
 - [ ] Add disk/cone/sector/arc/ring/line shapes only where not already implemented, with editable dimensions and placement modes.
 - [ ] Implement multiple/random placements, delayed waves, persistent zones, moving projectiles and orbit motion with explicit angular speed/count/radius/lifetime.
@@ -155,7 +163,7 @@ Every milestone must load/cache its own newly introduced scene dependencies on t
 - [ ] Use clearly labeled technical lab fixtures for combinations without an approved official move mapping. Do not publish a fabricated Pokemon move as official.
 - [ ] Acceptance: the requested pattern families run through the same cast pipeline; random previews match eventual positions; a low frame rate cannot skip contacts or multiply hits.
 
-### M5 — Coherent editable attack presentation; proposed release 0.4.5
+### M5 — Coherent editable attack presentation; proposed release 0.4.6
 
 - [ ] Inspect actual Pokemon sprites, terrain and camera captures before defining effect palette, pixel density, outlines and scale. Produce a small visual reference sheet and asset inventory.
 - [ ] Add local sprite effect loading, bounded sprite/particle emitters, trails, impact effects and optional short sounds through platform adapters. Acquire/create assets only with recorded provenance and appropriate rights; preserve named artist credits.
@@ -166,7 +174,7 @@ Every milestone must load/cache its own newly introduced scene dependencies on t
 - [ ] Measure desktop browser frame timing for an authored multi-attacker scene and configure quality budgets from those measurements. Keep compact viewport readability covered without claiming device performance.
 - [ ] Acceptance: each move reads as its intended action/type at gameplay scale; impacts match contact; visuals remain stable across directions and pause/resume. Inspect live screenshots and recordings, not just unit results.
 
-### M6 — Human-facing attack editor; proposed release 0.4.6
+### M6 — Human-facing attack editor; proposed release 0.4.7
 
 - [ ] Add a separate authoring entry using the current TypeScript/DOM/Canvas stack. Keep its modules lazy/separate from normal play; editor state never mutates the live save or encounter.
 - [ ] Build move list/search, duplicate/new definition, conditional property inspector, undo/redo, dirty indicator, errors and revert-to-source controls.
@@ -180,7 +188,7 @@ Every milestone must load/cache its own newly introduced scene dependencies on t
 - [ ] Keep browser drafts separate and versioned; distinguish draft persistence from saving authored project files. Never overwrite authored records with upstream reference imports.
 - [ ] Acceptance: a human can duplicate an attack, change range/preparation, replace its sprite, alter a trail and impact, replay, export, integrate the records and reproduce the same result after rebuilding without editing TypeScript.
 
-### M7 — Integrated quality and offline release; proposed release 0.4.7
+### M7 — Integrated quality and offline release; proposed release 0.4.8
 
 - [ ] Tune the full encounter and all five initial moves, telegraph overlap, preparation/recovery readability and multi-enemy pressure with real play sessions.
 - [ ] Validate first-visit offline loading for Attack/Hurt, VFX and any sounds before showing combat ready. Adjust `scripts/offline-assets.mts` or explicit scene dependency loading as necessary; do not eagerly download an entire future effect library.

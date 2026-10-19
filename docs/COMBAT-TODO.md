@@ -1,12 +1,15 @@
 # Combat design TODO
 
-Status: design discussion in progress. This checklist records the requested direction; it does not authorize combat implementation yet. No combat mechanics below are implemented.
+Status: implementation authorized and in progress. The implementation plan's execution ledger records tested releases; unchecked items still need implementation or integrated validation.
 
 Full implementation and release plan: [Real-time combat and attack editor](superpowers/plans/2026-10-19-realtime-combat-and-attack-editor.md). The user authorized publishing each completed, validated major milestone to GitHub Pages with a patch increment.
 
 Physical Thor testing is handled independently by the user. Do not request device tests or diagnostics, or block implementation, completion or publication on them. Agent verification uses automated tests and desktop browsers only.
 
 ## Agreed direction
+
+- [x] Advance world time only during player movement intent, Wait or their own attack preparation/active/recovery. Idle and aim-only freeze enemies, projectiles, timers and world animation; stick magnitude changes travel speed, not time rate.
+- [x] Use four contextual face-button attack slots, a shoulder for aim-only and another for waiting. Preserve menu confirm/back, custom mappings and keyboard/touch equivalents. Configure equipment through the pause menu.
 
 - [ ] Give each attack a configurable area pattern. Support different ranges, linear attacks, arcs, random impact zones and orbiting objects through reusable building blocks.
 - [ ] Make attacks easy for humans to inspect, edit and add through validated JSON definitions, editor schemas and clear parameter names.

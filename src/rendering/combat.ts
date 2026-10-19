@@ -1,42 +1,9 @@
-import type { AttackGeometry, CombatEvent, EncounterSnapshot } from '../domain/combat/types.ts';
-import { sectorOutline } from '../domain/combat/geometry.ts';
-import type { CollisionWorld, Point } from '../domain/movement.ts';
+import type { CombatEvent, EncounterSnapshot } from '../domain/combat/types.ts';
+import type { CollisionWorld } from '../domain/movement.ts';
+import { attackLockPoint, attackPath, combatRoot as root } from './combat-shapes.ts';
+import { drawCombatProjectiles, drawSleepIndicators } from './combat-projectiles.ts';
 
 const TILE = 32;
-const root = (coordinate: number): number => coordinate * TILE + TILE / 2;
-const outlines = new WeakMap<readonly string[], Map<string, readonly Point[]>>();
-
-function clippedOutline(world: CollisionWorld, geometry: AttackGeometry): readonly Point[] {
-  let cache = outlines.get(world.map);
-  if (!cache) { cache = new Map(); outlines.set(world.map, cache); }
-  const key = [geometry.origin.x, geometry.origin.y, geometry.angleRadians, geometry.range, geometry.angleDegrees].join(':');
-  const cached = cache.get(key);
-  if (cached) return cached;
-  const points = sectorOutline(world, geometry);
-  if (cache.size >= 32) cache.clear();
-  cache.set(key, points);
-  return points;
-}
-
-/** Ground danger uses the exact geometry used for contact, in world pixel roots. */
-function sector(context: CanvasRenderingContext2D, geometry: AttackGeometry, world?: CollisionWorld): void {
-  const x = root(geometry.origin.x), y = root(geometry.origin.y);
-  const half = geometry.angleDegrees * Math.PI / 360;
-  const segments = Math.max(4, Math.ceil(geometry.angleDegrees / 8));
-  context.beginPath();
-  context.moveTo(Math.round(x), Math.round(y));
-  if (world) {
-    for (const point of clippedOutline(world, geometry)) context.lineTo(Math.round(root(point.x)), Math.round(root(point.y)));
-    context.closePath();
-    return;
-  }
-  for (let i = 0; i <= segments; i++) {
-    const angle = geometry.angleRadians - half + half * 2 * i / segments;
-    context.lineTo(Math.round(x + Math.cos(angle) * geometry.range * TILE),
-      Math.round(y + Math.sin(angle) * geometry.range * TILE));
-  }
-  context.closePath();
-}
 
 function hostileCaster(snapshot: EncounterSnapshot, casterId: string): boolean {
   return snapshot.actors.some(actor => actor.id === casterId && actor.team === 'hostile');
@@ -51,11 +18,11 @@ export function drawCombatGround(context: CanvasRenderingContext2D, snapshot: En
     const locked = cast.phase === 'locked';
     const active = cast.phase === 'active';
     context.fillStyle = active ? '#fff1bf' : hostile ? locked ? '#e35c35' : '#f6be57' : '#78d9d4';
-    context.globalAlpha = active ? .32 : locked ? .27 : .14;
-    sector(context, cast.geometry, world);
+    context.globalAlpha = active ? cast.geometry.kind === 'line' ? .06 : .32 : locked ? .27 : .14;
+    attackPath(context, cast.geometry, world);
     context.fill();
     // Sparse direction marks distinguish the aiming phase without obscuring terrain.
-    if (cast.phase === 'tracking') {
+    if (cast.phase === 'tracking' && cast.geometry.kind !== 'disk') {
       context.save();
       context.clip();
       const { geometry } = cast;
@@ -76,19 +43,17 @@ function dangerOutline(context: CanvasRenderingContext2D, snapshot: EncounterSna
     const hostile = hostileCaster(snapshot, cast.casterId);
     const tracking = cast.phase === 'tracking';
     const active = cast.phase === 'active';
-    context.setLineDash(tracking ? [3, 3] : []);
+    const projectileCorridor = active && cast.geometry.kind === 'line';
+    context.setLineDash(tracking || projectileCorridor ? [3, 3] : []);
     context.lineWidth = tracking ? 1 : 2;
-    context.globalAlpha = tracking ? .65 : 1;
+    context.globalAlpha = projectileCorridor ? .3 : tracking ? .65 : 1;
     context.strokeStyle = active ? '#fff5d5' : hostile ? tracking ? '#f6c66b' : '#ff9959' : '#a4f3e3';
-    sector(context, cast.geometry, world);
+    attackPath(context, cast.geometry, world);
     context.stroke();
     if (!tracking && !active) {
       // A small lock diamond is distinct from the moving dashed tracking outline.
-      const { geometry } = cast;
-      const outline = world ? clippedOutline(world, geometry) : null;
-      const center = outline?.[Math.floor(outline.length / 2)];
-      const x = Math.round(center ? root(center.x) : root(geometry.origin.x) + Math.cos(geometry.angleRadians) * geometry.range * TILE);
-      const y = Math.round(center ? root(center.y) : root(geometry.origin.y) + Math.sin(geometry.angleRadians) * geometry.range * TILE);
+      const point = attackLockPoint(cast.geometry, world);
+      const x = Math.round(root(point.x)), y = Math.round(root(point.y));
       const size = Math.floor(snapshot.time * 6) % 2 ? 2 : 3;
       context.fillStyle = context.strokeStyle;
       context.fillRect(x - size, y - 1, size * 2 + 1, 3);
@@ -148,7 +113,9 @@ export function drawCombatOverlay(context: CanvasRenderingContext2D, snapshot: E
   context.save();
   context.lineJoin = 'round';
   dangerOutline(context, snapshot, world);
+  drawCombatProjectiles(context, snapshot);
   healthBars(context, snapshot);
+  drawSleepIndicators(context, snapshot);
   // Root retains a bounded event ledger; this further bounds decorative work per frame.
   for (const event of events.slice(-48)) {
     if (event.type === 'hit' || event.type === 'defeat') impact(context, event, presentationTime - event.time);

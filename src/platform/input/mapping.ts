@@ -1,4 +1,4 @@
-export const ACTIONS = ['up', 'down', 'left', 'right', 'confirm', 'back', 'menu', 'attack1', 'attack2'] as const;
+export const ACTIONS = ['up', 'down', 'left', 'right', 'confirm', 'back', 'menu', 'attack1', 'attack2', 'attack3', 'attack4', 'aim', 'wait'] as const;
 export type Action = (typeof ACTIONS)[number];
 export type Binding = { type: 'button'; index: number } | { type: 'axis'; index: number; sign: 1 | -1 };
 export type Mapping = Record<Action, Binding>;
@@ -20,6 +20,8 @@ export function defaultMapping(): Mapping {
     confirm: { type: 'button', index: 1 }, back: { type: 'button', index: 0 },
     menu: { type: 'button', index: 9 },
     attack1: { type: 'button', index: 2 }, attack2: { type: 'button', index: 3 },
+    attack3: { type: 'button', index: 1 }, attack4: { type: 'button', index: 0 },
+    aim: { type: 'button', index: 4 }, wait: { type: 'button', index: 5 },
   };
 }
 
@@ -44,11 +46,26 @@ export function restoreMapping(value: unknown): Mapping | null {
   const original = ['up', 'down', 'left', 'right', 'confirm', 'back', 'menu'] as const;
   if (!original.every(action => isBinding(value[action]))) return null;
   const result = defaultMapping();
+  const missing: Action[] = [];
   for (const action of ACTIONS) {
-    if (value[action] === undefined && !original.includes(action as typeof original[number])) continue;
+    if (value[action] === undefined && !original.includes(action as typeof original[number])) { missing.push(action); continue; }
     const binding = value[action];
     if (!isBinding(binding)) return null;
     result[action] = { ...binding };
+  }
+  // Menu confirm/back intentionally share the east/south face buttons with field attacks.
+  // Newly introduced actions must not take over an existing customized field command.
+  const used = new Set(ACTIONS.filter(action => action !== 'confirm' && action !== 'back' && !missing.includes(action))
+    .flatMap(action => result[action].type === 'button' ? [result[action].index] : []));
+  for (const action of missing) {
+    const binding = result[action];
+    if (binding.type === 'button' && used.has(binding.index)) {
+      const candidates = [6, 7, 8, 10, 11, 16, ...Array.from({ length: 64 }, (_, index) => index)];
+      const index = candidates.find(candidate => !used.has(candidate))!;
+      result[action] = { type: 'button', index };
+    }
+    const resolved = result[action];
+    if (resolved.type === 'button') used.add(resolved.index);
   }
   return result;
 }
@@ -58,10 +75,11 @@ const stickDirections: Partial<Record<Action, { index: number; sign: 1 | -1 }>> 
   left: { index: 0, sign: -1 }, right: { index: 0, sign: 1 },
 };
 
-export function decodePad(pad: PadLike | null, mapping: Mapping): Action[] {
+export function decodePad(pad: PadLike | null, mapping: Mapping, context: 'menu' | 'play' = 'menu'): Action[] {
   if (!pad) return [];
   const defaults = defaultMapping();
   return ACTIONS.filter(action => {
+    if (context === 'play' ? action === 'confirm' || action === 'back' : action.startsWith('attack') || action === 'aim' || action === 'wait') return false;
     const binding = mapping[action];
     if (binding.type === 'axis') return (pad.axes[binding.index] ?? 0) * binding.sign > 0.5;
     const button = pad.buttons[binding.index];

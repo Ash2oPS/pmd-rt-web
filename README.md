@@ -59,7 +59,8 @@ Checks reject forbidden dependency directions, cycles, explicit `any`, checking 
 - Escape / Start opens the menu. Thor east A confirms; south B returns. Remap under **Commandes**.
 - F or **Plein écran** toggles fullscreen where supported.
 - **Carnet et connexion** contains progress, device status and copyable input diagnostics.
-- **Combat d’entraînement** starts a transient fight against Bulbasaur. Press J / the default west X button or the visible attack button for Écras’Face; combat bindings can be remapped. Enemy amber aim becomes a locked orange zone before impact. Confirm retries after a result; down then confirm or back leaves training.
+- **Entraînement** offers Bulbizarre, Carapuce and Pikachu as partners. Four face buttons or J/K/L/I launch the four equipped slots; change equipment using the pause menu. Rondoudou initially knows Écras’Face and Berceuse, with two empty slots. In menus, east A confirms and south B returns; Start opens pause. All controller actions can be remapped.
+- The world freezes while you are idle. Moving, holding R/Space to wait or preparing/executing/recovering from your attack advances world time normally. Hold L/Shift and move the stick to face a direction without moving or advancing time. Enemy amber aim becomes a locked orange zone before impact. Touch provides the same actions.
 - Progress saves automatically. JSON export/import and legacy version-1 saves remain supported.
 - Clicking elsewhere clears held input and saves without pausing. Hiding/freezing the page or disconnecting the controller still pauses.
 - The canvas fills the viewport without stretching pixels.

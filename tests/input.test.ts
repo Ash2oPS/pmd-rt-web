@@ -11,7 +11,7 @@ function pad(axes: number[] = [], active: number[] = []): PadLike {
 
 test('combat bindings upgrade legacy mappings without replacing any customized action', () => {
   const current = defaultMapping();
-  const { attack1, attack2, ...legacy } = current;
+  const { attack1, attack2, attack3: _third, attack4: _fourth, aim: _aim, wait: _wait, ...legacy } = current;
   legacy.confirm = { type: 'button', index: 5 };
   const upgraded = restoreMapping(legacy)!;
   assert.deepEqual(upgraded.confirm, legacy.confirm);
@@ -19,7 +19,29 @@ test('combat bindings upgrade legacy mappings without replacing any customized a
   assert.deepEqual(upgraded.attack2, attack2);
   assert.deepEqual(restoreMapping(upgraded), upgraded);
   assert.equal(restoreMapping({ ...legacy, attack1: { type: 'button', index: -1 } }), null);
-  assert.deepEqual(decodePad(pad([], [2, 3]), upgraded), ['attack1', 'attack2']);
+  assert.deepEqual(decodePad(pad([], [2, 3]), upgraded, 'play'), ['attack1', 'attack2']);
+});
+
+test('four face buttons are contextual and shoulders remain held field actions', () => {
+  const mapping = defaultMapping();
+  assert.deepEqual(decodePad(pad([], [0, 1, 2, 3, 4, 5]), mapping, 'play'), ['attack1', 'attack2', 'attack3', 'attack4', 'aim', 'wait']);
+  assert.deepEqual(decodePad(pad([], [0, 1, 2, 3, 4, 5]), mapping, 'menu'), ['confirm', 'back']);
+  assert.deepEqual(decodePad(pad([], [1]), mapping, 'play'), ['attack3']);
+  assert.deepEqual(decodePad(pad([], [0]), mapping, 'play'), ['attack4']);
+});
+
+test('new controls avoid conflicts with legacy field remaps while preserving existing choices', () => {
+  const old = { up: { type: 'button', index: 4 }, down: { type: 'button', index: 13 },
+    left: { type: 'button', index: 14 }, right: { type: 'button', index: 15 },
+    confirm: { type: 'button', index: 1 }, back: { type: 'button', index: 0 }, menu: { type: 'button', index: 9 },
+    attack1: { type: 'button', index: 20 }, attack2: { type: 'axis', index: 3, sign: 1 } };
+  const restored = restoreMapping(old)!;
+  assert.deepEqual(restored.up, old.up);
+  assert.deepEqual(restored.attack1, old.attack1);
+  assert.deepEqual(restored.attack2, old.attack2);
+  assert.notEqual(restored.aim.index, 4);
+  assert.deepEqual(decodePad(pad([], [4]), restored, 'play'), ['up'], 'An existing custom movement button must not also aim');
+  assert.deepEqual(restoreMapping(restored), restored);
 });
 
 test('Thor face buttons confirm east and return south; custom directions disable stick fallback', () => {

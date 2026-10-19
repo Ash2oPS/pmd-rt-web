@@ -6,5 +6,15 @@
   "category": "special",
   "effectId": "damage",
   "accuracy": 100,
-  "pp": 20
+  "pp": 25,
+  "combat": {
+    "preparationSeconds": 0.65,
+    "trackingSeconds": 0.2,
+    "activeSeconds": 0.15,
+    "recoverySeconds": 0.35,
+    "cooldownSeconds": 1.4,
+    "movementDuringPreparation": 0,
+    "pattern": { "kind": "projectile", "range": 6, "width": 0.4, "speed": 7, "radius": 0.2 },
+    "effect": { "kind": "damage" }
+  }
 }

@@ -61,70 +61,271 @@
       "type": "string",
       "enum": [
         "damage",
-        "lower-attack"
+        "lower-attack",
+        "sleep"
       ]
     },
     "combat": {
-      "type": "object",
-      "properties": {
-        "preparationSeconds": {
-          "type": "number",
-          "exclusiveMinimum": 0,
-          "maximum": 10
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "preparationSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 10
+            },
+            "trackingSeconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "activeSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 5
+            },
+            "recoverySeconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "cooldownSeconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 30
+            },
+            "movementDuringPreparation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "pattern": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "sector"
+                    },
+                    "range": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 12
+                    },
+                    "angleDegrees": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 360
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "range",
+                    "angleDegrees"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "self-disk"
+                    },
+                    "radius": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 12
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "radius"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "target-disk"
+                    },
+                    "radius": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 12
+                    },
+                    "targetingRange": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 12
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "radius",
+                    "targetingRange"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "projectile"
+                    },
+                    "range": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 12
+                    },
+                    "width": {
+                      "type": "number",
+                      "minimum": 0.05,
+                      "maximum": 4
+                    },
+                    "speed": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 40
+                    },
+                    "radius": {
+                      "type": "number",
+                      "minimum": 0.025,
+                      "maximum": 2
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "range",
+                    "width",
+                    "speed",
+                    "radius"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "effect": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "damage"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "sleep"
+                    },
+                    "durationSeconds": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 20
+                    },
+                    "wakeOnHit": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "durationSeconds",
+                    "wakeOnHit"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "required": [
+            "preparationSeconds",
+            "trackingSeconds",
+            "activeSeconds",
+            "recoverySeconds",
+            "cooldownSeconds",
+            "movementDuringPreparation",
+            "pattern",
+            "effect"
+          ],
+          "additionalProperties": false
         },
-        "trackingSeconds": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
-        },
-        "activeSeconds": {
-          "type": "number",
-          "exclusiveMinimum": 0,
-          "maximum": 5
-        },
-        "recoverySeconds": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 10
-        },
-        "cooldownSeconds": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 30
-        },
-        "movementDuringPreparation": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
-        "range": {
-          "type": "number",
-          "minimum": 0.1,
-          "maximum": 12
-        },
-        "angleDegrees": {
-          "type": "number",
-          "minimum": 1,
-          "maximum": 360
-        },
-        "damage": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 999
+        {
+          "type": "object",
+          "properties": {
+            "preparationSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 10
+            },
+            "trackingSeconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "activeSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 5
+            },
+            "recoverySeconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "cooldownSeconds": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 30
+            },
+            "movementDuringPreparation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "range": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 12
+            },
+            "angleDegrees": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 360
+            },
+            "damage": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 999
+            }
+          },
+          "required": [
+            "preparationSeconds",
+            "trackingSeconds",
+            "activeSeconds",
+            "recoverySeconds",
+            "cooldownSeconds",
+            "movementDuringPreparation",
+            "range",
+            "angleDegrees",
+            "damage"
+          ],
+          "additionalProperties": false
         }
-      },
-      "required": [
-        "preparationSeconds",
-        "trackingSeconds",
-        "activeSeconds",
-        "recoverySeconds",
-        "cooldownSeconds",
-        "movementDuringPreparation",
-        "range",
-        "angleDegrees",
-        "damage"
-      ],
-      "additionalProperties": false
+      ]
     }
   },
   "required": [

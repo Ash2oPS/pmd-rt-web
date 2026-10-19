@@ -23,6 +23,7 @@ import { setupInputPreferences } from "./input-preferences.ts";
 import { selectMovement } from "../platform/input/movement.ts";
 import { setupCombat } from './combat.ts';
 import { bindSaveImport } from './save-import.ts';
+import { resolveActionClock } from '../domain/action-clock.ts';
 
 const toast = createToast(),
   storage = createStorage(field),
@@ -33,7 +34,8 @@ const pokemon = setupPokemon(field, () => runtime.velocity, () => combat?.snapsh
 combat = setupCombat(field, runtime, () => pokemon.isReady, {
   canAct: () => !menu.paused,
   clear: () => clear(), toast,
-  bindingLabel: slot => bindingLabel(pad.mapping[slot ? 'attack2' : 'attack1']),
+  bindingLabel: slot => bindingLabel(pad.mapping[(['attack1', 'attack2', 'attack3', 'attack4'] as const)[slot]!]),
+  controlLabel: action => bindingLabel(pad.mapping[action]),
 });
 const renderer = createRenderer(
   element<HTMLCanvasElement>("game"),
@@ -83,7 +85,7 @@ const menu = new Menu({
   resume() {
     pad.cancel();
     clear();
-    runtime.previous = new Set(["confirm", "menu", "back", "attack1", "attack2"]);
+    runtime.previous = new Set(ACTIONS);
     lastFrame = performance.now();
   },
   capture(action) {
@@ -109,7 +111,9 @@ const menu = new Menu({
     diagnostic: () => {
       void diagnosticsView.copy();
     },
-    combat: () => { if (combat.start()) menu.resume(); },
+    combat: () => { if (combat.startDefault()) menu.resume(); },
+    ...combat.partnerCommands(() => menu.resume()),
+    ...combat.equipCommands(),
   },
 });
 const pad = new GamepadController(VERSION, storage.mapping, {
@@ -190,11 +194,13 @@ function act(action: Action) {
     else if (action === "confirm") menu.confirm();
     return;
   }
-  if (action === 'attack1' || action === 'attack2') combat.attack(action === 'attack1' ? 0 : 1);
+  const slot = (['attack1', 'attack2', 'attack3', 'attack4'] as const).findIndex(candidate => candidate === action);
+  if (slot >= 0) combat.attack(slot);
 }
 let saveElapsed = 0, hudElapsed = 0, wasMoving = false;
+let worldAdvancing = false;
 function update(dt: number) {
-  const actions = pad.poll();
+  const actions = pad.poll(menu.paused || combat.finished ? 'menu' : 'play');
   diagnosticsView.update(pad.current);
   if (document.hidden) {
     clear();
@@ -205,12 +211,19 @@ function update(dt: number) {
   runtime.updateInput(new Set([...local, ...actions]), dt, act, menu.paused || combat.finished);
   if (menu.paused) return;
   const movement = selectMovement(local, pad.movementSelection());
+  const held = new Set([...local, ...actions]);
+  const clock = resolveActionClock({ movement: movement.vector, aimOnly: held.has('aim'), wait: held.has('wait'),
+    playerBusy: combat.playerBusy, paused: false }, dt);
+  worldAdvancing = clock.worldDt > 0;
+  if (clock.facing && !combat.facingLocked) runtime.state.facing = clock.facing;
   const multiplier = combat.movementMultiplier;
-  const result = runtime.advance({ x: movement.vector.x * multiplier, y: movement.vector.y * multiplier }, dt);
+  const result = runtime.advance({ x: clock.movement.x * multiplier, y: clock.movement.y * multiplier }, clock.worldDt);
   pad.diagnostics.snapshot.movement = { ...movement, maxSpeed: runtime.maxSpeed,
     resolvedSpeed: Math.hypot(runtime.velocity.x, runtime.velocity.y) };
-  pokemon.update(dt);
-  combat.update(dt);
+  pokemon.update(clock.worldDt);
+  const wasFinished = combat.finished;
+  combat.update(clock.worldDt);
+  if (!wasFinished && combat.finished) { clear(); runtime.previous = new Set(ACTIONS); }
   saveElapsed += dt;
   hudElapsed += dt;
   if (result.collected.length) toast(runtime.state.collected.length === field.collectibles.length
@@ -249,6 +262,8 @@ window.render_game_to_text = () =>
     pokemon: pokemon.snapshot(runtime.time, runtime.state, runtime.visual),
     combat: combat.snapshot(),
     combatPresentation: combat.presentation(),
+    equippedMoves: combat.equippedMoves().map(move => move?.id ?? null),
+    worldClock: { advancing: worldAdvancing, time: runtime.time },
     capture: pad.capture,
     mapping: pad.mapping,
     gamepad: pad.current

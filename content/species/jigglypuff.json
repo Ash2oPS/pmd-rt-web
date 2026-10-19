@@ -21,6 +21,10 @@
     {
       "level": 1,
       "moveId": "pound"
+    },
+    {
+      "level": 1,
+      "moveId": "sing"
     }
   ],
   "spriteId": "jigglypuff",

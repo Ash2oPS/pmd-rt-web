@@ -27,7 +27,7 @@ export const moveSchema = z.strictObject({
   power: z.number().int().min(0).max(999),
   accuracy: z.number().int().min(1).max(100),
   pp: z.number().int().min(1).max(99),
-  effectId: z.enum(['damage', 'lower-attack']),
+  effectId: z.enum(['damage', 'lower-attack', 'sleep']),
   combat: combatMoveSchema.optional(),
 });
 export const abilitySchema = z.strictObject({

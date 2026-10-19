@@ -14,8 +14,7 @@
     "recoverySeconds": 0.45,
     "cooldownSeconds": 1.5,
     "movementDuringPreparation": 0,
-    "range": 1.8,
-    "angleDegrees": 80,
-    "damage": 16
+    "pattern": { "kind": "sector", "range": 1.8, "angleDegrees": 80 },
+    "effect": { "kind": "damage" }
   }
 }

@@ -43,7 +43,7 @@ export class GamepadController {
       }
     });
   }
-  poll(): Action[] {
+  poll(context: 'menu' | 'play' = 'menu'): Action[] {
     const pads = this.reader.read(),
       pad =
         pads.find((p) => p.index === this.current?.index) || pads[0] || null;
@@ -68,7 +68,7 @@ export class GamepadController {
       if (!signals.length && !Math.hypot(movement.x, movement.y)) this.needsRelease = false;
       return [];
     }
-    return decodePad(pad, this.mapping);
+    return decodePad(pad, this.mapping, context);
   }
   start(action: Action): boolean {
     if (!this.current) return false;

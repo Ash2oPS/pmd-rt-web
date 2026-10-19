@@ -12,10 +12,12 @@ import species9 from '../../content/species/squirtle.json';
 import moves0 from '../../content/moves/ember.json';
 import moves1 from '../../content/moves/growl.json';
 import moves2 from '../../content/moves/pound.json';
-import moves3 from '../../content/moves/tackle.json';
-import moves4 from '../../content/moves/thunder-shock.json';
-import moves5 from '../../content/moves/vine-whip.json';
-import moves6 from '../../content/moves/water-gun.json';
+import moves3 from '../../content/moves/sing.json';
+import moves4 from '../../content/moves/tackle.json';
+import moves5 from '../../content/moves/thunder-shock.json';
+import moves6 from '../../content/moves/thunder.json';
+import moves7 from '../../content/moves/vine-whip.json';
+import moves8 from '../../content/moves/water-gun.json';
 import abilities0 from '../../content/abilities/blaze.json';
 import abilities1 from '../../content/abilities/cute-charm.json';
 import abilities2 from '../../content/abilities/overgrow.json';
@@ -31,7 +33,7 @@ import settings0 from '../../content/settings/movement.json';
 
 export const rawContent = {
   species: [species0, species1, species2, species3, species4, species5, species6, species7, species8, species9],
-  moves: [moves0, moves1, moves2, moves3, moves4, moves5, moves6],
+  moves: [moves0, moves1, moves2, moves3, moves4, moves5, moves6, moves7, moves8],
   abilities: [abilities0, abilities1, abilities2, abilities3, abilities4, abilities5, abilities6, abilities7],
   items: [items0, items1],
   dungeons: [dungeons0],

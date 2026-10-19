@@ -1,0 +1,20 @@
+{
+  "id": "thunder",
+  "label": "Fatal-Foudre",
+  "type": "electric",
+  "category": "special",
+  "power": 110,
+  "accuracy": 70,
+  "pp": 10,
+  "effectId": "damage",
+  "combat": {
+    "preparationSeconds": 1.4,
+    "trackingSeconds": 0.35,
+    "activeSeconds": 0.18,
+    "recoverySeconds": 0.55,
+    "cooldownSeconds": 2.6,
+    "movementDuringPreparation": 0,
+    "pattern": { "kind": "target-disk", "radius": 0.85, "targetingRange": 5 },
+    "effect": { "kind": "damage" }
+  }
+}

@@ -11,6 +11,10 @@ export const actionLabels: Record<Action, string> = {
   menu: "Menu",
   attack1: "Capacité 1",
   attack2: "Capacité 2",
+  attack3: "Capacité 3",
+  attack4: "Capacité 4",
+  aim: "Viser sans avancer",
+  wait: "Attendre",
 };
 export interface MenuCallbacks {
   pause(): void;

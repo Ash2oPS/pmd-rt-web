@@ -21,7 +21,13 @@ async function scene() {
     localStorage.setItem('pmd-field-save-v1', JSON.stringify({ version: 1, player: { x: 3, y: 5 }, steps: 0, collected: [], facing: 'down' }));
     window.__testPad = { id: 'Test standard gamepad', index: 0, connected: true, mapping: 'standard', timestamp: 0,
       axes: [0, 0, 0, 0], buttons: Array.from({ length: 17 }, () => ({ pressed: false, touched: false, value: 0 })) };
-    Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => [window.__testPad] });
+    const nativePad = Object.create({
+      get id() { return window.__testPad.id; }, get index() { return window.__testPad.index; },
+      get connected() { return window.__testPad.connected; }, get mapping() { return window.__testPad.mapping; },
+      get timestamp() { return window.__testPad.timestamp; },
+      get axes() { return window.__testPad.axes; }, get buttons() { return window.__testPad.buttons; },
+    });
+    Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => [nativePad] });
   });
   const page = await context.newPage();
   page.on('pageerror', (error) => errors.push(error.message));
@@ -120,6 +126,7 @@ try {
   });
   await check('Pokemon alternate Idle and Roaming coherently and freeze in pause', async () => {
     const { page, context } = await scene();
+    await page.keyboard.down('Space');
     const first = await state(page), seen = new Map(first.pokemon.actors.map((actor) => [actor.id, new Set([actor.behavior])]));
     const moved = new Set(), previous = new Map(first.pokemon.actors.map((actor) => [actor.id, actor]));
     for (let i = 0; i < 60; i++) {
@@ -147,7 +154,9 @@ try {
     const frozen = await state(page);
     assert.deepEqual(frozen.pokemon.actors, paused.pokemon.actors, 'NPC state and animation frame freeze in pause');
     assert.deepEqual(frozen.player, paused.player);
-    await page.locator('[data-menu="resume"]').click(); await advance(page, 1000);
+    await page.keyboard.up('Space');
+    await page.locator('[data-menu="resume"]').click();
+    await page.keyboard.down('Space'); await advance(page, 1000); await page.keyboard.up('Space');
     assert.equal((await state(page)).mode, 'play');
     assert.notDeepEqual((await state(page)).pokemon.actors, paused.pokemon.actors, 'World resumes after pause');
     await page.screenshot({ path: `${output}/roaming-field.png` });

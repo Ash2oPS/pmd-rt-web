@@ -11,11 +11,14 @@ const keyActions: Record<string, Action> = {
   KeyQ: "left",
   KeyD: "right",
   Enter: "confirm",
-  Space: "confirm",
   Escape: "menu",
   KeyX: "back",
   KeyJ: "attack1",
   KeyK: "attack2",
+  KeyL: "attack3",
+  KeyI: "attack4",
+  ShiftLeft: "aim",
+  ShiftRight: "aim",
 };
 export function bindControls(callbacks: {
   paused(): boolean;
@@ -25,8 +28,7 @@ export function bindControls(callbacks: {
   touch(action: Action): void;
   recordKey(event: KeyboardEvent): void;
 }) {
-  const keys = new Set<Action>(),
-    touch = new Set<Action>();
+  const keys = new Map<string, Action>(), touch = new Set<Action>();
   const taps = new Map<Action, number>();
   document.addEventListener("keydown", (event) => {
     callbacks.recordKey(event);
@@ -42,9 +44,10 @@ export function bindControls(callbacks: {
       callbacks.fullscreen();
       return;
     }
-    const action = keyActions[event.code];
+    const resultButton = event.target instanceof Element && !!event.target.closest('.combat-result');
+    const action = event.code === 'Space' ? callbacks.paused() || resultButton ? 'confirm' : 'wait' : keyActions[event.code];
     if (!action) return;
-    if (event.repeat && (action === 'attack1' || action === 'attack2')) return;
+    if (event.repeat && (action.startsWith('attack') || action === 'confirm')) { event.preventDefault(); return; }
     if (
       (callbacks.paused() || (event.target instanceof Element && !!event.target.closest('.combat-result'))) &&
       action === "confirm" &&
@@ -54,15 +57,15 @@ export function bindControls(callbacks: {
     )
       return;
     event.preventDefault();
-    keys.add(action);
+    keys.set(event.code, action);
+    if (!event.repeat && !['up', 'down', 'left', 'right'].includes(action)) callbacks.touch(action);
     if (callbacks.capturing() && action === "menu") {
       callbacks.cancelCapture();
-      keys.delete(action);
+      keys.delete(event.code);
     }
   });
   document.addEventListener("keyup", (event) => {
-    const action = keyActions[event.code];
-    if (action) keys.delete(action);
+    keys.delete(event.code);
   });
   document
     .querySelectorAll<HTMLButtonElement>("[data-action]")
@@ -80,7 +83,7 @@ export function bindControls(callbacks: {
         button.addEventListener(event, () => touch.delete(action));
     });
   return {
-    actions: () => new Set([...keys, ...touch, ...[...taps].filter(([, until]) => until > performance.now()).map(([action]) => action)]),
+    actions: () => new Set([...keys.values(), ...touch, ...[...taps].filter(([, until]) => until > performance.now()).map(([action]) => action)]),
     clear() {
       keys.clear();
       touch.clear();

@@ -1,0 +1,20 @@
+{
+  "id": "sing",
+  "label": "Berceuse",
+  "type": "normal",
+  "category": "status",
+  "power": 0,
+  "accuracy": 55,
+  "pp": 15,
+  "effectId": "sleep",
+  "combat": {
+    "preparationSeconds": 1.2,
+    "trackingSeconds": 0,
+    "activeSeconds": 0.12,
+    "recoverySeconds": 0.45,
+    "cooldownSeconds": 4,
+    "movementDuringPreparation": 0,
+    "pattern": { "kind": "self-disk", "radius": 2.2 },
+    "effect": { "kind": "sleep", "durationSeconds": 2, "wakeOnHit": true }
+  }
+}
