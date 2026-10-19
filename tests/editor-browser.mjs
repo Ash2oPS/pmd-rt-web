@@ -24,7 +24,7 @@ async function fill(path, value) { await field(path).fill(String(value)); await 
 async function check(name, run) { await run(); results.push(name); console.log(`PASS ${name}`); }
 const saveKey = 'pmd-field-save-v1';
 const protectedSave = JSON.stringify({ version: 999, guard: 'Editor must never modify exploration saves' });
-let exported, importedAsset;
+let exported, importedAsset, variantId;
 try {
   await page.goto(new URL('lab.html', baseURL).href); await ready();
   await page.evaluate(({ key, value }) => localStorage.setItem(key, value), { key: saveKey, value: protectedSave });
@@ -55,21 +55,22 @@ try {
   });
   await check('a duplicated move can edit private presentation and replace only its own sprite', async () => {
     await button('Dupliquer').click(); await ready();
-    assert.equal((await snapshot()).move, 'pound-variant');
+    variantId = (await snapshot()).move;
+    assert.match(variantId, /^pound-variant(?:-\d+)?$/);
     await button('Rendu').click();
     await page.getByLabel('Élément visuel', { exact: true }).selectOption('impact');
     await fill(['move', 'visualOverrides', 'impact', 'color'], '#66ddff');
     assert.equal((await snapshot()).editor.lastValid.move.visualOverrides.impact.color, '#66ddff');
     await button('Créer un rendu propre à cette capacité').click(); await ready();
     let view = await snapshot();
-    assert.equal(view.editor.lastValid.move.visualId, 'pound-variant-visual');
-    const ownVisual = view.editor.lastValid.visuals.find(visual => visual.id === 'pound-variant-visual');
+    assert.equal(view.editor.lastValid.move.visualId, `${variantId}-visual`);
+    const ownVisual = view.editor.lastValid.visuals.find(visual => visual.id === `${variantId}-visual`);
     assert.equal(ownVisual.tracks.find(track => track.id === 'impact').color, '#66ddff');
     await button('Assets').click();
     await page.getByLabel('Ressource visuelle', { exact: true }).selectOption('normal-impact');
     await button('Dupliquer cette ressource pour cette capacité').click(); await ready();
     importedAsset = (await snapshot()).editor.lastValid.move.visualOverrides.impact.assetId;
-    assert.equal(importedAsset, 'pound-variant-normal-impact');
+    assert.equal(importedAsset, `${variantId}-normal-impact`);
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="#123c5a" d="M6 1h4v3h3v3h2v3h-3v3H9v2H6v-3H3V9H1V6h3V3h2z"/><path fill="#a9efff" d="M6 4h4v6H6z"/></svg>';
     await page.locator('.editor-body input[type=file]').setInputFiles({ name: 'custom-impact.svg', mimeType: 'image/svg+xml', buffer: Buffer.from(svg) });
     await page.waitForFunction(assetId => JSON.parse(window.render_attack_lab_to_text()).editor.lastValid.files.some(file => file.assetId === assetId), importedAsset, { polling: 50 });
@@ -110,8 +111,8 @@ try {
     assert.equal(exported.visuals.some(visual => visual.id === 'water'), false, 'Unchanged unrelated presets must not be exported');
     await page.locator('[data-move="vine-whip"]').click(); await ready();
     await page.locator('.editor-toolbar input[type=file]').setInputFiles(`${output}/attack-bundle.json`);
-    await page.waitForFunction(() => JSON.parse(window.render_attack_lab_to_text()).move === 'pound-variant' &&
-      JSON.parse(window.render_attack_lab_to_text()).editor.lastValid.files.length === 1, undefined, { polling: 50 });
+    await page.waitForFunction(id => JSON.parse(window.render_attack_lab_to_text()).move === id &&
+      JSON.parse(window.render_attack_lab_to_text()).editor.lastValid.files.length === 1, variantId, { polling: 50 });
     await ready();
     const view = await snapshot();
     assert.deepEqual(view.editor.lastValid.move, exported.move);
@@ -133,8 +134,8 @@ try {
     assert.equal(await page.evaluate(key => localStorage.getItem(key), saveKey), protectedSave);
     await page.reload(); await ready();
     await button('Reprendre le brouillon').click();
-    await page.waitForFunction(() => JSON.parse(window.render_attack_lab_to_text()).move === 'pound-variant' &&
-      JSON.parse(window.render_attack_lab_to_text()).editor.raw.move.combat.preparationSeconds === 1.1, undefined, { polling: 50 });
+    await page.waitForFunction(id => JSON.parse(window.render_attack_lab_to_text()).move === id &&
+      JSON.parse(window.render_attack_lab_to_text()).editor.raw.move.combat.preparationSeconds === 1.1, variantId, { polling: 50 });
     await page.waitForFunction(() => !document.querySelector('#lab-play').disabled, undefined, { polling: 50 });
     assert.deepEqual((await snapshot()).editor.raw, expected);
     assert.equal(await page.evaluate(key => localStorage.getItem(key), saveKey), protectedSave);

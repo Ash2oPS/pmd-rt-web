@@ -27,3 +27,5 @@ Never disable strict typing, raise line limits, add unchecked `any` or suppress 
 - Never commit `dist/`, test artifacts or `node_modules/`.
 
 For an old published version: load once to download the update, close every game tab/PWA window, then reopen. Development deliberately retires persistent offline caches.
+
+Offline installation uses reload requests so an HTTP-cached old HTML document cannot enter a newly versioned worker cache. The two-version `tests/pwa-update-browser.mjs` fixture verifies waiting activation, closure and current HTML independently of live deployment.

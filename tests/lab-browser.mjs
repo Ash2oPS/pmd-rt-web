@@ -20,7 +20,8 @@ async function ready(id) {
 try {
   await page.goto(new URL('lab.html', baseURL).href);
   await ready('pound');
-  assert.equal(await page.locator('#lab-moves button').count(), 16);
+  for (const id of ['pound', 'sing', 'vine-whip', 'water-gun', 'thunder'])
+    assert.equal(await page.locator(`[data-move="${id}"]`).count(), 1, `${id} remains available as the catalog grows`);
   for (const id of ['lab-rain', 'lab-orbit', 'lab-ring', 'lab-arc', 'lab-waves', 'lab-cone', 'lab-line']) {
     await page.locator(`[data-move="${id}"]`).click(); await ready(id);
     await page.locator('#lab-play').click();

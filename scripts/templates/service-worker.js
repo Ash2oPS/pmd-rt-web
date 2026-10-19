@@ -1,6 +1,8 @@
 const CACHE = __CACHE__;
 const ASSETS = __ASSETS__;
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(
+  ASSETS.map(asset=>new Request(asset,{cache:'reload'}))
+))));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
   await Promise.all((await caches.keys()).filter(key=>key.startsWith('pmd-field-')&&key!==CACHE).map(key=>caches.delete(key)));
   await self.clients.claim();
