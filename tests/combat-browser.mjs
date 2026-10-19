@@ -39,6 +39,45 @@ async function start(page, partner = 'combat') {
 }
 async function check(name, run) { await run(); results.push(name); console.log(`PASS ${name}`); }
 try {
+  await check('camera focuses player attacks smoothly, freezes on pause and returns at idle', async () => {
+    const { page, context } = await scene();
+    try {
+      await advance(page, 0);
+      const resting = (await state(page)).camera;
+      assert.equal(resting.zoom, 1.25);
+      await page.screenshot({ path: `${output}/camera-exploration.png` });
+      await start(page);
+      await key(page, 'j', 100);
+      const focusing = (await state(page)).camera;
+      assert.equal(focusing.targetZoom, 1.42);
+      assert.ok(focusing.zoom > resting.zoom && focusing.zoom < focusing.targetZoom);
+      assert.ok(focusing.width < resting.width);
+      await key(page, 'Escape');
+      const paused = (await state(page)).camera;
+      await advance(page, 1000);
+      assert.deepEqual((await state(page)).camera, paused);
+      await page.locator('[data-menu="resume"]').click();
+      await advance(page, 150);
+      await page.screenshot({ path: `${output}/camera-action.png` });
+      await advance(page, 2500);
+      const returned = await state(page);
+      assert.equal(returned.camera.zoom, 1.25);
+      const worldTime = returned.worldClock.time;
+      await advance(page, 1000);
+      assert.equal((await state(page)).worldClock.time, worldTime, 'Camera does not drive simulation time');
+    } finally { await context.close(); }
+  });
+  await check('reduced motion retains the closer framing without automatic attack zoom', async () => {
+    const { page, context } = await scene();
+    try {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.reload();
+      await page.waitForFunction(() => typeof window.render_game_to_text === 'function' && JSON.parse(window.render_game_to_text()).pokemon.status === 'ready', undefined, { polling: 50 });
+      await start(page); await key(page, 'j', 100);
+      assert.equal((await state(page)).camera.zoom, 1.25);
+      assert.equal((await state(page)).camera.targetZoom, 1.25);
+    } finally { await context.close(); }
+  });
   await check('training uses prepared real attacks, freezes in menus and can be won', async () => {
     const { page, context } = await scene();
     try {

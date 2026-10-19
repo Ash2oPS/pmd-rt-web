@@ -4,6 +4,7 @@ import { drawTree } from "./tree.js";
 import { drawExplorer } from "./explorer.js";
 import { drawTerrain } from "./terrain.js";
 import { drawCollectibles, drawForeground, drawScenery } from "./decorations.js";
+import { createCameraZoom } from './camera.ts';
 
 export interface RenderWorld {
   map: readonly string[];
@@ -17,6 +18,8 @@ export interface Camera {
   width: number;
   height: number;
   scale: number;
+  zoom: number;
+  targetZoom: number;
 }
 
 function contextFor(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
@@ -46,7 +49,9 @@ export function createRenderer(
   scene.height = Math.ceil(worldHeight);
   const context = contextFor(scene);
   const rect = createRect(context);
-  const camera: Camera = { x: 0, y: 0, width: worldWidth, height: worldHeight, scale: 1 };
+  const zoom = createCameraZoom(reducedMotion);
+  const camera: Camera = { x: 0, y: 0, width: worldWidth, height: worldHeight, scale: 1,
+    zoom: zoom.zoom, targetZoom: zoom.target };
   const view = canvas.ownerDocument.defaultView;
   let disposed = false;
 
@@ -68,7 +73,9 @@ export function createRenderer(
     context.clearRect(0, 0, scene.width, scene.height);
     const artScale = world.tileSize / 32;
     context.scale(artScale, artScale);
-    camera.scale = Math.max(canvas.width / worldWidth, canvas.height / worldHeight);
+    camera.zoom = zoom.zoom;
+    camera.targetZoom = zoom.target;
+    camera.scale = Math.max(canvas.width / worldWidth, canvas.height / worldHeight) * zoom.zoom;
     camera.width = canvas.width / camera.scale;
     camera.height = canvas.height / camera.scale;
     camera.x = Math.max(0, Math.min(worldWidth - camera.width,
@@ -107,5 +114,5 @@ export function createRenderer(
     view?.removeEventListener("resize", resize);
   }
 
-  return { camera, resize, draw, dispose };
+  return { camera, resize, draw, dispose, setZoom: zoom.setZoom, updateCamera: zoom.update };
 }

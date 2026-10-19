@@ -87,6 +87,12 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Production build passes strict types, architecture, source/content checks and 60 unit tests, including long NPC simulations. The skill Playwright client was rerun with two input bursts; final gameplay screenshots inspected under output/realtime-final.
 - All 28 browser checks pass against production preview: 18 existing flows, five Pokemon/offline checks and five real-time movement/AI checks. Repeated menu checks with deliberate input holds also pass. Publication is authorized; verify the GitHub Actions result and live build after pushing. Physical Thor stick feel remains a device check, not established by desktop automation.
 
+## Smooth camera zoom — 2026-10-19
+- Request: add smooth action focus and slightly closer default framing.
+- Added a bounded presentation-only zoom controller: 1.25 exploration, 1.42 during player casts, exponential 0.18-second response. App supplies unpaused presentation time; idle return does not run gameplay. Reduced motion keeps a stable exploration framing.
+- Camera diagnostics expose current/target zoom; added unit and production-browser regressions for smoothing, pause, return and reduced motion.
+- Validation complete: npm run build passed (144 unit tests); production browser camera/combat regressions passed; skill Playwright captures and diagnostic state inspected in output/camera-verified and output/combat/camera-action.png. Full production browser suite passed, including offline reload, responsive layouts, input, editor and PWA update fixture. Existing/concurrent asset and HUD edits were preserved.
+
 ## 2026-10-19 unified HUD
 - Implement the approved generated HUD as responsive native DOM/CSS: persistent portrait/HP, quiet location/menu, four face-button slots, compact aim/wait hints and real cast/cooldown status. Preserve existing mechanics and all input/save/offline behavior.
 - User specifically selected SpriteCollab Jigglypuff Alternate portrait; import pin, exact pixels and named attribution preserved.

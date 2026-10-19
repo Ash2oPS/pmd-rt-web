@@ -11,6 +11,7 @@ import {
 } from "../platform/input/mapping.ts";
 import type { Action } from "../platform/input/mapping.ts";
 import { createRenderer } from "../rendering/renderer.ts";
+import { CAMERA_ZOOM } from '../rendering/camera.ts';
 import { Menu, actionLabels } from "../ui/menu.ts";
 import { createToast, element } from "../ui/dom.ts";
 import { updateHUD } from "../ui/hud.ts";
@@ -230,6 +231,9 @@ function update(dt: number) {
   pokemon.update(clock.worldDt);
   const wasFinished = combat.finished;
   combat.update(clock.worldDt, dt);
+  // Presentation time lets the camera return smoothly even when the world is idle.
+  renderer.setZoom(!reducedMotion && combat.playerBusy ? CAMERA_ZOOM.action : CAMERA_ZOOM.exploration);
+  renderer.updateCamera(dt);
   if (!wasFinished && combat.finished) { clear(); runtime.previous = new Set(ACTIONS); }
   saveElapsed += dt;
   hudElapsed += dt;
