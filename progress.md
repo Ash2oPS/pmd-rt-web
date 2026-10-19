@@ -112,9 +112,11 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Local validation: `npm run build` passes 151 unit tests and the full production browser suite passes (19 browser, 5 Pokemon, 6 realtime, 8 field combat, 7 lab, 5 effects, 7 editor, PWA update and HUD flows). Field-combat scenarios pass under `/pmd-rt-web/`. Inspected locked Vine Whip/contact, compact warning and post-revival captures; no browser errors.
 - Published `feat(combat): add hostile encounters to exploration` as commit `18ee85e`. GitHub Actions run `39260329523` passed verify and deploy. Live build 0.4.12 announces Vine Whip and reloads offline with transient combat cleared and one second of grace.
 
-## Lifecycle and PWA verification — 0.4.13 release candidate
+## Lifecycle and PWA verification — 0.4.13
 - Added production-browser checks with an enemy cast pending through menu pause, hidden-page suspension and explicit resume; blur keeps the game in play and clears input.
 - K.O. checks verify the save is written before recovery appears, the world freezes while down, pending projectiles/casts/statuses are cleared and neutral actors retain position. Reload starts a fresh encounter with one second of grace.
 - Offline reload now begins from an in-flight hostile move and verifies the installed worker serves the current build with no old cast. The PWA update fixture also checks cached old HTML against the two-version worker.
 - Final local validation passes: `npm run build` (151 unit tests), every production browser suite, and all ten field-combat scenarios under `/pmd-rt-web/`. Inspected the live warning, contact, K.O. recovery and compact HUD captures; browser error assertions are clear.
-- A live 0.4.12 service-worker session is open for the final close/reopen update check after the 0.4.13 deployment.
+- Published `feat(combat): finish safe field recovery` as commit `9919f63`. GitHub Actions run `39264259337` and Pages deployment `7175742033` succeeded.
+- A fresh live page shows BUILD 0.4.13, is controlled by its worker, and reloads offline with sprites ready, one second of grace and no pending combat. No browser errors.
+- The pre-existing 0.4.12 browser session remained on 0.4.12 during its immediate reload/close/reopen check. The local two-version service-worker update suite passes; this live existing-session transition was not confirmed.

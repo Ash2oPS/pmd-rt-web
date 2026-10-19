@@ -21,7 +21,7 @@ Combat is moving into the persistent exploration field in three patch releases. 
 - [x] K.O. saves the current position and collected items before showing recovery; health, statuses, awareness and pending attacks stay transient.
 - [x] Pause and suspension freeze the field encounter until explicit resume. Blur clears input and saves without opening pause.
 - [x] New encounters and reloads discard pending combat, restore enemy positions and start with one second of grace.
-- [x] Production browser checks cover offline reload/update; the published site and offline cache are verified under `/pmd-rt-web/`.
+- [x] Production browser checks cover offline reload and worker replacement; a fresh live 0.4.13 page stays ready offline under `/pmd-rt-web/`.
 
 The five authored moves, collision geometry, projectile/effect system, attack editor, and rendering remain shared with the workshop. PP, accuracy rolls, type effectiveness, abilities, recruitment, progression and procedural dungeons remain outside scope. HP, statuses and pending attacks are not part of the field save.
 
