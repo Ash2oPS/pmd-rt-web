@@ -23,7 +23,7 @@ Dependency chain: baseline -> M1 -> M2 -> M3 -> M4 -> M5 -> M6 -> M7. Within a m
 | M5 | Content worker: visual graph; renderer: bounded presentation; platform: assets/audio; root: integration | M4 local validation | Published 0.4.6 commit `4239ae7`; Actions `39236446337` succeeded; live water effects verified; 123 tests and all browser suites pass |
 | M6 | Authoring workers: document/drafts, inspector, bundle integration; root: live preview and regressions | M5 | Published 0.4.7 commit `7d28298`; Actions `39239836879` succeeded; live Idle animation/editor verified; 138 unit tests, all browser suites including six editor flows; actual UI export applied and rebuilt in an isolated project copy with concurrent edits preserved; stationary Idle animation regression passes |
 | M7 | Root: integrated quality, CI evidence and final publication | M6 | Published 0.4.8 commit `c01791c`; Actions `39240611126` succeeded; live Idle animation/editor/orbit verified. 139 unit tests and all production browser suites pass, including seven editor checks; concurrent enemy warning/contact regression passes; 64-zone desktop sample p50 9.4 ms / p95 13.1 ms (280 frames); native sprite QA checks 1,896 frames with no errors; CI captures every browser suite. The live existing-session update exposed stale HTTP HTML during worker installation; H2 below closes that release gate. |
-| H2 | Root: offline update regression and content-growth checks | M7 | 0.4.9: reproduced stale HTML in the new cache with an HTTP-cached two-version browser fixture; install requests now reload network resources. Old sessions still wait for closure. All production browser suites pass, including the new worker-update regression; final live update verification follows deployment. |
+| H2 | Root: offline update regression and content-growth checks | M7 | Published 0.4.9 commit `65ac233`; Actions `39241587180` succeeded. Reproduced and fixed stale HTTP HTML during worker installation. All browser suites pass, including the two-version update regression. Live 0.4.8 session stayed intact until closure, then reopened at 0.4.9. Additional-move project copy rebuilt and passed the advanced-pattern and seven editor flows. |
 
 Existing dirty files before execution belong to the preceding authorized save-protection/CRLF fixes and this combat planning discussion. Preserve and include those reviewed changes in the first release checkpoint; do not stage unrelated later edits automatically.
 
@@ -200,7 +200,7 @@ Every milestone must load/cache its own newly introduced scene dependencies on t
 - [x] Validate first-visit offline loading for Attack/Hurt, VFX and any sounds before showing combat ready. Adjust `scripts/offline-assets.mts` or explicit scene dependency loading as necessary; do not eagerly download an entire future effect library.
 - [x] Keep readiness honest if assets fail or the worker is unavailable. A silent fallback must not disguise a missing gameplay cue.
 - [x] Validate reload, import/export, focus changes, suspension/disconnection and editor separation. CI artifact upload includes combat/editor failures.
-- [ ] Confirm the final live `/pmd-rt-web/` release and existing-session PWA update after deployment; retain the browser evidence with the release results.
+- [x] Final live `/pmd-rt-web/` deployment and existing-session PWA update verified for 0.4.9; evidence retained under `output/quality/`.
 - [x] Complete desktop browser regression coverage for input, remapping, compact layouts, multiple enemies/effects and simulated lifecycle events. Physical Thor testing is user-owned and outside this milestone.
 - [x] Acceptance: no unresolved gameplay blocker in verified flows, no original save loss, no unannounced hit area and no claimed hardware verification based only on simulation.
 
@@ -252,6 +252,6 @@ Publish milestones after their automated, desktop browser and deployment checks 
 - [x] Sprites, particles, trails and impacts are readable, bounded, offline-capable and editable independently of gameplay rules.
 - [x] The attack editor uses the actual game pipeline and completes the human edit/export/rebuild round trip.
 - [x] Existing exploration, saves, custom controls and lifecycle behavior remain intact.
-- [ ] Final release publication/update verification closes the release ledger; preceding M1-M6 releases are verified above. Physical Thor tests are not a completion requirement.
+- [x] Every milestone has a verified patch release, including final 0.4.9 deployment and the existing-session PWA update. Physical Thor tests are not a completion requirement.
 
 Recruitment, progression, procedural dungeons, a full type/ability system and a complete Pokemon roster are outside this plan unless separately requested.
