@@ -1,0 +1,90 @@
+{
+  "id": "normal",
+  "label": "Impact physique",
+  "tracks": [
+    {
+      "id": "prepare",
+      "trigger": "prepare",
+      "kind": "particles",
+      "assetId": "dust",
+      "color": "#ffeac2",
+      "sizePixels": 4,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.5,
+      "count": 5,
+      "speedTilesPerSecond": 0.3,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "release",
+      "trigger": "activate",
+      "kind": "sprite",
+      "assetId": "normal-impact",
+      "color": "#ffeac2",
+      "sizePixels": 25,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.18,
+      "count": 1,
+      "speedTilesPerSecond": 1,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "impact",
+      "trigger": "hit",
+      "kind": "sprite",
+      "assetId": "normal-impact",
+      "color": "#ffeac2",
+      "sizePixels": 30,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.22,
+      "count": 1,
+      "speedTilesPerSecond": 1,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "debris",
+      "trigger": "hit",
+      "kind": "particles",
+      "assetId": "dust",
+      "color": "#ffeac2",
+      "sizePixels": 4,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.35,
+      "count": 10,
+      "speedTilesPerSecond": 1.5,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    }
+  ],
+  "sound": {
+    "waveform": "triangle",
+    "frequencyHz": 180,
+    "endFrequencyHz": 70,
+    "durationSeconds": 0.09,
+    "gain": 0.06,
+    "trigger": "hit"
+  }
+}

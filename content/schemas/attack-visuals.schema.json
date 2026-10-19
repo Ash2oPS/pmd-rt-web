@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "baseId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "tracks": {
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "trigger": {
+            "type": "string",
+            "enum": [
+              "prepare",
+              "lock",
+              "activate",
+              "hit",
+              "projectile",
+              "zone",
+              "cancel"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "sprite",
+              "particles",
+              "trail"
+            ]
+          },
+          "assetId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "color": {
+            "default": "#ffffff",
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          },
+          "sizePixels": {
+            "default": 16,
+            "type": "number",
+            "minimum": 1,
+            "maximum": 128
+          },
+          "offset": {
+            "default": {
+              "x": 0,
+              "y": 0
+            },
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": -12,
+                "maximum": 12
+              },
+              "y": {
+                "type": "number",
+                "minimum": -12,
+                "maximum": 12
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "additionalProperties": false
+          },
+          "delaySeconds": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "durationSeconds": {
+            "default": 0.3,
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 10
+          },
+          "count": {
+            "default": 1,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          },
+          "speedTilesPerSecond": {
+            "default": 1,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "spreadDegrees": {
+            "default": 360,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 360
+          },
+          "trailLengthTiles": {
+            "default": 0.6,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 12
+          },
+          "layer": {
+            "default": "overlay",
+            "type": "string",
+            "enum": [
+              "ground",
+              "overlay"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "trigger",
+          "kind",
+          "assetId",
+          "color",
+          "sizePixels",
+          "offset",
+          "delaySeconds",
+          "durationSeconds",
+          "count",
+          "speedTilesPerSecond",
+          "spreadDegrees",
+          "trailLengthTiles",
+          "layer"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "sound": {
+      "type": "object",
+      "properties": {
+        "waveform": {
+          "type": "string",
+          "enum": [
+            "sine",
+            "triangle"
+          ]
+        },
+        "frequencyHz": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 20000
+        },
+        "endFrequencyHz": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 20000
+        },
+        "durationSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 2
+        },
+        "gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5
+        },
+        "trigger": {
+          "type": "string",
+          "enum": [
+            "activation",
+            "hit"
+          ]
+        }
+      },
+      "required": [
+        "waveform",
+        "frequencyHz",
+        "endFrequencyHz",
+        "durationSeconds",
+        "gain",
+        "trigger"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "tracks"
+  ],
+  "additionalProperties": false
+}

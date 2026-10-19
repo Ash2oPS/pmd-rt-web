@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { attackVisualSchema, effectAssetSchema, visualOverridesSchema } from './visual-schema.ts';
+export type { EffectAsset, AttackVisual, VisualTrack, VisualTrackOverride } from './visual-schema.ts';
 import { combatMoveSchema } from './combat-schema.ts';
 export { combatMoveSchema } from './combat-schema.ts';
 export type { CombatMoveDefinition } from './combat-schema.ts';
@@ -29,6 +31,7 @@ export const moveSchema = z.strictObject({
   pp: z.number().int().min(1).max(99),
   effectId: z.enum(['damage', 'lower-attack', 'sleep']),
   combat: combatMoveSchema.optional(),
+  visualId: id.optional(), visualOverrides: visualOverridesSchema.optional(),
 });
 export const abilitySchema = z.strictObject({
   id, label, description: z.string().min(1),
@@ -76,10 +79,13 @@ export const catalogSchema = z.strictObject({
   abilities: z.array(abilitySchema).min(1), items: z.array(itemSchema).min(1),
   dungeons: z.array(dungeonSchema).min(1),
   settings: z.array(movementSettingsSchema).length(1),
+  'attack-visuals': z.array(attackVisualSchema).max(256).default([]),
+  'effect-assets': z.array(effectAssetSchema).max(256).default([]),
 });
 export const recordSchemas = {
   species: speciesSchema, moves: moveSchema, abilities: abilitySchema,
   items: itemSchema, dungeons: dungeonSchema, settings: movementSettingsSchema,
+  'attack-visuals': attackVisualSchema, 'effect-assets': effectAssetSchema,
 };
 export type Content = z.infer<typeof catalogSchema>;
 export type Species = z.infer<typeof speciesSchema>;

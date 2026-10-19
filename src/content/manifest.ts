@@ -30,12 +30,25 @@ import items0 from '../../content/items/light-shard.json';
 import items1 from '../../content/items/oran-berry.json';
 import dungeons0 from '../../content/dungeons/awakening-woods.json';
 import settings0 from '../../content/settings/movement.json';
+import attackvisuals0 from '../../content/attack-visuals/electric.json';
+import attackvisuals1 from '../../content/attack-visuals/grass.json';
+import attackvisuals2 from '../../content/attack-visuals/normal.json';
+import attackvisuals3 from '../../content/attack-visuals/sound.json';
+import attackvisuals4 from '../../content/attack-visuals/water.json';
+import effectassets0 from '../../content/effect-assets/dust.json';
+import effectassets1 from '../../content/effect-assets/electric-spark.json';
+import effectassets2 from '../../content/effect-assets/leaf.json';
+import effectassets3 from '../../content/effect-assets/normal-impact.json';
+import effectassets4 from '../../content/effect-assets/note.json';
+import effectassets5 from '../../content/effect-assets/water-drop.json';
 
 export const rawContent = {
-  species: [species0, species1, species2, species3, species4, species5, species6, species7, species8, species9],
-  moves: [moves0, moves1, moves2, moves3, moves4, moves5, moves6, moves7, moves8],
-  abilities: [abilities0, abilities1, abilities2, abilities3, abilities4, abilities5, abilities6, abilities7],
-  items: [items0, items1],
-  dungeons: [dungeons0],
-  settings: [settings0],
+  "species": [species0, species1, species2, species3, species4, species5, species6, species7, species8, species9],
+  "moves": [moves0, moves1, moves2, moves3, moves4, moves5, moves6, moves7, moves8],
+  "abilities": [abilities0, abilities1, abilities2, abilities3, abilities4, abilities5, abilities6, abilities7],
+  "items": [items0, items1],
+  "dungeons": [dungeons0],
+  "settings": [settings0],
+  "attack-visuals": [attackvisuals0, attackvisuals1, attackvisuals2, attackvisuals3, attackvisuals4],
+  "effect-assets": [effectassets0, effectassets1, effectassets2, effectassets3, effectassets4, effectassets5],
 };

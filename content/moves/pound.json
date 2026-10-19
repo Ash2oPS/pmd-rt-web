@@ -1,6 +1,6 @@
 {
   "id": "pound",
-  "label": "\u00c9cras\u2019Face",
+  "label": "Écras’Face",
   "type": "normal",
   "category": "physical",
   "power": 40,
@@ -14,7 +14,14 @@
     "recoverySeconds": 0.23,
     "cooldownSeconds": 0.65,
     "movementDuringPreparation": 0,
-    "pattern": { "kind": "sector", "range": 1.15, "angleDegrees": 95 },
-    "effect": { "kind": "damage" }
-  }
+    "pattern": {
+      "kind": "sector",
+      "range": 1.15,
+      "angleDegrees": 95
+    },
+    "effect": {
+      "kind": "damage"
+    }
+  },
+  "visualId": "normal"
 }

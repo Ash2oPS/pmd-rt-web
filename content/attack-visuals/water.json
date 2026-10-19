@@ -1,0 +1,129 @@
+{
+  "id": "water",
+  "label": "Eau et eclaboussures",
+  "baseId": "normal",
+  "tracks": [
+    {
+      "id": "prepare",
+      "trigger": "prepare",
+      "kind": "particles",
+      "assetId": "water-drop",
+      "color": "#6bd9f0",
+      "sizePixels": 5,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 1.1,
+      "count": 7,
+      "speedTilesPerSecond": 0.4,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "release",
+      "trigger": "activate",
+      "kind": "particles",
+      "assetId": "water-drop",
+      "color": "#6bd9f0",
+      "sizePixels": 10,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.6,
+      "count": 12,
+      "speedTilesPerSecond": 1.6,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "impact",
+      "trigger": "hit",
+      "kind": "sprite",
+      "assetId": "water-drop",
+      "color": "#6bd9f0",
+      "sizePixels": 25,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.25,
+      "count": 1,
+      "speedTilesPerSecond": 1,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "debris",
+      "trigger": "hit",
+      "kind": "particles",
+      "assetId": "water-drop",
+      "color": "#6bd9f0",
+      "sizePixels": 6,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.5,
+      "count": 12,
+      "speedTilesPerSecond": 1.6,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "shot",
+      "trigger": "projectile",
+      "kind": "sprite",
+      "assetId": "water-drop",
+      "color": "#6bd9f0",
+      "sizePixels": 14,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 5,
+      "count": 1,
+      "speedTilesPerSecond": 1,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "trail",
+      "trigger": "projectile",
+      "kind": "trail",
+      "assetId": "water-drop",
+      "color": "#6bd9f0",
+      "sizePixels": 7,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 5,
+      "count": 1,
+      "speedTilesPerSecond": 1,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.9,
+      "layer": "overlay"
+    }
+  ],
+  "sound": {
+    "waveform": "sine",
+    "frequencyHz": 600,
+    "endFrequencyHz": 250,
+    "durationSeconds": 0.16,
+    "gain": 0.045,
+    "trigger": "activation"
+  }
+}

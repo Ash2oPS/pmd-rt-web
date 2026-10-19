@@ -8,6 +8,9 @@ import { createPokemonAssets } from '../platform/pokemon-assets.ts';
 import { createRenderer } from '../rendering/renderer.ts';
 import { createPokemonRenderer } from '../rendering/pokemon.ts';
 import { drawCombatGround, drawCombatOverlay } from '../rendering/combat.ts';
+import { combatPose } from '../rendering/combat-pose.ts';
+import { setupAttackPresentation } from './attack-presentation.ts';
+import type { PresentationOptions } from './attack-presentation.ts';
 
 export interface LabOptions { seed: number; casterId: string; distance: number; facing: Facing; overlays: boolean }
 
@@ -18,6 +21,7 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
   let move: Move, options: LabOptions, encounter: Encounter, view: EncounterSnapshot | null = null;
   let events: CombatEvent[] = [];
   let configuration = 0;
+  let presentation: ReturnType<typeof setupAttackPresentation> | null = null;
   const world = structuredClone(field);
   world.spawn = { x: 7, y: 5 };
   world.collectibles = [];
@@ -43,29 +47,32 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
     (context, row) => {
       if (!view) return false;
       for (const actor of [...view.actors, view.player].filter(actor => !actor.defeated && Math.floor(actor.y) === row).sort((a, b) => a.y - b.y)) {
-        painter.draw(context, { ...actor, x: actor.x * 32 + 16, y: actor.y * 32 + 16,
-          animationTimeMs: (view.casts.find(cast => cast.casterId === actor.id)?.elapsedSeconds ?? view.time) * 1000 }, view.time * 1000);
+        painter.draw(context, { ...combatPose(actor, view, assets.manifest, [move]), x: actor.x * 32 + 16, y: actor.y * 32 + 16 }, view.time * 1000);
       }
       return Math.floor(view.player.y) === row;
     }, undefined,
-    { ground: context => { if (view && options?.overlays) drawCombatGround(context, view, world); },
-      overlay: context => { if (view) drawCombatOverlay(context, view, events, world); } });
+    { ground: context => { if (view) { if (options?.overlays) drawCombatGround(context, view, world); presentation?.draw(context, view, events, view.time, 'ground'); } },
+      overlay: context => { if (view) { if (options?.overlays) drawCombatOverlay(context, view, events, world); presentation?.draw(context, view, events, view.time, 'overlay'); } } });
   function advance(seconds: number) {
     if (!encounter || seconds <= 0) { draw(); return; }
     const steps = Math.max(1, Math.ceil(seconds * 60));
     for (let i = 0; i < steps; i++) {
       encounter.update(seconds / steps);
       events.push(...encounter.takeEvents());
-      events = events.filter(event => encounter.time - event.time < .8).slice(-100);
+      events = events.filter(event => encounter.time - event.time < 20).slice(-256);
     }
     view = encounter.snapshot(); draw();
   }
   return {
-    async configure(definition: Move, settings: LabOptions) {
+    async configure(definition: Move, settings: LabOptions, presentationOptions: Omit<PresentationOptions, 'moves' | 'audio'> = {}) {
       const revision = ++configuration;
+      const nextPresentation = setupAttackPresentation({ ...presentationOptions, moves: [definition], audio: false });
       await assets.loadSpecies([settings.casterId, 'bulbasaur'], ['Idle', 'Walk', 'Attack', 'Hurt']);
+      await nextPresentation.loaded;
       if (revision !== configuration) return;
       if (assets.status === 'error') throw new Error(assets.errors.join('; '));
+      if (nextPresentation.error) throw new Error(nextPresentation.error);
+      presentation = nextPresentation;
       move = structuredClone(definition); options = { ...settings };
       reset(); draw();
     },
@@ -73,6 +80,7 @@ export async function createLabSession(canvas: HTMLCanvasElement) {
     advance,
     seek(seconds: number) { reset(); encounter.requestAttack(move.id); view = encounter.snapshot(); advance(Math.max(0, Math.min(15, seconds))); },
     snapshot() { return view; },
+    presentation() { return presentation?.snapshot() ?? null; },
     events() { return [...events]; },
     dispose() { renderer.dispose(); },
   };

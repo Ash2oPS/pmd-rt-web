@@ -54,6 +54,7 @@ export interface ProjectileSnapshot {
   previousPosition: Point;
   radius: number;
   remainingRange: number;
+  spawnTime?: number;
 }
 export interface StatusSnapshot { entityId: string; kind: 'sleep'; remainingSeconds: number }
 export interface CastSnapshot {

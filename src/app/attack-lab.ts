@@ -4,9 +4,11 @@ import { SPRITE_DIRECTIONS } from '../domain/animation.ts';
 import type { Facing } from '../domain/movement.ts';
 import { setupOffline } from '../platform/offline.ts';
 import { createLabSession } from './lab-session.ts';
+import { VERSION } from './config.ts';
 
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const status = element('lab-status');
+element('lab-build').textContent = `BUILD ${VERSION}`;
 const entries = [...content.moves.filter(move => move.combat), ...labFixtures];
 let current = entries[0]!, running = false, lastFrame = performance.now(), revision = 0;
 setupOffline(element('lab-offline'), element<HTMLButtonElement>('lab-install'), message => { status.textContent = message; });
@@ -69,7 +71,7 @@ function frame(now: number) {
   if (running) { session.advance(dt * Number(element<HTMLSelectElement>('lab-rate').value)); update(); if ((session.snapshot()?.time ?? 0) >= 8) running = false; }
   requestAnimationFrame(frame);
 }
-window.render_attack_lab_to_text = () => JSON.stringify({ move: current.id, running, encounter: session.snapshot() });
+window.render_attack_lab_to_text = () => JSON.stringify({ version: VERSION, move: current.id, running, encounter: session.snapshot(), presentation: session.presentation() });
 window.advance_attack_lab = ms => { session.advance(ms / 1000); update(); };
 await select(current.id);
 requestAnimationFrame(frame);

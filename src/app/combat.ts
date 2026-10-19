@@ -7,6 +7,7 @@ import { addEquipmentSlots, addTrainingPartners, createCombatHUD } from '../ui/c
 import { element } from '../ui/dom.ts';
 import type { Runtime } from './runtime.ts';
 import type { Action } from '../platform/input/mapping.ts';
+import { setupAttackPresentation } from './attack-presentation.ts';
 
 /** App-owned training session: transient combat never writes exploration save fields. */
 export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boolean,
@@ -16,6 +17,8 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
   let view: EncounterSnapshot | null = null;
   let events: CombatEvent[] = [];
   let presentationTime = 0;
+  const effects = setupAttackPresentation({ audio: true });
+  element('attack-sound').textContent = `Son des capacités · ${effects.snapshot().muted ? 'désactivé' : 'activé'}`;
   const playerSpecies = content.species.find(species => species.id === field.playerSpeciesId)!;
   const knownMoves = playerSpecies.learnset.map(entry => content.moves.find(move => move.id === entry.moveId)!)
     .filter(move => move.combat);
@@ -39,19 +42,21 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
   function refresh() { view = encounter?.snapshot() ?? null; hud.update(view, moves, moves.map((_, slot) => callbacks.bindingLabel(slot)),
     [callbacks.controlLabel?.('aim') ?? 'L', callbacks.controlLabel?.('wait') ?? 'R']); }
   function start(partner = selectedPartner) {
-    if (!ready()) { callbacks.toast('Les animations de combat se chargent encore.'); return false; }
+    if (!ready() || !effects.isReady) { callbacks.toast(effects.error ?? 'Les animations et effets de combat se chargent encore.'); return false; }
     callbacks.clear();
     selectedPartner = partner;
     encounter = new Encounter({ field, species: content.species, moves: content.moves, movementSettings, state: runtime.state,
       hostileIds: partner ? [partner] : [] });
     events = [];
     presentationTime = 0;
+    effects.reset();
     refresh();
     callbacks.toast('Entraînement : esquive les zones. J / K / L / I : capacités · Maj : viser · Espace : attendre.');
     return true;
   }
   function leave() {
     encounter?.cancelAll(); encounter = null; events = [];
+    effects.reset();
     callbacks.clear(); refresh();
     element('scene-status').textContent = 'Exploration';
   }
@@ -72,7 +77,9 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
     partnerCommands(resume: () => void) {
       return Object.fromEntries(partners.slice(1).map(partner => [`combat-${partner.id}`, () => { if (start(partner.id)) resume(); }]));
     },
-    presentation() { return { time: presentationTime, recentEvents: events.length }; },
+    presentation() { return { time: presentationTime, recentEvents: events.length, ...effects.snapshot() }; },
+    suspendAudio() { effects.suspend(); },
+    toggleSound() { const muted = effects.toggleSound(); element('attack-sound').textContent = `Son des capacités · ${muted ? 'désactivé' : 'activé'}`; },
     get finished() { return !!view && view.result !== 'playing'; },
     resultAction(action: Action) {
       if (!view || view.result === 'playing') return false;
@@ -83,17 +90,16 @@ export function setupCombat(field: Dungeon, runtime: Runtime, ready: () => boole
       return true;
     },
     get movementMultiplier() { return encounter?.playerMovementMultiplier ?? 1; },
-    update(dt: number) {
+    update(dt: number, resultUiDt = dt) {
       if (!encounter) return;
-      presentationTime += dt;
+      presentationTime += encounter.result === 'playing' ? dt : resultUiDt;
       encounter.update(dt);
       const next = encounter.takeEvents();
-      events = [...events, ...next].filter(event => presentationTime - event.time < .8).slice(-80);
-      // Terminal action-clock time can remain still; never leave final hit decorations frozen.
-      if (encounter.result !== 'playing') events = [];
+      effects.consume(next);
+      events = [...events, ...next].filter(event => presentationTime - event.time < effects.retention(event)).slice(-256);
       refresh();
     },
-    ground(context: CanvasRenderingContext2D) { if (view) drawCombatGround(context, view, field); },
-    overlay(context: CanvasRenderingContext2D) { if (view) drawCombatOverlay(context, view, events, field, presentationTime); },
+    ground(context: CanvasRenderingContext2D) { if (view) { drawCombatGround(context, view, field); effects.draw(context, view, events, presentationTime, 'ground'); } },
+    overlay(context: CanvasRenderingContext2D) { if (view) { drawCombatOverlay(context, view, events, field, presentationTime); effects.draw(context, view, events, presentationTime, 'overlay'); } },
   };
 }

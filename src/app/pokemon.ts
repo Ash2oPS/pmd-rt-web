@@ -7,6 +7,7 @@ import { createPokemonRenderer } from '../rendering/pokemon.ts';
 import { element } from '../ui/dom.ts';
 import { createRoamers, updateRoamers } from '../domain/roaming.ts';
 import type { EncounterSnapshot } from '../domain/combat/types.ts';
+import { combatPose } from '../rendering/combat-pose.ts';
 
 /** Connects authored field actors to locally imported art without species branches. */
 export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () => EncounterSnapshot | null = () => null) {
@@ -47,9 +48,10 @@ export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () =
   })();
   function playerActor(game: GameState, visual: Point) {
     const fight = combat();
-    if (fight) return { ...fight.player, ...visual,
-      animation: fight.player.animation === 'Idle' && Math.hypot(velocity().x, velocity().y) > .01 ? 'Walk' : fight.player.animation,
-      animationTimeMs: (fight.casts.find(cast => cast.casterId === 'player')?.elapsedSeconds ?? fight.time) * 1000 };
+    if (fight) {
+      const pose = combatPose(fight.player, fight, assets?.manifest, content.moves);
+      return { ...pose, ...visual, animation: pose.animation === 'Idle' && Math.hypot(velocity().x, velocity().y) > .01 ? 'Walk' : pose.animation };
+    }
     const moving = Math.hypot(velocity().x, velocity().y) > .01;
     return {
       id: 'player', speciesId: field.playerSpeciesId,
@@ -66,8 +68,7 @@ export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () =
       const player = playerActor(game, visual);
       let playerDrawn = false;
       const fight = combat();
-      const visible = [...(fight ? fight.actors.filter(actor => !actor.defeated).map(actor => ({ ...actor,
-        animationTimeMs: (fight.casts.find(cast => cast.casterId === actor.id)?.elapsedSeconds ?? fight.time) * 1000 })) : actors), player]
+      const visible = [...(fight ? fight.actors.filter(actor => !actor.defeated).map(actor => combatPose(actor, fight, assets?.manifest, content.moves)) : actors), player]
         .filter(actor => Math.floor(actor.y) === row).sort((a, b) => a.y - b.y);
       for (const actor of visible) {
         if (actor.id === 'player') playerDrawn = true;
@@ -85,7 +86,7 @@ export function setupPokemon(field: Dungeon, velocity: () => Point, combat: () =
       return {
         status: state, error,
         player: { ...player, frame: painter?.snapshot(player, time * 1000) },
-        actors: combat()?.actors.map(actor => ({ ...actor, frame: painter?.snapshot(actor, time * 1000) })) ?? actors.map(actor => ({ id: actor.id, speciesId: actor.speciesId, x: actor.x, y: actor.y,
+        actors: combat()?.actors.map(actor => { const pose = combatPose(actor, combat()!, assets?.manifest, content.moves); return { ...pose, frame: painter?.snapshot(pose, time * 1000) }; }) ?? actors.map(actor => ({ id: actor.id, speciesId: actor.speciesId, x: actor.x, y: actor.y,
           facing: actor.facing, animation: actor.animation, behavior: actor.behavior, velocity: actor.velocity, resolvedSpeed: actor.resolvedSpeed,
           frame: painter?.snapshot(actor, time * 1000) })),
         loaded: assets?.status, elapsed: time,

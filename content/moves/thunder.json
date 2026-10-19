@@ -14,7 +14,14 @@
     "recoverySeconds": 0.55,
     "cooldownSeconds": 2.6,
     "movementDuringPreparation": 0,
-    "pattern": { "kind": "target-disk", "radius": 0.85, "targetingRange": 5 },
-    "effect": { "kind": "damage" }
-  }
+    "pattern": {
+      "kind": "target-disk",
+      "radius": 0.85,
+      "targetingRange": 5
+    },
+    "effect": {
+      "kind": "damage"
+    }
+  },
+  "visualId": "electric"
 }

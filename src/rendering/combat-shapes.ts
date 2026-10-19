@@ -55,10 +55,12 @@ function outline(geometry: AttackGeometry, world?: CollisionWorld): readonly Poi
 /** Build only a path; callers own its phase-dependent fill, outline and layer. */
 export function attackPath(context: CanvasRenderingContext2D, geometry: AttackGeometry, world?: CollisionWorld): void {
   const points = outline(geometry, world);
+  const splitRing = geometry.kind === 'ring' && geometry.angleDegrees >= 360 ? points.length / 2 : -1;
   context.beginPath();
   points.forEach((point, index) => {
     const x = Math.round(combatRoot(point.x)), y = Math.round(combatRoot(point.y));
-    if (index) context.lineTo(x, y);
+    if (index === splitRing) { context.closePath(); context.moveTo(x, y); }
+    else if (index) context.lineTo(x, y);
     else context.moveTo(x, y);
   });
   context.closePath();

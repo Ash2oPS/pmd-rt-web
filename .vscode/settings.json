@@ -36,6 +36,18 @@
         "/content/settings/*.json"
       ],
       "url": "./content/schemas/settings.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/content/attack-visuals/*.json"
+      ],
+      "url": "./content/schemas/attack-visuals.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/content/effect-assets/*.json"
+      ],
+      "url": "./content/schemas/effect-assets.schema.json"
     }
   ]
 }

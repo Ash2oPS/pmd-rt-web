@@ -10,6 +10,7 @@ function hostile(snapshot: EncounterSnapshot, casterId: string): boolean {
 export function drawZoneGround(context: CanvasRenderingContext2D, snapshot: EncounterSnapshot, world?: CollisionWorld): void {
   context.save();
   for (const zone of snapshot.zones) {
+    if (zone.occluded) continue;
     const active = zone.phase === 'active';
     const enemy = hostile(snapshot, zone.casterId);
     const justActivated = active && snapshot.time - zone.activationTime < .1;
@@ -39,6 +40,7 @@ export function drawZoneOverlay(context: CanvasRenderingContext2D, snapshot: Enc
   }
   for (const zone of snapshot.zones) {
     const active = zone.phase === 'active';
+    if (zone.occluded) continue;
     const enemy = hostile(snapshot, zone.casterId);
     context.globalAlpha = active ? .95 : .8;
     context.setLineDash(active ? [] : [3, 2]);

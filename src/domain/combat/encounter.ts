@@ -219,7 +219,7 @@ export class Encounter {
       if (pattern.kind === 'projectile' && cast.geometry.kind === 'line') {
         this.projectiles.push({ id: ++this.sequence, castId: cast.id, casterId: caster.id, moveId: cast.moveId,
           team: caster.team, position: { ...cast.geometry.origin }, previousPosition: { ...cast.geometry.origin },
-          radius: pattern.radius, remainingRange: pattern.range, angleRadians: cast.geometry.angleRadians, speed: pattern.speed });
+          radius: pattern.radius, remainingRange: pattern.range, angleRadians: cast.geometry.angleRadians, speed: pattern.speed, spawnTime: this.time });
         this.emit('projectile-launch', caster.id, cast.moveId);
       }
     }

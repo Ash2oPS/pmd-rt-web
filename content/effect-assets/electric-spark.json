@@ -1,0 +1,11 @@
+{
+  "id": "electric-spark",
+  "label": "electric-spark",
+  "path": "effects/electric-spark.svg",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "frames": 1,
+  "frameSeconds": 0.08,
+  "credit": "PMD RT Web project (Codex-assisted)",
+  "license": "Project-authored; editable with this project"
+}

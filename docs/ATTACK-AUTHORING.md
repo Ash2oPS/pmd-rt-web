@@ -19,3 +19,15 @@ Simple attacks describe a sector, self disk, target disk or projectile. The `zon
 Orbit trajectories and their actual objects respect terrain visibility from the orbit center. Occluded objects cannot deal damage and are not drawn as active danger. Cosmetic overlays never determine hits.
 
 After source edits, run `npm run content:generate` and `npm run build`, then verify the production browser flows with `npm run test:browser`. Never edit generated schemas or the offline worker by hand.
+
+## Presentation records
+
+The visual direction follows the existing muted forest palette and outlined pixel sprites: compact readable bursts, sparse particles and bright danger contours. The live preview is the main workspace; presentation controls are secondary to the actual result.
+
+`content/attack-visuals/<id>.json` contains reusable tracks and optional synthesized sound. `baseId` inherits tracks by stable track ID. A move selects `visualId` and can override individual nonidentity fields with `visualOverrides[trackId]`; sparse overrides preserve inherited values. Presentation edits do not alter preparation, contact geometry or damage.
+
+Tracks bind to preparation, lock, activation, hit, projectile, zone or cancellation. Sprites have local asset references, size in pixels, world-tile offsets, phase delay/duration and drawing layer. Particle count, speed, spread and trail length are editable. Budgets limit each frame to 256 particles and 64 combined sprites/trails; reduced motion reduces decoration without removing telegraphs. A nonprojectile trail extends forward, while projectile trails follow their actual path.
+
+`content/effect-assets/<id>.json` defines a local sprite/sheet, frame dimensions/count/timing and provenance. The initial six SVG sprites under `public/effects/` are project-authored pixel assets, separate from pinned SpriteCollab imports. Sheet dimensions and loading errors are checked before combat is ready. Existing Pokemon roots and authored frame durations are preserved; an Attack animation holds before its source contact frame until the simulation activates, then finishes without looping.
+
+Sound is optional and unlocked by a browser-recognized user gesture. The pause menu offers a separately persisted mute setting. The laboratory never plays sounds while scrubbing. Final cosmetic impacts finish on the result UI clock while gameplay stays frozen.

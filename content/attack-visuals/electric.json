@@ -1,0 +1,91 @@
+{
+  "id": "electric",
+  "label": "Etincelles electriques",
+  "baseId": "normal",
+  "tracks": [
+    {
+      "id": "prepare",
+      "trigger": "prepare",
+      "kind": "particles",
+      "assetId": "electric-spark",
+      "color": "#ffe66d",
+      "sizePixels": 5,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 1.1,
+      "count": 7,
+      "speedTilesPerSecond": 0.4,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "release",
+      "trigger": "activate",
+      "kind": "particles",
+      "assetId": "electric-spark",
+      "color": "#ffe66d",
+      "sizePixels": 10,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.6,
+      "count": 12,
+      "speedTilesPerSecond": 1.6,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "impact",
+      "trigger": "hit",
+      "kind": "sprite",
+      "assetId": "electric-spark",
+      "color": "#ffe66d",
+      "sizePixels": 42,
+      "offset": {
+        "x": 0,
+        "y": -0.3
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.25,
+      "count": 1,
+      "speedTilesPerSecond": 1,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    },
+    {
+      "id": "debris",
+      "trigger": "hit",
+      "kind": "particles",
+      "assetId": "electric-spark",
+      "color": "#ffe66d",
+      "sizePixels": 6,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "delaySeconds": 0,
+      "durationSeconds": 0.5,
+      "count": 12,
+      "speedTilesPerSecond": 1.6,
+      "spreadDegrees": 360,
+      "trailLengthTiles": 0.7,
+      "layer": "overlay"
+    }
+  ],
+  "sound": {
+    "waveform": "sine",
+    "frequencyHz": 950,
+    "endFrequencyHz": 200,
+    "durationSeconds": 0.16,
+    "gain": 0.045,
+    "trigger": "activation"
+  }
+}

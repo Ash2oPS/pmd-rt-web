@@ -79,6 +79,7 @@ function fullscreen() {
 const menu = new Menu({
   pause() {
     save();
+    combat.suspendAudio();
     pad.cancel();
     clear();
   },
@@ -115,6 +116,7 @@ const menu = new Menu({
     ...combat.partnerCommands(() => menu.resume()),
     ...combat.equipCommands(),
     lab: () => { location.href = new URL('lab.html', location.href).href; },
+    sound: () => combat.toggleSound(),
   },
 });
 const pad = new GamepadController(VERSION, storage.mapping, {
@@ -177,6 +179,7 @@ bindLifecycle({
   },
   suspend(reason) {
     clear();
+    combat.suspendAudio();
     menu.open(reason, false);
   },
 });
@@ -223,7 +226,7 @@ function update(dt: number) {
     resolvedSpeed: Math.hypot(runtime.velocity.x, runtime.velocity.y) };
   pokemon.update(clock.worldDt);
   const wasFinished = combat.finished;
-  combat.update(clock.worldDt);
+  combat.update(clock.worldDt, dt);
   if (!wasFinished && combat.finished) { clear(); runtime.previous = new Set(ACTIONS); }
   saveElapsed += dt;
   hudElapsed += dt;

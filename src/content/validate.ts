@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { resolveVisual } from './visuals.ts';
 import { catalogSchema, type Content, type Dungeon } from './schemas.ts';
 
 type Issue = { code: 'custom'; path: (string | number)[]; message: string };
@@ -78,6 +79,21 @@ export function validateContent(input: unknown): Content {
     dungeon.actors.forEach((entry, offset) => {
       if (!speciesIds.has(entry.speciesId)) issues.push({ code: 'custom', path: ['dungeons', index, 'actors', offset, 'speciesId'], message: `Unknown actor species: ${entry.speciesId}` });
     });
+  });
+  const assets = new Set(data['effect-assets'].map(asset => asset.id));
+  data['attack-visuals'].forEach((visual, index) => {
+    visual.tracks.forEach((track, offset) => {
+      if (!assets.has(track.assetId)) issues.push({ code: 'custom', path: ['attack-visuals', index, 'tracks', offset, 'assetId'], message: `Unknown effect asset: ${track.assetId}` });
+    });
+    try { resolveVisual({ visualId: visual.id }, data['attack-visuals']); }
+    catch (error) { issues.push({ code: 'custom', path: ['attack-visuals', index], message: error instanceof Error ? error.message : String(error) }); }
+  });
+  data.moves.forEach((move, index) => {
+    try {
+      const resolved = resolveVisual(move, data['attack-visuals']);
+      for (const track of resolved?.tracks ?? []) if (!assets.has(track.assetId))
+        issues.push({ code: 'custom', path: ['moves', index, 'visualOverrides', track.id, 'assetId'], message: `Unknown effect asset: ${track.assetId}` });
+    } catch (error) { issues.push({ code: 'custom', path: ['moves', index, 'visualId'], message: error instanceof Error ? error.message : String(error) }); }
   });
   if (issues.length) throw new z.ZodError(issues);
   return data;
