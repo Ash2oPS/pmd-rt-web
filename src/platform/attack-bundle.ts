@@ -1,4 +1,5 @@
 import type { AttackDocument } from '../content/attack-document.ts';
+import type { EffectAsset } from '../content/visual-schema.ts';
 import { decodeDocumentFile, validateDocumentFile } from '../content/document-files.ts';
 
 export interface EmbeddedEffectImage { assetId: string; mimeType: 'image/png' | 'image/webp' | 'image/svg+xml'; dataBase64: string }
@@ -52,13 +53,21 @@ export async function readEffectImage(file: File, assetId: string): Promise<{ fi
   return { file: embedded, width: image.naturalWidth, height: image.naturalHeight };
 }
 
-export async function createImageOverrides(files: readonly EmbeddedEffectImage[]): Promise<Map<string, CanvasImageSource>> {
-  const images = new Map<string, CanvasImageSource>();
+export async function createImageOverrides(files: readonly EmbeddedEffectImage[]): Promise<Map<string, HTMLImageElement>> {
+  const images = new Map<string, HTMLImageElement>();
   if (new Set(files.map(file => file.assetId)).size !== files.length) throw new Error('Duplicate effect image IDs');
   await Promise.all(files.map(async file => {
     images.set(file.assetId, await decodeImage(file));
   }));
   return images;
+}
+
+export function validateImageOverrides(images: ReadonlyMap<string, HTMLImageElement>, assets: readonly EffectAsset[]): void {
+  for (const [id, image] of images) {
+    const asset = assets.find(asset => asset.id === id);
+    if (!asset || image.naturalWidth !== asset.frameWidth * asset.frames || image.naturalHeight !== asset.frameHeight)
+      throw new Error(`Dimensions du sprite ${id} incompatibles avec la taille et le nombre de frames.`);
+  }
 }
 
 export function createAttackDraftStore() {

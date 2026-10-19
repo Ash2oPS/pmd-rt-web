@@ -4,7 +4,7 @@ import type { AttackDocument, ValidatedAttackDocument } from '../content/attack-
 import type { Move } from '../content/schemas.ts';
 import { resolveVisual } from '../content/visuals.ts';
 import { AttackDraft } from '../domain/attack-drafts.ts';
-import { createAttackDraftStore, createImageOverrides, downloadAttackDocument, readAttackDocumentFile, readEffectImage } from '../platform/attack-bundle.ts';
+import { createAttackDraftStore, createImageOverrides, downloadAttackDocument, readAttackDocumentFile, readEffectImage, validateImageOverrides } from '../platform/attack-bundle.ts';
 import { createAttackEditor } from '../ui/attack-editor.ts';
 
 type Path = (string | number)[];
@@ -29,7 +29,7 @@ export function setupAttackEditor(container: HTMLElement, callbacks: {
 }) {
   const histories = new Map<string, AttackDraft>(), store = createAttackDraftStore();
   let selected = '', draft: AttackDraft | null = null, previewError: string | null = null, revision = 0;
-  let imageFingerprint = '', images = new Map<string, CanvasImageSource>();
+  let imageFingerprint = '', images = new Map<string, HTMLImageElement>(), previewPending = false;
   let imageOperation = 0;
   const validate = (raw: unknown) => parseAttackDocument(raw, content);
   function sourceDocument(move: Move): AttackDocument {
@@ -55,16 +55,19 @@ export function setupAttackEditor(container: HTMLElement, callbacks: {
   async function apply() {
     if (!draft) return;
     const token = ++revision, valid = draft.lastValid;
-    previewError = null; render();
+    previewError = null; previewPending = true; render();
     callbacks.status('Chargement de l’aperçu…');
     try {
       const signature = JSON.stringify(valid.document.files);
       if (signature !== imageFingerprint) { images = await createImageOverrides(valid.document.files); imageFingerprint = signature; }
       if (token !== revision) return;
+      validateImageOverrides(images, valid.document.assets);
       callbacks.entry(valid.document.move, selected);
       await callbacks.apply(valid, images);
-    } catch (error) { if (token === revision) previewError = error instanceof Error ? error.message : String(error); }
-    if (token === revision) render();
+    } catch (error) {
+      if (token === revision) { previewError = error instanceof Error ? error.message : String(error); callbacks.status(previewError); }
+    }
+    if (token === revision) { previewPending = false; render(); }
   }
   function changed(next: unknown) {
     if (!draft) return;
@@ -137,7 +140,7 @@ export function setupAttackEditor(container: HTMLElement, callbacks: {
       void command(() => importDocument(document));
     },
     export() {
-      if (!draft || draft.errors.length || previewError) return;
+      if (!draft || draft.errors.length || previewError || previewPending) return;
       const document = draft.lastValid.document;
       if (document.move.id.startsWith('lab-')) delete document.assignTo;
       else if (!content.moves.some(move => move.id === document.move.id) && !document.assignTo)

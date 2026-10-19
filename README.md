@@ -60,10 +60,12 @@ Checks reject forbidden dependency directions, cycles, explicit `any`, checking 
 - F or **Plein écran** toggles fullscreen where supported.
 - **Carnet et connexion** contains progress, device status and copyable input diagnostics.
 - **Entraînement** offers Bulbizarre, Carapuce and Pikachu as partners. Four face buttons or J/K/L/I launch the four equipped slots; change equipment using the pause menu. Rondoudou initially knows Écras’Face and Berceuse, with two empty slots. In menus, east A confirms and south B returns; Start opens pause. All controller actions can be remapped.
-- The world freezes while you are idle. Moving, holding R/Space to wait or preparing/executing/recovering from your attack advances world time normally. Hold L/Shift and move the stick to face a direction without moving or advancing time. Enemy amber aim becomes a locked orange zone before impact. Touch provides the same actions.
+- At rest, Pokemon keep their Idle animations while movement and combat mechanics freeze. Moving, holding R/Space to wait or preparing/executing/recovering from your attack advances world time normally. Hold L/Shift and move the stick to face a direction without moving or advancing time. Enemy amber aim becomes a locked orange zone before impact. Touch provides the same actions.
 - Progress saves automatically. JSON export/import and legacy version-1 saves remain supported.
 - Clicking elsewhere clears held input and saves without pausing. Hiding/freezing the page or disconnecting the controller still pauses.
 - The canvas fills the viewport without stretching pixels.
+
+The **Atelier capacités** menu opens `lab.html`: edit patterns, timings, effects and sprites with a live preview, undo/redo and separate browser drafts. Export JSON bundles, then integrate them with `npm run attack:apply`; see [attack authoring](docs/ATTACK-AUTHORING.md).
 
 ## Offline and deployment
 

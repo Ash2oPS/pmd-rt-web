@@ -84,6 +84,19 @@ try {
     assert.ok((await snapshot()).presentation);
     await page.screenshot({ path: `${output}/desktop-editor.png` });
   });
+  await check('uploaded sheet dimensions must match metadata before preview and export', async () => {
+    await button('Assets').click();
+    await page.getByLabel('Ressource visuelle', { exact: true }).selectOption(importedAsset);
+    const view = await snapshot(), index = view.editor.raw.assets.findIndex(asset => asset.id === importedAsset);
+    const previous = view.encounter;
+    await field(['assets', index, 'frameWidth']).fill('8');
+    await page.waitForFunction(() => document.querySelector('#lab-status').textContent.includes('Dimensions du sprite'), undefined, { polling: 50 });
+    assert.equal(await button('Exporter le bundle').isDisabled(), true);
+    assert.deepEqual((await snapshot()).encounter, previous, 'Invalid image metadata retains the prior preview');
+    await field(['assets', index, 'frameWidth']).fill('16'); await ready();
+    assert.equal(await button('Exporter le bundle').isDisabled(), false);
+    await button('Rendu').click();
+  });
   await check('export and import round trip the exact authoring bundle including its new image', async () => {
     const downloadEvent = page.waitForEvent('download'); await button('Exporter le bundle').click();
     const download = await downloadEvent;

@@ -30,7 +30,14 @@ jobs:
         if: failure()
         with:
           name: browser-results
-          path: output/playwright
+          path: |
+            output/playwright
+            output/pokemon
+            output/realtime
+            output/combat
+            output/lab
+            output/effects
+            output/editor
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name != 'pull_request'
         with:
