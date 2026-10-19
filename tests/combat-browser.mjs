@@ -193,6 +193,11 @@ try {
       assert.deepEqual(persisted.player, view.player);
       assert.deepEqual(persisted.collected, [0], 'Collected objects are saved before recovery is offered');
       assert.deepEqual(view.combat.casts, []); assert.deepEqual(view.combat.projectiles, []); assert.deepEqual(view.combat.zones, []);
+      const frozenTime = view.worldClock.time, fallen = view.combat;
+      await advance(page, 1000);
+      view = await state(page);
+      assert.equal(view.worldClock.time, frozenTime);
+      assert.deepEqual(view.combat, fallen, 'K.O. stops the world until the player chooses recovery');
       const neutralPositions = new Map(view.combat.actors.filter(actor => actor.team === 'neutral').map(actor => [actor.id, [actor.x, actor.y]]));
       await page.locator('[data-recover]').click(); await advance(page, 0);
       view = await state(page);
@@ -229,6 +234,71 @@ try {
       assert.deepEqual((await state(page)).combat, paused, 'Idle after resuming remains frozen');
       await waitWorld(page, 250);
       assert.ok((await state(page)).combat.time > paused.time);
+    } finally { await context.close(); }
+  });
+  await check('an enemy cast freezes on pause and suspension; blur leaves exploration active', async () => {
+    const { page, context } = await scene();
+    try {
+      let view = await state(page);
+      const enemy = view.combat.actors.find(actor => actor.team === 'hostile');
+      for (let i = 0; i < 40 && !view.combat.casts.some(cast => cast.casterId === enemy.id && cast.phase === 'locked'); i++) {
+        await waitWorld(page, 100); view = await state(page);
+      }
+      assert.ok(view.combat.casts.some(cast => cast.casterId === enemy.id && cast.phase === 'locked'));
+      const active = view.combat;
+      const clock = view.worldClock.time;
+      await key(page, 'Escape');
+      assert.equal((await state(page)).mode, 'menu');
+      await advance(page, 1000);
+      assert.deepEqual((await state(page)).combat, active, 'Menu pause freezes the announced cast');
+      await page.evaluate(() => {
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      await advance(page, 1000);
+      assert.deepEqual((await state(page)).combat, active, 'Suspension keeps the pending cast frozen');
+      await page.evaluate(() => {
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      assert.equal((await state(page)).mode, 'menu', 'Visibility return requires explicit resume');
+      await page.locator('[data-menu="resume"]').click(); await advance(page, 0);
+      assert.deepEqual((await state(page)).combat, active, 'Idle after explicit resume remains frozen');
+      await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+      assert.equal((await state(page)).mode, 'play', 'Blur clears input without opening a pause menu');
+      assert.deepEqual((await state(page)).combat, active);
+      await waitWorld(page, 100);
+      assert.ok((await state(page)).worldClock.time > clock, 'A player action advances the resumed encounter');
+    } finally { await context.close(); }
+  });
+  await check('offline reload discards pending combat and keeps the field ready', async () => {
+    const { page, context } = await scene();
+    try {
+      await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+      if (!await page.evaluate(() => !!navigator.serviceWorker.controller)) {
+        await page.reload();
+        await page.waitForFunction(() => typeof window.render_game_to_text === 'function' && JSON.parse(window.render_game_to_text()).pokemon.status === 'ready', undefined, { polling: 50 });
+      }
+      let view = await state(page);
+      const enemy = view.combat.actors.find(actor => actor.team === 'hostile');
+      for (let i = 0; i < 40 && !view.combat.casts.some(cast => cast.casterId === enemy.id); i++) {
+        await waitWorld(page, 100); view = await state(page);
+      }
+      assert.ok(view.combat.casts.some(cast => cast.casterId === enemy.id), 'The online session has a pending hostile move');
+      await context.setOffline(true);
+      await page.reload();
+      await page.waitForFunction(() => typeof window.render_game_to_text === 'function' && JSON.parse(window.render_game_to_text()).pokemon.status === 'ready', undefined, { polling: 50 });
+      view = await state(page);
+      assert.match(await page.locator('.build').textContent(), /^BUILD 0\.4\.\d+$/);
+      assert.ok(await page.evaluate(() => !!navigator.serviceWorker.controller), 'The offline page remains under the installed worker');
+      assert.equal(view.offline, 'Prêt');
+      assert.equal(view.combat.graceSeconds, 1);
+      assert.deepEqual(view.combat.casts, []);
+      assert.deepEqual(view.combat.projectiles, []);
+      assert.deepEqual(view.combat.statuses, []);
+      assert.equal(view.combatPresentation.assetsReady, true);
+      assert.equal(view.combat.player.hp, view.combat.player.maxHp);
+      await page.screenshot({ path: `${output}/field-offline-reload.png` });
     } finally { await context.close(); }
   });
   assert.deepEqual(errors, []);

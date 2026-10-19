@@ -183,13 +183,21 @@ test('a wall blocks first notice until the explorer reaches a clear view', () =>
 
 test('revival resets enemies and transient attacks while keeping neutral positions and player progress', () => {
   const dungeon = structuredClone(field);
-  const state = createState(dungeon); state.player = { x: 2, y: 4 }; state.collected = [0];
-  const lethalMoves = structuredClone(moves);
-  lethalMoves.find(move => move.id === 'vine-whip')!.combat!.damage = 999;
-  const encounter = new Encounter({ field: dungeon, species, moves: lethalMoves, movementSettings, state,
+  dungeon.playerSpeciesId = 'squirtle';
+  const state = createState(dungeon); state.player = { x: 2, y: 4 }; state.facing = 'down'; state.collected = [0];
+  const lethalMoves = structuredClone(content.moves.filter(move => ['vine-whip', 'water-gun'].includes(move.id)));
+  lethalMoves.find(move => move.id === 'vine-whip')!.power = 999;
+  const water = lethalMoves.find(move => move.id === 'water-gun')!;
+  if (water.combat && 'pattern' in water.combat && water.combat.pattern.kind === 'projectile') {
+    water.combat.pattern.range = 10; water.combat.pattern.speed = 1;
+  }
+  const encounter = new Encounter({ field: dungeon, species: content.species, moves: lethalMoves, movementSettings, state,
     continueAfterVictory: true });
   encounter.reset(state, 0);
-  encounter.update(1);
+  assert.equal(encounter.requestAttack('water-gun'), true);
+  encounter.update(.7);
+  assert.equal(encounter.snapshot().projectiles.length, 1, 'The player has a projectile in flight before the K.O.');
+  encounter.update(.4);
   assert.equal(encounter.result, 'lost');
   assert.equal(encounter.snapshot().casts.length, 0);
   assert.equal(encounter.snapshot().projectiles.length, 0);
@@ -207,6 +215,7 @@ test('revival resets enemies and transient attacks while keeping neutral positio
   for (const actor of fresh.actors.filter(actor => actor.team === 'neutral'))
     assert.deepEqual(neutralPositions.get(actor.id), { x: actor.x, y: actor.y });
   assert.deepEqual(fresh.casts, []); assert.deepEqual(fresh.projectiles, []); assert.deepEqual(fresh.zones, []);
+  assert.deepEqual(fresh.statuses, []);
 });
 
 test('sector geometry includes collision-radius edges in every direction and respects terrain', () => {

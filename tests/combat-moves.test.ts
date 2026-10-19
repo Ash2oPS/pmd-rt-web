@@ -82,6 +82,15 @@ test('Berceuse holds its caster, waits for preparation, interrupts and expires o
   const events = encounter.takeEvents();
   assert.ok(events.some(event => event.type === 'cast-cancel' && event.casterId !== 'player'));
   assert.ok(events.some(event => event.type === 'sleep-end'));
+  const resetCase = fixture();
+  const resetSing = resetCase.moves.find(move => move.id === 'sing')!.combat!;
+  resetCase.encounter.reset(resetCase.state, 100);
+  assert.equal(resetCase.encounter.requestAttack('sing'), true);
+  resetCase.encounter.update(resetSing.preparationSeconds + .02);
+  assert.equal(resetCase.encounter.snapshot().statuses.length, 1);
+  resetCase.encounter.reset(resetCase.state, 1);
+  assert.deepEqual(resetCase.encounter.snapshot().statuses, [], 'Temporary status does not survive a fresh encounter');
+  assert.deepEqual(resetCase.encounter.snapshot().casts, []);
 });
 
 test('ordinary damage wakes sleep without cancelling an already preparing attack', () => {

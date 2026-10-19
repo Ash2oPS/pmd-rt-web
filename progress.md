@@ -105,8 +105,16 @@ Original prompt: Set up the proposed first milestone immediately: a playable sce
 - Local validation: `npm run build` passed 146 unit tests; the full production browser suite passed on `npm run preview` (19 browser, 5 Pokemon, 6 realtime, 5 field combat, 7 lab, 5 effects, 7 editor, PWA update and HUD flows). Inspected field hit, post-victory and controller telegraph captures; no console errors.
 - Published `feat(combat): move attacks into exploration` as commit `1f207a9`. GitHub Actions run `39253660495` passed verify and deploy. The live site shows BUILD 0.4.11, one hostile/eight neutrals, and a successful offline reload; no console errors.
 
-## Hostile encounters and recovery — 0.4.12 release candidate
+## Hostile encounters and recovery — 0.4.12
 - Bulbizarre's `noticeRange` is authored in dungeon content. It notices only during world time, after an action, nearby and with a clear line of sight; then it pursues and selects Fouet Lianes from its learnset.
 - The HUD announces the French move name while the existing locked geometry drives both warning and contact. Production-browser cases cover blocked sight, pursuit, telegraph/contact, dodging and riposte.
 - K.O. saves position and collected items before showing recovery. Revival resets hostiles, HP, statuses and pending attacks, preserves neutral positions, and grants one second of grace.
-- Local validation: `npm run build` passes 151 unit tests and the full production browser suite passes (19 browser, 5 Pokemon, 6 realtime, 8 field combat, 7 lab, 5 effects, 7 editor, PWA update and HUD flows). All eight field-combat scenarios also pass when served under `/pmd-rt-web/`. Inspected the locked Vine Whip/contact and post-revival captures; no browser errors. Pages publication is pending.
+- Local validation: `npm run build` passes 151 unit tests and the full production browser suite passes (19 browser, 5 Pokemon, 6 realtime, 8 field combat, 7 lab, 5 effects, 7 editor, PWA update and HUD flows). Field-combat scenarios pass under `/pmd-rt-web/`. Inspected locked Vine Whip/contact, compact warning and post-revival captures; no browser errors.
+- Published `feat(combat): add hostile encounters to exploration` as commit `18ee85e`. GitHub Actions run `39260329523` passed verify and deploy. Live build 0.4.12 announces Vine Whip and reloads offline with transient combat cleared and one second of grace.
+
+## Lifecycle and PWA verification — 0.4.13 release candidate
+- Added production-browser checks with an enemy cast pending through menu pause, hidden-page suspension and explicit resume; blur keeps the game in play and clears input.
+- K.O. checks verify the save is written before recovery appears, the world freezes while down, pending projectiles/casts/statuses are cleared and neutral actors retain position. Reload starts a fresh encounter with one second of grace.
+- Offline reload now begins from an in-flight hostile move and verifies the installed worker serves the current build with no old cast. The PWA update fixture also checks cached old HTML against the two-version worker.
+- Final local validation passes: `npm run build` (151 unit tests), every production browser suite, and all ten field-combat scenarios under `/pmd-rt-web/`. Inspected the live warning, contact, K.O. recovery and compact HUD captures; browser error assertions are clear.
+- A live 0.4.12 service-worker session is open for the final close/reopen update check after the 0.4.13 deployment.
